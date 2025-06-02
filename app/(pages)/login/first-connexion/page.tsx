@@ -29,6 +29,9 @@ export default function WelcomeFirstLogin() {
     // TODO: call API to update password
   };
 
+  //connexion à l'API pour la modification du mot de passe
+  
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-100 to-indigo-200">
       <motion.div

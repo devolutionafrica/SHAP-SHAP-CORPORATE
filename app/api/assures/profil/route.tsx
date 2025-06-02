@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { poolPromise, sql } from "@/app/lib/db";
-import { verifyAuthToken } from "@/app/lib/auth";
+import { poolPromise, sql } from "@/app/api/lib/db";
+import { verifyAuthToken } from "@/app/api/lib/auth";
 
 export async function GET(request: NextRequest) {
   // Vérification JWT
@@ -21,14 +21,14 @@ export async function GET(request: NextRequest) {
     const pool = await poolPromise;
     const result = await pool.request().input("LOGIN", sql.VarChar, login)
       .query(`SELECT C.*, U.LOGIN
-FROM CLIENT_UNIQUE C inner join UTILISATEUR U on U.IDE_CLIENT_UNIQUE=C.IDE_CLIENT_UNIQUE 
-where LOGIN = @LOGIN`);
+        FROM CLIENT_UNIQUE C inner join UTILISATEUR U on U.IDE_CLIENT_UNIQUE=C.IDE_CLIENT_UNIQUE 
+        where LOGIN = @LOGIN`);
 
     if (result.recordset.length > 0) {
       pourcentages = await pool
         .request()
-        .input("LOGIN", sql.VarChar, login)
-        .query(`SELECT * FROM FnPourcentageProfil(@LOGIN) `);
+        .input("USERNAME", sql.VarChar, login)
+        .query(`SELECT * FROM FnPourcentageProfil(@USERNAME)`);
     }
 
     return NextResponse.json(

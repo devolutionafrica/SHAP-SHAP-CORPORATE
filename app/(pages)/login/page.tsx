@@ -12,17 +12,19 @@ import Image from "next/image";
 import LoginIllustration from "@/public/Login.svg";
 import "./styles.scss";
 import { login } from "@/app/repository/auths";
+import { useLogin } from "@/hooks/useLogin";
+import { useAuthContext } from "@/hooks/contexts/authContext";
+import { useUserInfo } from "@/hooks/useUserInfo";
+import { useUser } from "@/hooks/contexts/userContext";
 
 const loginSchema = z.object({
-  email: z.string().email("Adresse email invalide"),
+  email: z.string().min(6, "Adresse email invalide"),
   password: z.string().min(6, "Mot de passe trop court"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -31,14 +33,35 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    login(data.email, data.password).then((response) => {
-      if (response.status == 200) {
-        router.push("/");
-      } else {
-        alert("Identifiants incorrects. Veuillez réessayer.");
+  const loginMutation = useLogin();
+
+  const router = useRouter();
+
+  const { setUserName, username } = useAuthContext();
+
+  const onSubmit = async (data: LoginFormData) => {
+    loginMutation.mutateAsync(
+      {
+        username: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: (response) => {
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("username", response.username);
+          // handleLoadUserData();
+          document.cookie = "isAuth=true; path=/";
+          router.push("/");
+
+          setUserName(response.username);
+          console.log("Connexion réussie :", response);
+        },
+        onError: (error) => {
+          console.error("Erreur de connexion :", error);
+          alert("Échec de la connexion. Veuillez vérifier vos identifiants.");
+        },
       }
-    });
+    );
   };
 
   return (
@@ -76,7 +99,7 @@ export default function LoginPage() {
             <label className="flex flex-col text-sm">
               Email:
               <input
-                type="email"
+                type="text"
                 {...register("email")}
                 className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400"
               />
@@ -110,7 +133,7 @@ export default function LoginPage() {
                 type="submit"
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-200"
               >
-                "Se connecter"
+                {loginMutation.isPending ? "Connexion..." : "Se connecter"}
               </button>
             </div>
             <p className="mt-4 text-center text-sm">
