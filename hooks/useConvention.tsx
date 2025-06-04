@@ -5,7 +5,7 @@ import { api } from "@/lib/api/base";
 export const useConvention = () => {
   const username = localStorage.getItem("username");
   return useQuery({
-    queryKey: ["contrat", username],
+    queryKey: ["conventions", username],
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await api.get(`/corporate/${username}/convention`, {

@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import { Contrat } from "@/app/Types/type";
 import { useContratDetails } from "@/hooks/useContrat";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
+import "./styles.scss";
 export default function ModernDashboard({
   children,
 }: {
@@ -26,7 +27,7 @@ export default function ModernDashboard({
   useEffect(() => {}, [id, contrat]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-2">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-2 contrat">
       {/* Main Content */}
 
       <motion.div

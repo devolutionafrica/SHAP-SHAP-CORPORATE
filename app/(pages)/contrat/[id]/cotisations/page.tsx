@@ -184,9 +184,6 @@ export default function CotisationPage() {
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               Situation du {startDate.format("DD/MM/YYYY")} au{" "}
               {endDate.format("DD/MM/YYYY")} |{" "}
-              <span style={{ color: "red" }}>
-                Date Édition : {dayjs().format("DD/MM/YYYY")}
-              </span>
             </Typography>
 
             {/* Table */}

@@ -5,7 +5,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 
-import { Adhesion, allAdhesions } from "../../../contrat/[id]/lib/data"; // Assurez-vous que le chemin est correct
+import { Adhesion, allAdhesions } from "../../(pages)/contrat/[id]/lib/data"; // Assurez-vous que le chemin est correct
 import {
   Table,
   TableHeader,
@@ -13,7 +13,7 @@ import {
   TableRow,
   TableCell,
   TableColumn,
-} from "../../../../../components/ui/table2"; // Assurez-vous que le chemin est correct
+} from "../../../components/ui/table2"; // Assurez-vous que le chemin est correct
 import { Button, Skeleton } from "@mui/material";
 import "./style.scss";
 import {
@@ -24,17 +24,16 @@ import {
 } from "lucide-react";
 import { useContratByConvention } from "@/hooks/useContratByConvention";
 import { useParams, useRouter } from "next/navigation";
-import { InfoPolice } from "@/app/Types/type";
+
 import { useContratContext } from "@/hooks/contexts/useContratContext";
+import { useConvention } from "@/hooks/useConvention";
+import { Convention } from "@/app/Types/type";
+import { Book } from "lucide-react";
 
 // Headers du tableau pour un affichage plus lisible
 const tableHeaders = [
-  { key: "NomAssure", label: "Nom" },
-  { key: "PrenomsAssure", label: "Prénom" },
-  { key: "NUMERO_POLICE", label: "N° Contrat" },
-  { key: "DATE_DEBUT_POLICE", label: "Date Début Police" },
-  { key: "PERIODICITE_COTISATION", label: "Périodicité Cotisation" },
-  { key: "EtatPolice", label: "État Police" },
+  { key: "NUMERO_DE_CONVENTION", label: "N° Convention" },
+  { key: "LIBELLE_CONVENTION", label: "Libelle Convention" },
 ];
 
 export default function AdhesionTable() {
@@ -44,9 +43,13 @@ export default function AdhesionTable() {
 
   const param = useParams();
   const id = param.id as string;
-  const loaderContrat = useContratByConvention(id);
+  const loaderContrat = useConvention();
+  const router = useRouter();
+  const { handleLoadConvention, conventions } = useContratContext();
 
-  const { handleLoadConvention } = useContratContext();
+  const gotoDetails = (id: string) => {
+    router.push(`/conventions/${id}/details`);
+  };
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -54,65 +57,27 @@ export default function AdhesionTable() {
     }
   };
 
-  const [contrats, setContrats] = useState<InfoPolice[] | null>(null);
-  const router = useRouter();
-  const getContratByConvention = async () => {
-    await loaderContrat
-      .refetch()
-      .then((response) => {
-        setContrats(response.data.data as InfoPolice[]);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const gotoDetails = (id: string) => {
-    router.push(`/contrat/${id}/details`);
-  };
-
   useEffect(() => {
-    getContratByConvention();
     handleLoadConvention();
-  }, [id]);
+  }, [id, conventions]);
 
   return (
-    <div className="w-full shadow-lg border border-gray-200 rounded overflow-hidden details-convention ">
-      <div className="p-4 sm:p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-        <h3 className="text-lg sm:text-xl font-bold text-gray-800">
-          Liste des adhésions
-        </h3>
-        <span className="text-md sm:text-lg ">
-          Nombre total de contrats sur la convention {`{${id}}`} :{" "}
-          {contrats?.length || 0}
-        </span>
-      </div>
-      <div className="flex flex-col  m-4 gap-2">
-        <h3 className="font-serif">Rechercher un contrat</h3>
-        <div className="flex flex-row gap-2 items-end">
-          <div>
-            <label htmlFor="">Nom scripteur</label>
-            <Input className="max-w-[220px]" />
-          </div>
-          ou
-          <div>
-            <label htmlFor="">Numéro police</label>
-            <Input className="max-w-[220px]" />
-          </div>
-          <div>
-            <Button>Rechercher</Button>
-          </div>
-        </div>
+    <div className="w-full  border border-gray-200 rounded overflow-hidden details-convention ">
+      <div className="mt-11">
+        <h1 className=" p-4 text-[28px] flex flex-row gap-5 items-center">
+          <Book />
+          Liste de vos conventions
+        </h1>
       </div>
 
       <div className="overflow-x-auto relative">
         <Table className="min-w-full divide-y divide-gray-200">
-          <TableHeader className="bg-gray-100">
+          <TableHeader className="bg-[#223268] !text-white table-header">
             <TableRow>
               {tableHeaders.map((header) => (
                 <TableColumn
                   key={header.key}
-                  className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  className="px-4 py-3 text-left text-xs font-semibold  uppercase tracking-wider"
                 >
                   {header.label}
                 </TableColumn>
@@ -121,11 +86,11 @@ export default function AdhesionTable() {
           </TableHeader>
           <AnimatePresence mode="wait">
             {loaderContrat.isLoading && <Skeleton />}
-            {contrats && (
-              <TableBody>
-                {contrats.map((adhesion, index) => (
+            {conventions && (
+              <TableBody className="">
+                {conventions.map((adhesion: Convention, index) => (
                   <motion.tr
-                    key={adhesion.NUMERO_POLICE || index}
+                    key={adhesion.NUMERO_DE_CONVENTION || index}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -20 }}
@@ -135,10 +100,12 @@ export default function AdhesionTable() {
                     {tableHeaders.map((header) => (
                       <TableCell
                         key={header.key}
-                        className="px-4 py-3 whitespace-nowrap text-sm text-gray-800 cursor-pointer"
-                        onClick={() => gotoDetails(adhesion.NUMERO_POLICE)}
+                        className="px-4 whitespace-nowrap text-sm text-gray-800 my-6 hover:bg-blue-300"
+                        onClick={() =>
+                          gotoDetails(adhesion.NUMERO_DE_CONVENTION)
+                        }
                       >
-                        {header.key === "ETAT_POLICE" ? (
+                        {/* {header.key === "ETAT_POLICE" ? (
                           <span
                             className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                             ${
@@ -152,10 +119,13 @@ export default function AdhesionTable() {
                             {adhesion.EtatPolice}
                           </span>
                         ) : (
-                          (adhesion[
-                            header.key as keyof InfoPolice
-                          ] as React.ReactNode) || "N/A"
-                        )}
+                          
+                        )} */}
+                        <div className=" font-bold cursor-pointer ">
+                          {(adhesion[
+                            header.key as keyof Convention
+                          ] as React.ReactNode) || "N/A"}
+                        </div>
                       </TableCell>
                     ))}
                   </motion.tr>
@@ -168,7 +138,7 @@ export default function AdhesionTable() {
                 <span>Error de chargement des contrats</span>
               </div>
             )}
-            {loaderContrat.data && contrats?.length == 0 && (
+            {loaderContrat.data && conventions?.length == 0 && (
               <div>Aucun contrat trouvé</div>
             )}
           </AnimatePresence>

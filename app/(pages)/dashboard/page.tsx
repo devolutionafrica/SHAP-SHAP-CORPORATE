@@ -1,5 +1,5 @@
 "use client";
-import { Contrat } from "@/app/Types/type";
+import { Contrat, Convention } from "@/app/Types/type";
 import ContratCard from "@/components/ContratCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,10 +36,10 @@ export default function DashboardPage() {
   } = useUser();
   const userinfo = useUserInfo();
 
-  const { contrats } = useContratContext();
+  const { contrats, conventions, handleLoadConvention } = useContratContext();
 
   const { agences, setAgence } = useAgenceContext();
-  const loaderConvention = useConvention();
+
   const formatTypeUser = (civility: string) => {
     switch (civility) {
       case "MONSIEUR":
@@ -102,7 +102,8 @@ export default function DashboardPage() {
     const token = localStorage.getItem("token");
     handleLoadUserData();
     handleLoadAgences();
-  }, [user, contrats]);
+    handleLoadConvention();
+  }, [user, contrats, conventions]);
 
   if (!user) {
     return (
@@ -198,7 +199,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-slate-100">
-              {contrats != null &&
+              {getTypeUser() == 1 &&
+                contrats != null &&
                 contrats!.map((contract: Contrat) => (
                   <div
                     key={Date.now() + contract.NumeroContrat}
@@ -209,7 +211,7 @@ export default function DashboardPage() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[#223268] rounded-lg flex items-center justify-center">
                           <FileText className="w-6 h-6 text-white" />
                         </div>
                         <div>
@@ -232,6 +234,47 @@ export default function DashboardPage() {
                           Expire: {contract.DateFinPolice ?? "N/A"}
                         </p>
                       </div>
+                    </div>
+                  </div>
+                ))}
+
+              {getTypeUser() == 2 &&
+                conventions != null &&
+                conventions!.map((contract: Convention) => (
+                  <div
+                    key={Date.now() + contract.NUMERO_DE_CONVENTION}
+                    className="p-6 hover:bg-slate-50 transition-colors cursor-pointer group"
+                    onClick={() =>
+                      router.push(
+                        `/conventions/${contract.NUMERO_DE_CONVENTION}/details`
+                      )
+                    }
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
+                          <FileText className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
+                            {contract.LIBELLE_CONVENTION}
+                          </h3>
+                          <p className="text-sm text-slate-500">
+                            Contrat #{contract.NUMERO_DE_CONVENTION}
+                          </p>
+                        </div>
+                      </div>
+                      {/* <div className="text-right">
+                        <Badge
+                          variant="secondary"
+                          className="bg-green-100 text-green-800 border-green-200"
+                        >
+                          {contract.EtatPolice}
+                        </Badge>
+                        <p className="text-sm text-slate-500 mt-1">
+                          Expire: {contract.DateFinPolice ?? "N/A"}
+                        </p>
+                      </div> */}
                     </div>
                   </div>
                 ))}

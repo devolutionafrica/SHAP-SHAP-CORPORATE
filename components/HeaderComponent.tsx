@@ -38,7 +38,7 @@ export default function HeaderComponent({}: {}) {
     { name: "Accueil", url: "/dashboard", icon: TrendingUp },
     {
       name: `${labelType()}`,
-      url: "/contrat",
+      url: `${getTypeUser() == 1 ? "/contrat" : "/conventions"}`,
       icon: FileText,
     },
     { name: "Mon Profil", url: "/profil", icon: User },
@@ -77,8 +77,8 @@ export default function HeaderComponent({}: {}) {
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <Shield className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  NSIA Assurance
+                <span className="text-xl font-bold text-[#223268]">
+                  NSIA ASSURANCE
                 </span>
               </div>
 

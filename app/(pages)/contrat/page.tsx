@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
 import { useUser } from "@/hooks/contexts/userContext";
 import { FileText } from "lucide-react";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 
 export default function ContratPage() {
@@ -32,9 +32,9 @@ export default function ContratPage() {
             Gérez tous vos contrats d'assurance
           </p>
         </div>
-        <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+        {/* <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
           Nouveau Contrat
-        </Button>
+        </Button> */}
       </div>
 
       <div className="flex flex-col">
@@ -48,26 +48,14 @@ export default function ContratPage() {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
+              <thead className="bg-[#223268] text-white">
                 <tr>
-                  <th className="text-left p-4 font-semibold text-slate-700">
-                    Produit
-                  </th>
-                  <th className="text-left p-4 font-semibold text-slate-700">
-                    Numéro
-                  </th>
-                  <th className="text-left p-4 font-semibold text-slate-700">
-                    Début
-                  </th>
-                  <th className="text-left p-4 font-semibold text-slate-700">
-                    Fin
-                  </th>
-                  <th className="text-left p-4 font-semibold text-slate-700">
-                    Périodicité
-                  </th>
-                  <th className="text-left p-4 font-semibold text-slate-700">
-                    Statut
-                  </th>
+                  <th className="text-left p-4 font-semibold ">Produit</th>
+                  <th className="text-left p-4 font-semibold ">Numéro</th>
+                  <th className="text-left p-4 font-semibold ">Début</th>
+                  <th className="text-left p-4 font-semibold ">Fin</th>
+                  <th className="text-left p-4 font-semibold ">Périodicité</th>
+                  <th className="text-left p-4 font-semibold">Statut</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
