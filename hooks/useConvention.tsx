@@ -2,13 +2,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api/base";
 
-export const useContrat = () => {
+export const useConvention = () => {
   const username = localStorage.getItem("username");
   return useQuery({
     queryKey: ["contrat", username],
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await api.get(`/contrat`, {
+      const response = await api.get(`/corporate/${username}/convention`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

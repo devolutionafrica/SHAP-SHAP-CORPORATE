@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken } from "@/app/api/lib/auth";
 import { poolPromise, sql } from "@/app/api/lib/db";
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   // Vérification du token JWT
+  const params = await context.params;
 
-  const codeFiliale = request.nextUrl.searchParams.get("codeFiliale");
   const username = request.nextUrl.searchParams.get("username");
-  const idContrat = request.nextUrl.searchParams.get("idContrat");
+  const idContrat = params.id;
 
   const authResult = verifyAuthToken(request);
   if (!authResult) {
@@ -21,11 +24,10 @@ export async function GET(request: NextRequest) {
     const result = await pool
       .request()
       .input("Login", sql.VarChar, username)
-      .input("NUMERO_CONTRAT", sql.VarChar, idContrat)
-      .input("CODE_FILIALE", sql.VarChar, codeFiliale).query(`SELECT * 
+      .input("NUMERO_CONTRAT", sql.VarChar, idContrat).query(`SELECT * 
     FROM dbo.FnConsultationPoliceDetail(@Login) Where NumeroContrat = @NUMERO_CONTRAT`);
 
-    return NextResponse.json({
+    return NextResponse.json({  
       data: result.recordset,
       sizes: result.recordset.length,
     });

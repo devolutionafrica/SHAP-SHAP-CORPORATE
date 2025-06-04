@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import Providers from "./providers";
+
 import HeaderComponent from "@/components/HeaderComponent";
 import { headers, cookies } from "next/headers"; // <-- Import 'cookies' to read cookies on the server
 
@@ -16,14 +15,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <Providers>
-          <div className="bg-gradient-to-br from-slate-50">
-            <div className="">{children}</div>
-          </div>
-        </Providers>
-      </body>
-    </html>
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-2">
+      {/* Conditionally render HeaderComponent based on 'shouldShowHeader' */}
+      {<HeaderComponent />}
+
+      {/* Main Content */}
+      <div className="content p-8">{children}</div>
+    </div>
   );
 }

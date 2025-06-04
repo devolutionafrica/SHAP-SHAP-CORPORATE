@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { poolPromise, sql } from "@/app/lib/db";
-import { verifyAuthToken } from "@/app/lib/auth";
+import { poolPromise, sql } from "@/app/api/lib/db";
+import { verifyAuthToken } from "@/app/api/lib/auth";
 
 export async function GET(request: NextRequest) {
   const authResult = verifyAuthToken(request);

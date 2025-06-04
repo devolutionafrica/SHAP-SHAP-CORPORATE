@@ -1,3 +1,4 @@
+"use client";
 import { Contrat } from "@/app/Types/type";
 import ContratCard from "@/components/ContratCard";
 import { Badge } from "@/components/ui/badge";
@@ -19,16 +20,39 @@ import { useUserInfo } from "@/hooks/useUserInfo";
 import { Calendar, FileText, Mail, MapPin, Phone, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ButtonOutline } from "./component/ButtonOutline";
+import { useConvention } from "@/hooks/useConvention";
 
 export default function DashboardPage() {
-  const { user } = useUser();
+  const { user, labelType } = useUser();
 
-  const { setUser, percentProfile, setPercentProfile } = useUser();
+  const {
+    setUser,
+    percentProfile,
+    setPercentProfile,
+    setTypeUtilisateur,
+    typeUtilisateur,
+    getTypeUser,
+  } = useUser();
   const userinfo = useUserInfo();
 
-  const { contrat } = useContratContext();
+  const { contrats } = useContratContext();
 
   const { agences, setAgence } = useAgenceContext();
+  const loaderConvention = useConvention();
+  const formatTypeUser = (civility: string) => {
+    switch (civility) {
+      case "MONSIEUR":
+      case "MADAME":
+      case "MADEMOISELLE":
+      case "MAITRE": {
+        return 1;
+      }
+
+      default:
+        return 2;
+    }
+  };
 
   const handleLoadUserData = async () => {
     await userinfo
@@ -39,6 +63,15 @@ export default function DashboardPage() {
           setUser(result.data.data);
           setPercentProfile!(result.data.pourcentage);
           console.log("User data loaded successfully:", user?.CIVILITE);
+          if (user) {
+            localStorage.setItem(
+              "type_user",
+              formatTypeUser(user.CIVILITE).toString()
+            );
+            console.log("Type contrats:\n\n", getTypeUser());
+            console.log("UTILISATEUR :\n\n\n", user);
+            setTypeUtilisateur(formatTypeUser(user.CIVILITE));
+          }
         }
       })
       .catch((error) => {
@@ -48,6 +81,7 @@ export default function DashboardPage() {
   };
 
   const agenceQuery = useAgence();
+  const router = useRouter();
   const handleLoadAgences = async () => {
     await agenceQuery
       .refetch()
@@ -68,7 +102,7 @@ export default function DashboardPage() {
     const token = localStorage.getItem("token");
     handleLoadUserData();
     handleLoadAgences();
-  }, [user, contrat]);
+  }, [user, contrats]);
 
   if (!user) {
     return (
@@ -140,15 +174,7 @@ export default function DashboardPage() {
                 {percentProfile} %
               </div>
               <Progress value={percentProfile} className="mt-2 h-2" />
-              <div className="mt-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-purple-700 hover:bg-purple-200 p-0"
-                >
-                  Compléter →
-                </Button>
-              </div>
+              <ButtonOutline>Compléter →</ButtonOutline>
             </CardContent>
           </Card>
         </div>
@@ -159,7 +185,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-xl text-slate-900">
-                  Mes Contrats
+                  {labelType()}
                 </CardTitle>
                 <CardDescription className="text-slate-600">
                   Vos derniers contrats d'assurance
@@ -172,11 +198,14 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-slate-100">
-              {contrat != null &&
-                contrat!.map((contract: Contrat) => (
+              {contrats != null &&
+                contrats!.map((contract: Contrat) => (
                   <div
-                    key={contract.Produit}
+                    key={Date.now() + contract.NumeroContrat}
                     className="p-6 hover:bg-slate-50 transition-colors cursor-pointer group"
+                    onClick={() =>
+                      router.push(`/contrat/${contract.NumeroContrat}/details`)
+                    }
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">

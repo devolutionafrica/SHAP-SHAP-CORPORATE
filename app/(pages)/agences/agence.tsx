@@ -1,3 +1,4 @@
+"use client";
 import { Agence } from "@/app/Types/type";
 import { Button } from "@/components/ui/button";
 import {

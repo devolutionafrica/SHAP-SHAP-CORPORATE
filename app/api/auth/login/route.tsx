@@ -13,8 +13,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Vérification du mot de passe
-
   console.log("User trouvé :", user);
 
   if (password != user.MOT_DE_PASSE) {
@@ -24,14 +22,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  //   Génération du token
   const token = jwt.sign(
     { id: user.NUMERO_CLIENT, username: user.LOGIN },
     process.env.JWT_SECRET!,
     { expiresIn: "1d" } // 1 jour
   );
 
-  // Renvoie le token
   return NextResponse.json(
     {
       codeFilliale: user.CODE_FILIALE,

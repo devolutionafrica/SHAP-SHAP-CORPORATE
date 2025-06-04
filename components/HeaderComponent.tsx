@@ -1,4 +1,5 @@
-"use client";
+"use client"; // Conserver cette directive
+
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -15,30 +16,59 @@ import {
   LogOut,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation"; // <-- Importez usePathname
 import { useUser } from "@/hooks/contexts/userContext";
+import { useAuthContext } from "@/hooks/contexts/authContext";
+import Profile from "/public/Login.svg";
+import Image from "next/image";
 
-export default function HeaderComponent({
-  activeTab,
-  setActiveTab,
-}: {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}) {
+export default function HeaderComponent({}: {}) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { user, getTypeUser, labelType } = useUser();
+  const { isAuth } = useAuthContext();
+
   const handleDeconnexion = () => {
     document.cookie = "isAuth=; Max-Age=0; path=/";
     localStorage.removeItem("token");
     router.push("/login");
   };
 
-  const { user } = useUser();
+  const tabUrl = [
+    { name: "Accueil", url: "/dashboard", icon: TrendingUp },
+    {
+      name: `${labelType()}`,
+      url: "/contrat",
+      icon: FileText,
+    },
+    { name: "Mon Profil", url: "/profil", icon: User },
+    { name: "Nos Agences", url: "/agences", icon: MapPin },
+  ];
 
+  const [activeTab, setActiveTab] = useState("Accueil");
+
+  // Met à jour la tabulation active en fonction du chemin actuel de l'URL
+  useEffect(() => {
+    const matchingTab = tabUrl.find((item) => pathname.startsWith(item.url));
+    if (matchingTab) {
+      setActiveTab(matchingTab.name);
+    } else {
+      // Optionnel: définir une tabulation par défaut si aucune correspondance n'est trouvée
+      setActiveTab("Accueil");
+    }
+  }, [pathname]); // Se déclenche à chaque changement de chemin d'URL
+
+  const handleNavigate = (url: string, name: string) => {
+    setActiveTab(name);
+    router.push(url);
+  };
+
+  // L'useEffect pour `user` peut être conservé si vous avez d'autres logiques liées à l'utilisateur
   useEffect(() => {}, [user]);
 
   return (
     <div>
-      {/* Modern Header */}
+      {/* En-tête Moderne */}
       <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -53,23 +83,18 @@ export default function HeaderComponent({
               </div>
 
               <nav className="hidden md:flex space-x-6">
-                {[
-                  { id: "dashboard", label: "Accueil", icon: TrendingUp },
-                  { id: "contracts", label: "Mes Contrats", icon: FileText },
-                  { id: "profile", label: "Mon Profil", icon: User },
-                  { id: "agencies", label: "Nos Agences", icon: MapPin },
-                ].map((item) => (
+                {tabUrl.map((item) => (
                   <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                      activeTab === item.id
+                    key={item.name}
+                    onClick={() => handleNavigate(item.url, item.name)}
+                    className={`flex items-center text-[12px] space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                      activeTab === item.name
                         ? "bg-blue-100 text-blue-700 font-medium"
                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
                   >
                     <item.icon className="w-4 h-4" />
-                    <span>{item.label}</span>
+                    <span>{item.name}</span>
                   </button>
                 ))}
               </nav>
@@ -79,9 +104,11 @@ export default function HeaderComponent({
               <div className="flex items-center space-x-3 pl-4 border-l border-slate-200">
                 <Avatar className="w-8 h-8">
                   <AvatarImage src="/placeholder.svg?height=32&width=32" />
-                  <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm">
-                    DB
-                  </AvatarFallback>
+                  <Image
+                    src={Profile}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full"
+                  />
                 </Avatar>
                 <div className="hidden sm:block">
                   <p className="text-sm font-medium text-slate-900">
@@ -97,7 +124,7 @@ export default function HeaderComponent({
               </div>
               <Button
                 variant="ghost"
-                className="relative flex  flex-col"
+                className="relative flex flex-col"
                 onClick={() => handleDeconnexion()}
               >
                 <LogOut className="w-5 h-5" />

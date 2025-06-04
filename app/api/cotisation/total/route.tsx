@@ -21,11 +21,11 @@ export async function GET(request: NextRequest) {
   //conversion des dates au format souhaité
   const dateDebSplit = dateDeb.split("/");
 
-  const dateFormatDeb = `${dateDebSplit[0]}${dateDebSplit[1]}${dateDebSplit[2]}`;
+  const dateFormatDeb = `${dateDebSplit[2]}${dateDebSplit[1]}${dateDebSplit[0]}`;
 
   const dateFinSplit = dateFin.split("/");
 
-  const dateFormatFin = `${dateFinSplit[0]}${dateFinSplit[1]}${dateFinSplit[2]}`;
+  const dateFormatFin = `${dateFinSplit[2]}${dateFinSplit[1]}${dateFinSplit[1]}`;
 
   console.log("dateFormatDeb", dateFormatDeb);
   console.log("dateFormatFin", dateFormatFin);
@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
     const result = await pool
       .request()
       .input("NUMERO_POLICE", sql.VarChar, numeroPolice)
-      .input("DATE_DEBUT", sql.Int, dateFormatDeb)
-      .input("DATE_FIN", sql.Int, dateFormatFin)
+      .input("DATE_DEBUT", sql.BigInt, dateFormatDeb)
+      .input("DATE_FIN", sql.BigInt, dateFormatFin)
       .query(
         `SELECT * FROM FnConsultationCotisationSommeTotalClientIndiv(@NUMERO_POLICE, @DATE_DEBUT, @DATE_FIN)`
       );

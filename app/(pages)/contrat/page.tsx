@@ -1,19 +1,33 @@
+"use client";
 import { Contrat } from "@/app/Types/type";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
+import { useUser } from "@/hooks/contexts/userContext";
 import { FileText } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ContratPage() {
-  const { contrat } = useContratContext();
+  const { contrats } = useContratContext();
+  const { getTypeUser } = useUser();
+  const router = useRouter();
+  const handleGotoDetails = (id: string) => {
+    if (getTypeUser() == 2) {
+      router.push(`/conventions/${id}/details`);
+    } else {
+      router.push(`/contrat/${id}/details`);
+    }
+  };
+
+  const { labelType } = useUser();
 
   return (
     <div className="space-y-6 ">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Mes Contrats</h1>
+          <h1 className="text-3xl font-bold text-slate-900">{labelType()}</h1>
           <p className="text-slate-600 mt-1">
             Gérez tous vos contrats d'assurance
           </p>
@@ -30,7 +44,7 @@ export default function ContratPage() {
         </label>
       </div>
 
-      <Card className="shadow-lg border-0">
+      <div className="shadow border-0">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -57,10 +71,11 @@ export default function ContratPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {contrat != null &&
-                  contrat.map((contract: Contrat) => (
+                {contrats != null &&
+                  contrats.map((contract: Contrat) => (
                     <tr
                       key={contract.NumeroContrat}
+                      onClick={() => handleGotoDetails(contract.NumeroContrat!)}
                       className="hover:bg-slate-50 transition-colors cursor-pointer"
                     >
                       <td className="p-4">
@@ -99,7 +114,7 @@ export default function ContratPage() {
             </table>
           </div>
         </CardContent>
-      </Card>
+      </div>
     </div>
   );
 }

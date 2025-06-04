@@ -1,5 +1,5 @@
-import { verifyAuthToken } from "@/app/lib/auth";
-import { poolPromise } from "@/app/lib/db";
+import { verifyAuthToken } from "@/app/api/lib/auth";
+import { poolPromise } from "@/app/api/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(

@@ -7,13 +7,13 @@ import { useEffect } from "react";
 
 export default function ContratCard({}) {
   const useContratQuery = useContrat();
-  const { contrat, setContrat } = useContratContext();
+  const { contrats, setContrats } = useContratContext();
   const handleLoadContrats = async () => {
     await useContratQuery
       .refetch()
       .then((result) => {
         if (result.data) {
-          setContrat(result.data.data);
+          setContrats(result.data.data);
         }
       })
       .catch((error) => {
@@ -24,7 +24,7 @@ export default function ContratCard({}) {
 
   useEffect(() => {
     handleLoadContrats();
-  }, [contrat]);
+  }, [contrats]);
 
   return (
     <div>
@@ -37,7 +37,7 @@ export default function ContratCard({}) {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-blue-900">
-            {contrat != null && contrat!.length > 0 ? contrat!.length : 0}
+            {contrats != null && contrats!.length > 0 ? contrats!.length : 0}
           </div>
           <p className="text-xs text-blue-600 mt-1">
             Tous vos contrats sont à jour

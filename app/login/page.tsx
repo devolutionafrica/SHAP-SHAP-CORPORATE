@@ -51,7 +51,7 @@ export default function LoginPage() {
           localStorage.setItem("username", response.username);
           // handleLoadUserData();
           document.cookie = "isAuth=true; path=/";
-          router.push("/");
+          router.push("/dashboard");
 
           setUserName(response.username);
           console.log("Connexion réussie :", response);
@@ -65,7 +65,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-100 login-page">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br login-page">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -122,6 +122,11 @@ export default function LoginPage() {
                 </span>
               )}
             </label>
+            {loginMutation.error && (
+              <div className="flex justify-center p-2 bg-red-200 border-collapse rounded">
+                Vos données ne sont pas correctes
+              </div>
+            )}
             <div className="flex flex-row items-center justify-between text-sm mt-2">
               <a
                 href="/login/forgot"
