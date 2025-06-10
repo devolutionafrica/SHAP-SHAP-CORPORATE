@@ -9,6 +9,7 @@ import Image from "next/image";
 
 import { Card } from "@/components/ui/card";
 import Family from "@/public/family.jpg";
+import Logo from "@/public/nsiavie.png";
 import "./styles.scss";
 import { useLogin } from "@/hooks/useLogin";
 import { useAuthContext } from "@/hooks/contexts/authContext";
@@ -63,7 +64,6 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="flex flex-col md:flex-row bg-white backdrop-blur-md shadow-xl rounded-xl overflow-hidden max-w-4xl w-full h-[80vh]"
       >
-        {/* Illustration plein côté gauche */}
         <div className="relative hidden md:block w-full md:w-1/2 h-full">
           <Image
             src={Family}
@@ -76,9 +76,10 @@ export default function LoginPage() {
 
         {/* Formulaire */}
         <Card className="w-full md:w-1/2 p-6 flex flex-col justify-center">
-          <h1 className="font-extrabold text-[28px] text-indigo-700 text-center">
-            Connexion
+          <h1 className="font-extrabold text-[28px] text-[#223268] text-center">
+            CONNEXION
           </h1>
+          {/* <Image src={Logo} alt="NSIA" width={200} className="justify-center" /> */}
           <p className="text-center text-sm text-gray-600 mt-1">
             Connectez-vous à votre compte pour accéder à toutes les
             fonctionnalités.
@@ -128,7 +129,7 @@ export default function LoginPage() {
               </a>
               <button
                 type="submit"
-                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-200"
+                className="!bg-[#ca9a2c] text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-200"
               >
                 {loginMutation.isPending ? "Connexion..." : "Se connecter"}
               </button>

@@ -1,3 +1,4 @@
+"use client";
 interface UserContextType {
   user: User | null;
   typeUtilisateur: Number | undefined;

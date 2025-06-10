@@ -1,4 +1,5 @@
 // lib/hooks/useLogin.ts
+"use client";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api/base";
 
@@ -12,6 +13,6 @@ export const useLogin = () =>
       password: string;
     }) => {
       const response = await api.post("/auth/login", { username, password });
-      return response.data; 
+      return response.data;
     },
   });

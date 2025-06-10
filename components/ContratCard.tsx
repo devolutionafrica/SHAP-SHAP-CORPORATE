@@ -45,10 +45,10 @@ export default function ContratCard({}) {
 
   return (
     <div>
-      <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+      <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer group h-full">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-blue-700">
-            {labelType() && "Actifs"}
+            {labelType()} Actifs
           </CardTitle>
           <FileText className="h-6 w-6 text-blue-600 group-hover:scale-110 transition-transform" />
         </CardHeader>

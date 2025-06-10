@@ -70,21 +70,6 @@ export default function SinistresPage() {
           </div>
         )}
       </motion.div>
-
-      {/* Section d'information supplémentaire ou actions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-        className="flex justify-center mt-8"
-      >
-        <Card className="p-6 text-center max-w-lg bg-blue-50 border-blue-200">
-          <p className="text-blue-800 text-sm md:text-base flex items-center justify-center gap-2">
-            <Info className="h-5 w-5 text-blue-600" />
-            Cette liste présente un aperçu de tous les sinistres enregistrés.
-          </p>
-        </Card>
-      </motion.div>
     </motion.div>
   );
 }

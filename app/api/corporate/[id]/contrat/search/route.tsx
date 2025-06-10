@@ -6,8 +6,10 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = await params;
+  const { id } = params;
   console.log("ID:", id);
+  const policeId = req.nextUrl.searchParams.get("contrat");
+  const name = req.nextUrl.searchParams.get("name");
   const authResult = await verifyAuthToken(req);
   if (!authResult)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,9 +19,26 @@ export async function GET(
     const request = pool.request();
     request.input("NumeroConvention", sql.Int, id);
     const result = await request.execute("Ps_ListeContratConvention");
+    const data = result.recordset;
+    const filter: any[] = [];
+    data.map((item: any) => {
+      if (item.NomAssure != null && item.PrenomsAssure != null) {
+        if (
+          item.NUMERO_POLICE.includes(policeId) ||
+          item.NomAssure.includes(name) ||
+          item.PrenomsAssure.includes(name)
+        ) {
+          filter.push(item);
+        }
+      } else {
+        if (item.NUMERO_POLICE.includes(policeId)) {
+          filter.push(item);
+        }
+      }
+    });
     return NextResponse.json({
-      data: result.recordset,
-      sizes: result.recordset.length,
+      data: filter,
+      sizes: filter.length,
     });
   } catch (error) {
     console.error("Error in GET request:", error);

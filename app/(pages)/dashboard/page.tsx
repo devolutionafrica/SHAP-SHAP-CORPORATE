@@ -122,7 +122,7 @@ export default function DashboardPage() {
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-slate-900">
             Bienvenue,{" "}
-            <span className="text-[#223268] bg-clip-text text-transparent">
+            <span className="text-[#223268] bg-clip-text">
               {user?.NOM_CLIENT || "Utilisateur"}
             </span>
           </h1>
@@ -189,10 +189,18 @@ export default function DashboardPage() {
                   {labelType()}
                 </CardTitle>
                 <CardDescription className="text-slate-600">
-                  Vos derniers contrats d'assurance
+                  Vos{" "}
+                  {getTypeUser() == 1
+                    ? "derniers contrats"
+                    : " dernières Conventions"}{" "}
+                  d'assurance
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push("/conventions")}
+              >
                 Voir tout
               </Button>
             </div>
@@ -219,7 +227,8 @@ export default function DashboardPage() {
                             {contract.Produit}
                           </h3>
                           <p className="text-sm text-slate-500">
-                            Contrat #{contract.NumeroContrat}
+                            {getTypeUser() == 1 ? "Contrat" : "Convention"}#
+                            {contract.NumeroContrat}
                           </p>
                         </div>
                       </div>

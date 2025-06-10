@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAuthToken } from "@/app/lib/auth";
+import { verifyAuthToken } from "@/app/api/lib/auth";
 import { cookies } from "next/headers";
 
 export async function POST(request: NextRequest) {

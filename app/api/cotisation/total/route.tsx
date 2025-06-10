@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     const sizes = result.recordset.length;
     return NextResponse.json(
-      { data: result.recordsets, sizes },
+      { data: result.recordset[0], sizes },
       { status: 200 }
     );
   } catch (err) {

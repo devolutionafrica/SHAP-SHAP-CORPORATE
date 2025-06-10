@@ -9,6 +9,7 @@ import { useContratDetails } from "@/hooks/useContrat";
 import { useParams } from "next/navigation";
 import { Contrat } from "@/app/Types/type";
 import { CircularProgress } from "@mui/material";
+import LoaderData from "@/components/LoaderComponent";
 
 export default function ContractDetailsPage() {
   const { contrat, setContrat } = useContratContext();
@@ -41,10 +42,7 @@ export default function ContractDetailsPage() {
       className="p-4 md:p-8 w-full"
     >
       {contratDetails.isLoading && (
-        <div className="flex justify-center items-center flex-col p-12 gap-3">
-          <CircularProgress className="" />
-          <p>Chargement des données du contrat</p>
-        </div>
+        <LoaderData label="Chargement des données du contrat" />
       )}
       <div className="flex flex-row flex-wrap gap-4 items-stretch justify-start">
         {contratDetails.data && <ContractInfoCard />}

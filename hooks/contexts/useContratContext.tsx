@@ -1,3 +1,4 @@
+"use client";
 import { Contrat, Convention, User } from "@/app/Types/type";
 import React, { createContext, useContext, useState } from "react";
 import { useConvention } from "../useConvention";

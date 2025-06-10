@@ -1,3 +1,4 @@
+"use client";
 import { Agence, Contrat, User } from "@/app/Types/type";
 import React, { createContext, useContext, useState } from "react";
 interface AgenceContextType {

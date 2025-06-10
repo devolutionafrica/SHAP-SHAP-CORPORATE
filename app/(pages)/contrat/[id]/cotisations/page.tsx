@@ -80,8 +80,8 @@ export default function CotisationPage() {
     await summary
       .refetch()
       .then((response) => {
-        console.log("Summary fetched:", response.data.data[0]);
-        setSummaryCotisation(response.data.data[0]);
+        console.log("Summary fetched:", response.data.data);
+        setSummaryCotisation(response.data.data);
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération du summary : ", error);
@@ -186,24 +186,22 @@ export default function CotisationPage() {
             {/* Table */}
             <TableContainer component={Paper}>
               <Table>
-                <TableHead>
+                <TableHead className="bg-[#223268]">
                   <TableRow>
                     {[
-                      "NUMÉRO QUITTANCE",
-                      "DATE QUITTANCE", // J'ai renommé pour correspondre à votre type CotisationClientIndiv.Echeance
+                      "NUMÉRO POLICE",
+                      "DATE", // J'ai renommé pour correspondre à votre type CotisationClientIndiv.Echeance
                       "DÉBUT PÉRIODE",
                       "FIN PÉRIODE",
-                      "MONTANT ÉMIS",
+
                       "PRIME PÉRIODIQUE",
-                      "REMBOURSEMENT AVANCE", // Cela semble être EcheanceAvance dans votre type
                       "MONTANT ENCAISSÉ",
-                      "MONTANT RÉGULARISÉ",
                       "ÉTAT QUITTANCE",
                     ].map((header) => (
                       <TableCell
                         key={header}
                         sx={{ fontWeight: "500", fontSize: "12px" }}
-                        className="text-center text-[11px]"
+                        className="text-center text-[11px] text-black"
                       >
                         {header}
                       </TableCell>
@@ -239,22 +237,22 @@ export default function CotisationPage() {
                           {cotisation.FinPeriode &&
                             dayjs(cotisation.FinPeriode).format("DD/MM/YYYY")}
                         </TableCell>
-                        <TableCell className="text-center">
+                        {/* <TableCell className="text-center">
                           {cotisation.MontantEmis} FCFA
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="text-center">
                           {cotisation.PrimePeriodique} FCFA
                         </TableCell>
-                        <TableCell className="text-center">
+                        {/* <TableCell className="text-center">
                           {cotisation.EcheanceAvance} FCFA{" "}
-                          {/* Utilisé EcheanceAvance basé sur votre type */}
-                        </TableCell>
+                          
+                        </TableCell> */}
                         <TableCell className="text-center">
                           {cotisation.MontantEncaisse} FCFA
                         </TableCell>
-                        <TableCell className="text-center">
+                        {/* <TableCell className="text-center">
                           {cotisation.MontantRegularise} FCFA
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="text-center">
                           {cotisation.EtatQuittance}
                         </TableCell>

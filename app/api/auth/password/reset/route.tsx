@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { poolPromise, sql } from "@/app/lib/db";
+import { poolPromise, sql } from "@/app/api/lib/db";
 
 import { findUserByUsername } from "@/app/models/user.model";
-import { verifyAuthToken } from "@/app/lib/auth";
+import { verifyAuthToken } from "@/app/api/lib/auth";
 
 export async function UPDATE(request: NextRequest) {
   // Récupération des paramètres de requête

@@ -100,7 +100,7 @@ export default function AdhesionTable() {
                     {tableHeaders.map((header) => (
                       <TableCell
                         key={header.key}
-                        className="px-4 whitespace-nowrap text-sm text-gray-800 my-6 hover:bg-blue-300"
+                        className="px-4 whitespace-nowrap text-sm text-gray-800 my-6 "
                         onClick={() =>
                           gotoDetails(adhesion.NUMERO_DE_CONVENTION)
                         }

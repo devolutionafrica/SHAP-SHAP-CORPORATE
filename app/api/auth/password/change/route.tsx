@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { poolPromise, sql } from "@/app/lib/db";
+import { poolPromise, sql } from "@/app/api/lib/db";
 
 import { findUserByUsername } from "@/app/models/user.model";
 
