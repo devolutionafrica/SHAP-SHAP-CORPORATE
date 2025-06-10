@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Input } from "@/components/ui/input"; // Assurez-vous que c'est le bon chemin
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableHeader,
@@ -11,20 +11,29 @@ import {
   TableRow,
   TableCell,
   TableColumn,
-} from "@/components/ui/table2"; // Utilisez le chemin correct pour votre composant Table de Shadcn/ui
-import { Button } from "@/components/ui/button"; // Utilisez le bouton de Shadcn/ui
-import { Skeleton } from "@mui/material"; // Conservez Skeleton de MUI si vous le souhaitez, sinon utilisez un équivalent Shadcn/ui
-import "./style.scss"; // Pour les styles spécifiques, si vous en avez
+} from "@/components/ui/table2";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@mui/material"; // Conservez Skeleton de MUI si vous le souhaitez
+import "./style.scss"; // Pour les styles spécifiques
 import {
   Search, // Icône de recherche
   XCircle, // Icône d'annulation
+  ChevronLeft, // Icône pour la page précédente
+  ChevronRight, // Icône pour la page suivante
 } from "lucide-react";
 import { useContratByConvention } from "@/hooks/useContratByConvention";
 import { useParams, useRouter } from "next/navigation";
 import { InfoPolice } from "@/app/Types/type";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Importez les composants Select de Shadcn/ui
 
-// Headers du tableau pour un affichage plus lisible
+// Headers du tableau
 const tableHeaders = [
   { key: "NomAssure", label: "Nom" },
   { key: "PrenomsAssure", label: "Prénom" },
@@ -35,9 +44,9 @@ const tableHeaders = [
 ];
 
 export default function AdhesionTable() {
-  // Suppression des états et fonctions de pagination
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const itemsPerPage = 5;
+  // --- États de Pagination ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Nombre d'éléments par page
 
   const param = useParams();
   const id = param.id as string;
@@ -45,16 +54,16 @@ export default function AdhesionTable() {
   const { handleLoadConvention } = useContratContext();
   const router = useRouter();
 
-  // États pour la recherche
+  // --- États pour la recherche ---
   const [searchTermPolice, setSearchTermPolice] = useState("");
   const [searchTermName, setSearchTermName] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [initialContrats, setInitialContrats] = useState<InfoPolice[] | null>(
     null
-  ); // Stocke la liste initiale
-  const [displayedContrats, setDisplayedContrats] = useState<
-    InfoPolice[] | null
-  >(null); // Les contrats actuellement affichés (filtrés ou non)
+  ); // Stocke la liste initiale complète
+  const [filteredContrats, setFilteredContrats] = useState<InfoPolice[] | null>(
+    null
+  ); // Les contrats après filtrage (avant pagination)
 
   // Chargement initial des contrats
   useEffect(() => {
@@ -63,26 +72,39 @@ export default function AdhesionTable() {
         .refetch()
         .then((response) => {
           const fetchedContrats = response.data.data as InfoPolice[];
-          //   setInitialContrats(fetchedContrats); // Stocke l'original
-          setDisplayedContrats(fetchedContrats); // Affiche l'original par défaut
+          setInitialContrats(fetchedContrats); // Stocke l'original complet
+          setFilteredContrats(fetchedContrats); // Initialise les contrats filtrés avec l'original
+          setCurrentPage(1); // Réinitialise la page à 1 après un nouveau chargement
         })
         .catch((e) => {
           console.error("Erreur lors du chargement des contrats:", e);
+          setInitialContrats([]); // En cas d'erreur, initialiser à un tableau vide
+          setFilteredContrats([]);
         });
     };
     getContrat();
     handleLoadConvention();
-  }, [id, loaderContrat]);
+  }, [id]);
 
-  // Fonction pour la recherche
-  const handleSearch = () => {
+  // --- Logique de Filtrage (mise à jour) ---
+  // Utilisation de useEffect pour mettre à jour les filteredContrats lorsque les termes de recherche changent
+  useEffect(() => {
     if (!initialContrats) return;
 
-    let filtered = initialContrats.filter((contrat) => {
-      const policeMatch = searchTermPolice
-        ? String(contrat.NUMERO_POLICE) == searchTermPolice
-        : true;
+    let tempFiltered = initialContrats.filter((contrat) => {
+      const hasSearchTerm = searchTermPolice !== "" || searchTermName !== "";
 
+      // Si aucun terme de recherche, afficher tous les contrats
+      if (!hasSearchTerm) {
+        return true;
+      }
+
+      // Condition de correspondance pour le numéro de police
+      const policeMatch = searchTermPolice
+        ? String(contrat.NUMERO_POLICE) === searchTermPolice
+        : false; // Si searchTermPolice est vide, cette condition individuelle est fausse pour la logique OU
+
+      // Condition de correspondance pour le nom/prénom
       const nameMatch = searchTermName
         ? String(contrat.NomAssure || "")
             .toLowerCase()
@@ -90,27 +112,43 @@ export default function AdhesionTable() {
           String(contrat.PrenomsAssure || "")
             .toLowerCase()
             .includes(searchTermName.toLowerCase())
-        : true;
+        : false; // Si searchTermName est vide, cette condition individuelle est fausse pour la logique OU
 
-      const hasSearchTerm = searchTermPolice || searchTermName;
-
-      if (!hasSearchTerm) {
-        return true; // Si aucun terme de recherche, afficher tout
-      }
-
+      // Appliquer la logique OU si au moins un terme de recherche est présent
+      // Si un champ est vide, sa 'match' est false, donc il n'influence pas le '||' si l'autre est vrai.
+      // Si les deux sont remplis, on cherche un match pour l'un OU l'autre.
       return policeMatch || nameMatch;
     });
 
-    setDisplayedContrats(filtered);
-    setIsSearching(true);
+    setFilteredContrats(tempFiltered);
+    setCurrentPage(1); // Réinitialiser la page à 1 à chaque nouveau filtrage
+    setIsSearching(searchTermPolice !== "" || searchTermName !== ""); // Mettre à jour l'état de recherche
+  }, [searchTermPolice, searchTermName, initialContrats]); // Dépend des termes de recherche et des contrats initiaux
+
+  // --- Logique de Pagination ---
+  const totalPages = useMemo(() => {
+    if (!filteredContrats) return 0;
+    return Math.ceil(filteredContrats.length / itemsPerPage);
+  }, [filteredContrats, itemsPerPage]);
+
+  const paginatedContrats = useMemo(() => {
+    if (!filteredContrats) return [];
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredContrats.slice(startIndex, endIndex);
+  }, [filteredContrats, currentPage, itemsPerPage]);
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
-  // Fonction pour annuler la recherche
-  const handleCancelSearch = () => {
-    setSearchTermPolice("");
-    setSearchTermName("");
-    setDisplayedContrats(initialContrats); // Rétablit la liste initiale
-    setIsSearching(false);
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  const handleItemsPerPageChange = (value: string) => {
+    setItemsPerPage(Number(value));
+    setCurrentPage(1); // Revenir à la première page lors du changement de taille
   };
 
   const gotoDetails = (policeNumber: string) => {
@@ -179,43 +217,29 @@ export default function AdhesionTable() {
             />
           </div>
 
-          {/* Boutons Recherche/Annuler */}
-          <div className="flex justify-end w-full sm:w-auto">
-            <AnimatePresence mode="wait">
-              {isSearching ? (
-                <motion.div
-                  key="cancel-button"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Button
-                    onClick={handleCancelSearch}
-                    variant="outline"
-                    className="w-full sm:w-auto text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700 transition-colors duration-200 ease-in-out flex items-center gap-2"
-                  >
-                    <XCircle className="h-4 w-4" /> Annuler la recherche
-                  </Button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="search-button"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Button
-                    onClick={handleSearch}
-                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200 ease-in-out flex items-center gap-2"
-                  >
-                    <Search className="h-4 w-4" /> Rechercher
-                  </Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          {/* Boutons Annuler la recherche */}
+          {isSearching && (
+            <motion.div
+              key="cancel-button"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+              className="flex justify-end w-full sm:w-auto"
+            >
+              <Button
+                onClick={() => {
+                  setSearchTermPolice("");
+                  setSearchTermName("");
+                  // useEffect ci-dessus gérera la mise à jour de filteredContrats et la réinitialisation de la page
+                }}
+                variant="outline"
+                className="w-full sm:w-auto text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700 transition-colors duration-200 ease-in-out flex items-center gap-2"
+              >
+                <XCircle className="h-4 w-4" /> Annuler la recherche
+              </Button>
+            </motion.div>
+          )}
         </div>
       </div>
       {/* --- Fin Section Recherche --- */}
@@ -246,10 +270,10 @@ export default function AdhesionTable() {
                 </TableRow>
               </TableBody>
             )}
-            {!loaderContrat.isLoading && displayedContrats && (
+            {!loaderContrat.isLoading && paginatedContrats && (
               <TableBody>
-                {displayedContrats.length > 0 ? (
-                  displayedContrats.map((adhesion, index) => (
+                {paginatedContrats.length > 0 ? (
+                  paginatedContrats.map((adhesion, index) => (
                     <motion.tr
                       key={adhesion.NUMERO_POLICE || index}
                       initial={{ opacity: 0, y: 20 }}
@@ -291,7 +315,7 @@ export default function AdhesionTable() {
                       colSpan={tableHeaders.length}
                       className="text-center py-6 text-gray-500"
                     >
-                      Aucun contrat trouvé pour votre recherche.
+                      Aucun contrat trouvé.
                     </TableCell>
                   </TableRow>
                 )}
@@ -314,7 +338,58 @@ export default function AdhesionTable() {
         </Table>
       </div>
 
-      {/* La section de pagination a été supprimée ici */}
+      {/* --- Section Pagination --- */}
+      {!loaderContrat.isLoading &&
+        filteredContrats &&
+        filteredContrats.length > 0 && (
+          <div className="p-4 sm:p-6 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-gray-700">
+              <span>Afficher</span>
+              <Select
+                value={String(itemsPerPage)}
+                onValueChange={handleItemsPerPageChange}
+              >
+                <SelectTrigger className="w-[80px]">
+                  <SelectValue placeholder={itemsPerPage} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+              <span>lignes par page</span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-700">
+                Page {currentPage} sur {totalPages}
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      {/* --- Fin Section Pagination --- */}
     </div>
   );
 }

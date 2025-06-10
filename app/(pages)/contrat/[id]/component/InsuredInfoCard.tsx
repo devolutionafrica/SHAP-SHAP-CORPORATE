@@ -1,8 +1,9 @@
 import { useUser } from "@/hooks/contexts/userContext";
 import { Field } from "./Field";
+import { User } from "@/app/Types/type";
 
-export const InsuredInfoCard = () => {
-  const { user } = useUser();
+export const InsuredInfoCard = ({ user }: { user: User }) => {
+  //   const { user } = useUser();
 
   return (
     <div className="bg-white rounded shadow-lg p-6">

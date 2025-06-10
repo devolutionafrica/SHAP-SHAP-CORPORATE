@@ -5,7 +5,7 @@ import { api } from "@/lib/api/base";
 export const useConvention = () => {
   const username = localStorage.getItem("username");
   return useQuery({
-    queryKey: ["conventions", username],
+    queryKey: ["conventions", Date.now()],
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await api.get(`/corporate/${username}/convention`, {
@@ -16,7 +16,7 @@ export const useConvention = () => {
       });
       return response.data;
     },
-    // staleTime: 1000 * 60 * 5,
+    staleTime: Infinity,
     // retry: false,
     enabled: false,
   });

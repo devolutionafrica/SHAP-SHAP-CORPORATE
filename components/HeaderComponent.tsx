@@ -73,7 +73,10 @@ export default function HeaderComponent({}: {}) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
-              <div className="flex items-center space-x-3">
+              <div
+                className="flex items-center space-x-3 cursor-pointer "
+                onClick={() => router.push("/")}
+              >
                 <div className="w-8 h-8 bg-[#223268] rounded-lg flex items-center justify-center">
                   <Shield className="w-5 h-5 text-white" />
                 </div>
@@ -102,7 +105,7 @@ export default function HeaderComponent({}: {}) {
 
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3 pl-4 border-l border-slate-200">
-                <Avatar className=" bg-[#223268] justify-center items-center">
+                <Avatar className=" !bg-[#ca9a2c] justify-center items-center">
                   <User color="white" />
                 </Avatar>
                 <div className="hidden sm:block">

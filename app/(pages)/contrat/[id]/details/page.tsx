@@ -4,19 +4,22 @@ import PageTabs from "../component/PageTab";
 import ContractInfoCard from "../component/ContratInfoCard";
 import { InsuredInfoCard } from "../component/InsuredInfoCard";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useContratDetails } from "@/hooks/useContrat";
 import { useParams } from "next/navigation";
 import { Contrat } from "@/app/Types/type";
 import { CircularProgress } from "@mui/material";
 import LoaderData from "@/components/LoaderComponent";
+import { useUserInfoById } from "@/hooks/useUserInfo";
 
 export default function ContractDetailsPage() {
   const { contrat, setContrat } = useContratContext();
 
   const params = useParams();
   const id = params?.id;
-
+  const [userId, setUserId] = useState();
+  const [user, setUser] = useState(null);
+  const userDetails = useUserInfoById(contrat?.NumeroSouscripteur!);
   const contratDetails = useContratDetails(id as string);
   const fetchDetails = async () => {
     try {
@@ -25,6 +28,7 @@ export default function ContractDetailsPage() {
       if (result.data.sizes > 0) {
         setContrat(result.data.data[0] as Contrat);
       }
+      setUser(result.data.suscripber[0]);
     } catch (error) {
       console.error("Error fetching contract details:", error);
     }
@@ -32,7 +36,8 @@ export default function ContractDetailsPage() {
 
   useEffect(() => {
     fetchDetails();
-  }, []);
+    // fetchUser();
+  }, [contrat, user]);
 
   return (
     <motion.div
@@ -46,7 +51,7 @@ export default function ContractDetailsPage() {
       )}
       <div className="flex flex-row flex-wrap gap-4 items-stretch justify-start">
         {contratDetails.data && <ContractInfoCard />}
-        {contratDetails.data && <InsuredInfoCard />}
+        {userDetails.data && <InsuredInfoCard user={user!} />}
       </div>
     </motion.div>
   );

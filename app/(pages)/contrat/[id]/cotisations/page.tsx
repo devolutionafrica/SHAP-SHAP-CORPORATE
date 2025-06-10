@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat"; // Import the plugin
 
@@ -30,6 +30,8 @@ import { CotisationClientIndiv } from "@/app/Types/type";
 import { useCotisation } from "@/hooks/useCotisation";
 import { useParams } from "next/navigation";
 import { useCotisationTotal } from "@/hooks/useSummaryCotisation";
+import { useUserInfo } from "@/hooks/useUserInfo";
+import { useUser } from "@/hooks/contexts/userContext";
 
 // Extend Day.js with the customParseFormat plugin
 dayjs.extend(customParseFormat);
@@ -41,15 +43,14 @@ export default function CotisationPage() {
   );
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(Date.now()));
 
+  const { getTypeUser } = useUser();
+
   const param = useParams();
   const contratId = param.id as string;
 
   const [cotisations, setCotisations] = useState<CotisationClientIndiv[]>([]);
   const [summaryCotisations, setSummaryCotisation] = useState<any>();
 
-  // Les hooks useCotisation et useCotisationTotal recevront des Dayjs.
-  // Vous devrez formater ces Dayjs en chaînes "YYYY-MM-DD" avant de les envoyer à l'API
-  // car votre API SQL Server s'attend à "YYYY-MM-DD" ou un format similaire pour les requêtes.
   const fetchCotisation = useCotisation(
     startDate.format("YYYY-MM-DD"), // Format YYYY-MM-DD pour l'API SQL
     endDate.format("YYYY-MM-DD"), // Format YYYY-MM-DD pour l'API SQL
@@ -270,12 +271,14 @@ export default function CotisationPage() {
             </TableContainer>
 
             {/* Boutons */}
-            <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
-              <Button variant="contained" color="error">
-                Régler Prime
-              </Button>
-              <Button variant="outlined">Imprimer</Button>
-            </Box>
+            {getTypeUser() == 1 && (
+              <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
+                <Button variant="contained" color="error">
+                  Régler Prime
+                </Button>
+                <Button variant="outlined">Imprimer</Button>
+              </Box>
+            )}
           </CardContent>
         </Card>
 
