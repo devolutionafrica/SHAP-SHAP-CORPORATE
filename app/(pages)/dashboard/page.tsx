@@ -122,7 +122,7 @@ export default function DashboardPage() {
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-slate-900">
             Bienvenue,{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-[#223268] bg-clip-text text-transparent">
               {user?.NOM_CLIENT || "Utilisateur"}
             </span>
           </h1>

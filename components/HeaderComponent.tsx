@@ -74,7 +74,7 @@ export default function HeaderComponent({}: {}) {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-[#223268] rounded-lg flex items-center justify-center">
                   <Shield className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold text-[#223268]">
@@ -89,7 +89,7 @@ export default function HeaderComponent({}: {}) {
                     onClick={() => handleNavigate(item.url, item.name)}
                     className={`flex items-center text-[12px] space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
                       activeTab === item.name
-                        ? "bg-blue-100 text-blue-700 font-medium"
+                        ? "bg-[#1b338570] text-blue-700 font-medium"
                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
                   >
@@ -102,13 +102,8 @@ export default function HeaderComponent({}: {}) {
 
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3 pl-4 border-l border-slate-200">
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src="/placeholder.svg?height=32&width=32" />
-                  <Image
-                    src={Profile}
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full"
-                  />
+                <Avatar className=" bg-[#223268] justify-center items-center">
+                  <User color="white" />
                 </Avatar>
                 <div className="hidden sm:block">
                   <p className="text-sm font-medium text-slate-900">

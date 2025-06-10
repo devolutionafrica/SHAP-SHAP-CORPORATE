@@ -20,6 +20,7 @@ import {
   Paper,
   Box,
   CircularProgress,
+  Skeleton,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -34,9 +35,11 @@ import { useCotisationTotal } from "@/hooks/useSummaryCotisation";
 dayjs.extend(customParseFormat);
 
 export default function CotisationPage() {
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs("2025-05-01"));
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs("2025-06-03"));
   const { contrat } = useContratContext();
+  const [startDate, setStartDate] = useState<Dayjs>(
+    dayjs(contrat?.DateDebutPolice)
+  );
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs(Date.now()));
 
   const param = useParams();
   const contratId = param.id as string;
@@ -77,7 +80,7 @@ export default function CotisationPage() {
     await summary
       .refetch()
       .then((response) => {
-        console.log("Summary fetched:", response.data.data);
+        console.log("Summary fetched:", response.data.data[0]);
         setSummaryCotisation(response.data.data[0]);
       })
       .catch((error) => {
@@ -96,10 +99,10 @@ export default function CotisationPage() {
         {/* Header infos */}
         {contrat && (
           <div>
-            <div className="shadow-lg p-2">
-              <Grid container spacing={2}>
+            <div className="p-2 bg-[#223268] text-white rounded px-6">
+              <Grid container spacing={12}>
                 <Grid>
-                  <Typography variant="subtitle2" color="text.secondary">
+                  <Typography variant="subtitle2" className="text-white">
                     Libellé Produit
                   </Typography>
                   <Typography fontWeight="bold">
@@ -107,26 +110,20 @@ export default function CotisationPage() {
                   </Typography>
                 </Grid>
                 <Grid>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Numéro Police
-                  </Typography>
+                  <Typography variant="subtitle2">Numéro Police</Typography>
                   <Typography fontWeight="bold">
                     {contrat.NumeroContrat}
                   </Typography>
                 </Grid>
                 <Grid>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Date début effet
-                  </Typography>
+                  <Typography variant="subtitle2">Date début effet</Typography>
                   <Typography fontWeight="bold">
                     {contrat.DateDebutPolice &&
                       dayjs(contrat.DateDebutPolice).format("DD/MM/YYYY")}
                   </Typography>
                 </Grid>
                 <Grid>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Date fin effet
-                  </Typography>
+                  <Typography variant="subtitle2">Date fin effet</Typography>
                   <Typography fontWeight="bold">
                     {contrat.DateFinPolice &&
                       dayjs(contrat.DateFinPolice).format("DD/MM/YYYY")}
@@ -214,7 +211,11 @@ export default function CotisationPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {fetchCotisation.isLoading && <CircularProgress />}
+                  {fetchCotisation.isLoading && (
+                    <div className="p-8 flex justify-center items-center">
+                      Chargement des données en cours...
+                    </div>
+                  )}
                   {cotisations.length > 0 ? (
                     cotisations.map((cotisation) => (
                       <TableRow

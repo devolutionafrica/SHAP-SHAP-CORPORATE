@@ -1,5 +1,6 @@
 "use client";
 import { Agence } from "@/app/Types/type";
+import MapView from "@/components/MapContainer";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,6 +25,8 @@ export default function AgencePage() {
     }
   }, [agences]);
 
+  const [showCarte, setShowCarte] = useState(false);
+
   return (
     <div className="space-y-6">
       <div>
@@ -31,6 +34,12 @@ export default function AgencePage() {
         <p className="text-slate-600 mt-1">
           Trouvez l'agence la plus proche de vous
         </p>
+      </div>
+
+      <div>
+        {showCarte && (
+          <MapView longitude={0} latitude={0} onClose={setShowCarte} />
+        )}
       </div>
 
       <Card className="shadow-lg border-0">
@@ -44,7 +53,7 @@ export default function AgencePage() {
               Explorez nos agences à travers l'Afrique de l'Ouest sur notre
               carte interactive
             </p>
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            <Button className="bg-[#223268]" onClick={() => setShowCarte(true)}>
               Ouvrir la Carte
             </Button>
           </div>
@@ -59,7 +68,7 @@ export default function AgencePage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-[#223268] rounded-lg flex items-center justify-center">
                 <MapPin className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">

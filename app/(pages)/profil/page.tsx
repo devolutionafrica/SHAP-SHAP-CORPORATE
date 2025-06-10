@@ -27,7 +27,7 @@ export default function ProfilPage() {
           <CardHeader className="text-center">
             <Avatar className="w-24 h-24 mx-auto mb-4">
               <AvatarImage src="/placeholder.svg?height=96&width=96" />
-              <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-2xl">
+              <AvatarFallback className="bg-[#223268] text-white text-2xl">
                 DB
               </AvatarFallback>
             </Avatar>
@@ -43,9 +43,7 @@ export default function ProfilPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-              Modifier Photo
-            </Button>
+            <Button className="w-full bg-[#223268]">Modifier Photo</Button>
             <Button variant="outline" className="w-full">
               Changer Mot de Passe
             </Button>
@@ -62,7 +60,7 @@ export default function ProfilPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Button className="bg-gradient-to-r bg-[#223268]">
                 Compléter le Profil
               </Button>
             </CardContent>
@@ -140,9 +138,7 @@ export default function ProfilPage() {
               </div>
 
               <div className="flex space-x-4 pt-4">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  Modifier
-                </Button>
+                <Button className="bg-[#223268]">Modifier</Button>
                 <Button variant="outline">Appliquer</Button>
                 <Button
                   variant="ghost"

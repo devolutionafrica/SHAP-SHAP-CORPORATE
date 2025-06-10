@@ -15,7 +15,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-2">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-2 relative ">
       {/* Conditionally render HeaderComponent based on 'shouldShowHeader' */}
       {<HeaderComponent />}
 

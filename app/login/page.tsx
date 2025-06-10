@@ -3,19 +3,15 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-
-import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import LoginIllustration from "@/public/Login.svg";
+
+import { Card } from "@/components/ui/card";
+import Family from "@/public/family.jpg";
 import "./styles.scss";
-import { login } from "@/app/repository/auths";
 import { useLogin } from "@/hooks/useLogin";
 import { useAuthContext } from "@/hooks/contexts/authContext";
-import { useUserInfo } from "@/hooks/useUserInfo";
-import { useUser } from "@/hooks/contexts/userContext";
 
 const loginSchema = z.object({
   email: z.string().min(6, "Adresse email invalide"),
@@ -34,10 +30,8 @@ export default function LoginPage() {
   });
 
   const loginMutation = useLogin();
-
   const router = useRouter();
-
-  const { setUserName, username } = useAuthContext();
+  const { setUserName } = useAuthContext();
 
   const onSubmit = async (data: LoginFormData) => {
     loginMutation.mutateAsync(
@@ -49,12 +43,9 @@ export default function LoginPage() {
         onSuccess: (response) => {
           localStorage.setItem("token", response.token);
           localStorage.setItem("username", response.username);
-          // handleLoadUserData();
           document.cookie = "isAuth=true; path=/";
-          router.push("/dashboard");
-
           setUserName(response.username);
-          console.log("Connexion réussie :", response);
+          router.push("/dashboard");
         },
         onError: (error) => {
           console.error("Erreur de connexion :", error);
@@ -70,20 +61,21 @@ export default function LoginPage() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col md:flex-row bg-white backdrop-blur-md shadow-xl rounded-xl overflow-hidden max-w-4xl"
+        className="flex flex-col md:flex-row bg-white backdrop-blur-md shadow-xl rounded-xl overflow-hidden max-w-4xl w-full h-[80vh]"
       >
-        {/* Illustration */}
-        <div className="hidden md:flex items-center justify-center bg-indigo-100 p-6">
+        {/* Illustration plein côté gauche */}
+        <div className="relative hidden md:block w-full md:w-1/2 h-full">
           <Image
-            src={LoginIllustration}
+            src={Family}
             alt="Connexion"
-            width={300}
-            height={300}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-l-xl"
           />
         </div>
 
         {/* Formulaire */}
-        <Card className="w-full max-w-md p-6 flex flex-col">
+        <Card className="w-full md:w-1/2 p-6 flex flex-col justify-center">
           <h1 className="font-extrabold text-[28px] text-indigo-700 text-center">
             Connexion
           </h1>
@@ -123,7 +115,7 @@ export default function LoginPage() {
               )}
             </label>
             {loginMutation.error && (
-              <div className="flex justify-center p-2 bg-red-200 border-collapse rounded">
+              <div className="flex justify-center p-2 bg-red-200 rounded text-sm text-red-800">
                 Vos données ne sont pas correctes
               </div>
             )}

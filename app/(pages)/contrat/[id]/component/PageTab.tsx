@@ -24,10 +24,10 @@ const PageTabs = ({
         <button
           key={index}
           onClick={() => handleChangeTab(tab.url, tab.label)}
-          className={`py-2 px-4 whitespace-nowrap border-b-2 ${
+          className={`py-2 px-4 whitespace-nowrap border-b-4 ${
             currentTab === tab.label
-              ? "border-primary text-primary font-semibold"
-              : "border-transparent text-gray-600"
+              ? "border-[#223268] text-primary font-semibold"
+              : "border-transparent text-gray-600 "
           } hover:text-primary transition`}
         >
           {tab.label}

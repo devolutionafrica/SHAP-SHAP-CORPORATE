@@ -55,10 +55,10 @@ export default function ModernDashboard({
               url: `/contrat/${id}/cotisations`,
             },
 
-            {
-              label: "Demande prestation",
-              url: `/contrat/${id}/cotisations`,
-            },
+            // {
+            //   label: "Demande prestation",
+            //   url: `/contrat/${id}/cotisations`,
+            // },
             {
               label: "Prestation effectuées",
               url: `/contrat/${id}/sinistre`,

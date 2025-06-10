@@ -40,7 +40,12 @@ export default function ContractDetailsPage() {
       transition={{ duration: 0.5 }}
       className="p-4 md:p-8 w-full"
     >
-      {contratDetails.isLoading && <CircularProgress />}
+      {contratDetails.isLoading && (
+        <div className="flex justify-center items-center flex-col p-12 gap-3">
+          <CircularProgress className="" />
+          <p>Chargement des données du contrat</p>
+        </div>
+      )}
       <div className="flex flex-row flex-wrap gap-4 items-stretch justify-start">
         {contratDetails.data && <ContractInfoCard />}
         {contratDetails.data && <InsuredInfoCard />}
