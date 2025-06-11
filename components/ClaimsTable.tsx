@@ -86,11 +86,11 @@ export default function ClaimTable({ claims }: ClaimTableProps) {
         <div className="overflow-x-auto relative">
           <Table className="min-w-full divide-y divide-gray-200">
             <TableHeader className="bg-gray-100">
-              <TableRow>
+              <TableRow className="bg-[#223268]">
                 {tableHeaders.map((header) => (
                   <TableColumn
                     key={header.key}
-                    className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider"
                   >
                     {header.label}
                   </TableColumn>

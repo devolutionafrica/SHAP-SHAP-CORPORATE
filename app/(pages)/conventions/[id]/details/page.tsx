@@ -44,17 +44,14 @@ const tableHeaders = [
 ];
 
 export default function AdhesionTable() {
-  // --- États de Pagination ---
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Nombre d'éléments par page
-
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const param = useParams();
   const id = param.id as string;
   const loaderContrat = useContratByConvention(id);
   const { handleLoadConvention } = useContratContext();
   const router = useRouter();
 
-  // --- États pour la recherche ---
   const [searchTermPolice, setSearchTermPolice] = useState("");
   const [searchTermName, setSearchTermName] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -99,12 +96,10 @@ export default function AdhesionTable() {
         return true;
       }
 
-      // Condition de correspondance pour le numéro de police
       const policeMatch = searchTermPolice
-        ? String(contrat.NUMERO_POLICE) === searchTermPolice
-        : false; // Si searchTermPolice est vide, cette condition individuelle est fausse pour la logique OU
+        ? String(contrat.NUMERO_POLICE).includes(searchTermPolice)
+        : false;
 
-      // Condition de correspondance pour le nom/prénom
       const nameMatch = searchTermName
         ? String(contrat.NomAssure || "")
             .toLowerCase()
@@ -112,11 +107,8 @@ export default function AdhesionTable() {
           String(contrat.PrenomsAssure || "")
             .toLowerCase()
             .includes(searchTermName.toLowerCase())
-        : false; // Si searchTermName est vide, cette condition individuelle est fausse pour la logique OU
+        : false;
 
-      // Appliquer la logique OU si au moins un terme de recherche est présent
-      // Si un champ est vide, sa 'match' est false, donc il n'influence pas le '||' si l'autre est vrai.
-      // Si les deux sont remplis, on cherche un match pour l'un OU l'autre.
       return policeMatch || nameMatch;
     });
 

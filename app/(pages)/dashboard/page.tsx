@@ -199,7 +199,9 @@ export default function DashboardPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => router.push("/conventions")}
+                onClick={() =>
+                  router.push(getTypeUser() == 2 ? "/conventions" : "/contrat")
+                }
               >
                 Voir tout
               </Button>

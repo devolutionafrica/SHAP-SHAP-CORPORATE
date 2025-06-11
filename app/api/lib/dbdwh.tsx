@@ -11,6 +11,7 @@ const altDbConfig: sql.config = {
     encrypt: process.env.AL === "true",
     trustServerCertificate: process.env.DB_TRUST_CERT === "true",
   },
+  requestTimeout: 0,
 };
 
 export const poolPromiseDHW = new sql.ConnectionPool(altDbConfig)

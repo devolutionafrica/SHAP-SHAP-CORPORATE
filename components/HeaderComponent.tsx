@@ -47,7 +47,6 @@ export default function HeaderComponent({}: {}) {
 
   const [activeTab, setActiveTab] = useState("Accueil");
 
-  // Met à jour la tabulation active en fonction du chemin actuel de l'URL
   useEffect(() => {
     const matchingTab = tabUrl.find((item) => pathname.startsWith(item.url));
     if (matchingTab) {
@@ -67,9 +66,8 @@ export default function HeaderComponent({}: {}) {
   useEffect(() => {}, [user]);
 
   return (
-    <div>
-      {/* En-tête Moderne */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+    <div className="sticky top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
@@ -86,25 +84,32 @@ export default function HeaderComponent({}: {}) {
               </div>
 
               <nav className="hidden md:flex space-x-6">
-                {tabUrl.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => handleNavigate(item.url, item.name)}
-                    className={`flex items-center text-[12px] space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                      activeTab === item.name
-                        ? "bg-[#1b338570] text-blue-700 font-medium"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                    }`}
-                  >
-                    <item.icon className="w-4 h-4" />
-                    <span>{item.name}</span>
-                  </button>
-                ))}
+                {tabUrl.map(
+                  (item) =>
+                    getTypeUser() == 2 &&
+                    item.name !== "Mon Profil" && (
+                      <button
+                        key={item.name}
+                        onClick={() => handleNavigate(item.url, item.name)}
+                        className={`flex items-center text-[12px] space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          activeTab === item.name
+                            ? "bg-[#1b338570] text-blue-700 font-medium"
+                            : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        }`}
+                      >
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.name}</span>
+                      </button>
+                    )
+                )}
               </nav>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3 pl-4 border-l border-slate-200">
+            <div className="flex items-center space-x-4 cursor-pointer">
+              <div
+                className="flex items-center space-x-3 pl-4 border-l border-slate-200"
+                onClick={() => router.push("/profil")}
+              >
                 <Avatar className=" !bg-[#ca9a2c] justify-center items-center">
                   <User color="white" />
                 </Avatar>

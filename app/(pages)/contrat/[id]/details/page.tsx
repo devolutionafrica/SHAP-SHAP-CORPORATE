@@ -28,7 +28,7 @@ export default function ContractDetailsPage() {
       if (result.data.sizes > 0) {
         setContrat(result.data.data[0] as Contrat);
       }
-      setUser(result.data.suscripber[0]);
+      setUser(result.data.suscripber);
     } catch (error) {
       console.error("Error fetching contract details:", error);
     }
@@ -51,7 +51,7 @@ export default function ContractDetailsPage() {
       )}
       <div className="flex flex-row flex-wrap gap-4 items-stretch justify-start">
         {contratDetails.data && <ContractInfoCard />}
-        {userDetails.data && <InsuredInfoCard user={user!} />}
+        {user && <InsuredInfoCard user={user!} />}
       </div>
     </motion.div>
   );

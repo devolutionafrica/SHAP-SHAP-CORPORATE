@@ -1,6 +1,8 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import dayjs, { Dayjs } from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import {
   Card,
   CardContent,
@@ -11,7 +13,7 @@ import {
 import { useUser } from "@/hooks/contexts/userContext";
 
 export default function ProfilPage() {
-  const { user } = useUser();
+  const { user, getTypeUser } = useUser();
 
   return (
     <div className="space-y-6">
@@ -97,11 +99,12 @@ export default function ProfilPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700">
-                    Date de Naissance
+                    {getTypeUser() == 1 ? "Date de Naissance" : "Date Création"}
                   </label>
                   <div className="p-3 bg-slate-50 rounded-lg border">
                     <span className="text-slate-600">
-                      {user.DATE_NAISSANCE || "Non renseigné"}
+                      {dayjs(user.DATE_NAISSANCE).format("dd/MM/yyyy") ||
+                        "Non renseigné"}
                     </span>
                   </div>
                 </div>

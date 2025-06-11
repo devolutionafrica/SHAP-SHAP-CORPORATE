@@ -26,22 +26,24 @@ export async function GET(
       .input("Login", sql.VarChar, username)
       .input("NUMERO_CONTRAT", sql.VarChar, idContrat).query(`SELECT * 
     FROM dbo.FnConsultationPoliceDetail(@Login) Where NumeroContrat = @NUMERO_CONTRAT`);
+    let souscripteur = null;
+    if (result.recordset) {
+      const ideClient = result.recordset[0].IDE_CLIENT_UNIQUE;
 
-    const ideClient = result.recordset[0].IDE_CLIENT_UNIQUE;
+      console.log("resultat", result.recordset);
 
-    console.log("resultat", result.recordset);
-
-    const souscripteur = await pool
-      .request()
-      .input("idclient", sql.VarChar, ideClient).query(`
-        SELECT C.* FROM CLIENT_UNIQUE C
-        where ide_client_unique=@idclient
-          ;
+      souscripteur = await pool
+        .request()
+        .input("idclient", sql.VarChar, ideClient).query(`
+          SELECT C.* FROM CLIENT_UNIQUE C
+          where ide_client_unique=@idclient
+            ;
       `);
+    }
 
     return NextResponse.json({
       data: result.recordset,
-      suscripber: souscripteur.recordset,
+      suscripber: souscripteur.recordset[0],
       test: "",
       sizes: result.recordset.length,
     });

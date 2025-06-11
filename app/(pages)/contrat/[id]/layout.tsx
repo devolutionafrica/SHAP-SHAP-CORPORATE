@@ -50,10 +50,10 @@ export default function ModernDashboard({
               label: "Relevé des cotisations",
               url: `/contrat/${id}/cotisations`,
             },
-            // {
-            //   label: "Avis de situation",
-            //   url: `/contrat/${id}/cotisations`,
-            // },
+            {
+              label: "Avis de situation",
+              url: `/contrat/${id}/avis-situation`,
+            },
 
             // {
             //   label: "Demande prestation",
