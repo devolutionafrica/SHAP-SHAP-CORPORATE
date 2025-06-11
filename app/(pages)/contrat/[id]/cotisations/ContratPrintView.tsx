@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import dayjs from "dayjs";
 
@@ -118,41 +119,42 @@ const ContractPrintView = React.forwardRef<
       </p>
 
       <h2 className="text-lg font-semibold mb-3">Situation des Cotisations</h2>
-      <div className="overflow-x-auto mb-6">
-        <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+      {/* Retirer overflow-x-auto ici pour l'impression, laisser la table gérer le fit */}
+      <div className="mb-6">
+        <table className="w-full divide-y divide-gray-200 border border-gray-300">
+          <thead className="!bg-[#223268]">
+            <tr className="font-[300] text-[11px]">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-quittance-no">
                 NUMERO QUITTANCE
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-date">
                 DATE QUITTANCE
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-date">
                 DEBUT PERIODE
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-date">
                 FIN PERIODE
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
                 MONTANT EMIS
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
                 PRIME PERIODIQUE
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
                 ECHEANCE D'AVANCE
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
                 FRAIS REJET
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
                 MONTANT COTISE
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r">
+              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
                 MONTANT REGULARISE
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-gray-700 uppercase tracking-wider print-col-status">
                 ETAT DE LA QUITTANCE
               </th>
             </tr>
@@ -161,37 +163,37 @@ const ContractPrintView = React.forwardRef<
             {data.quittances.length > 0 ? (
               data.quittances.map((quittance, index) => (
                 <tr key={index}>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r">
                     {quittance.NUMERO_QUITTANCE}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r">
                     {quittance.DATE_QUITTANCE}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r">
                     {quittance.DEBUT_PERIODE}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r">
                     {quittance.FIN_PERIODE}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r text-right">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r text-right">
                     {quittance.MONTANT_EMIS}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r text-right">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r text-right">
                     {quittance.PRIME_PERIODIQUE}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r text-right">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r text-right">
                     {quittance.ECHEANCE_D_AVANCE}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r text-right">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r text-right">
                     {quittance.FRAIS_REJET}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r text-right">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r text-right">
                     {quittance.MONTANT_COTISE}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 border-r text-right">
+                  <td className="px-2 py-1 whitespace-nowrap text-xs text-gray-900 border-r text-right">
                     {quittance.MONTANT_REGULARISE}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-1 text-xs text-gray-900 word-break-all">
                     {quittance.ETAT_DE_LA_QUITTANCE}
                   </td>
                 </tr>
@@ -268,23 +270,54 @@ const ContractPrintView = React.forwardRef<
           .print-page {
             box-shadow: none;
             margin: 0;
-            padding: 0;
-            table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-            th,
-            td {
-              border: 1px solid #ccc;
-              padding: 8px;
-              text-align: left;
-            }
-            thead {
-              background-color: #f2f2f2;
-            }
+            padding: 0.1cm; /* Small padding for print margins */
+            font-family: Arial, sans-serif; /* Consistent font for print */
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* Ensures columns fit within the table width */
+          }
+          th,
+          td {
+            border: 1px solid #ccc;
+            padding: 4px 2px; /* Reduced padding for print */
+            text-align: left;
+            font-size: 8pt; /* Smaller font size for print */
+            word-wrap: break-word; /* Allows long words to break */
+            overflow-wrap: break-word; /* Standard property for word wrapping */
+          }
+          thead {
+            background-color: #223268;
+            text-align: start;
+          }
+          .print-col-quittance-no {
+            width: 10%; /* Adjust widths as needed for your data */
+          }
+          .print-col-date {
+            width: 8%;
+          }
+          .print-col-amount {
+            width: 9%;
+            text-align: right; /* Ensure amounts are right-aligned in print */
+          }
+          .print-col-status {
+            width: 12%;
           }
           .no-print {
             display: none !important;
+          }
+          /* Specific adjustments for smaller cells if necessary */
+          td:nth-child(1), /* NUMERO QUITTANCE */
+          td:nth-child(2), /* DATE QUITTANCE */
+          td:nth-child(3), /* DEBUT PERIODE */
+          td:nth-child(4) /* FIN PERIODE */ {
+            width: 8%; /* Adjust for dates */
+          }
+          td:nth-child(11) {
+            /* ETAT DE LA QUITTANCE */
+            white-space: normal; /* Allow text to wrap for status */
+            width: 12%;
           }
         }
       `}</style>

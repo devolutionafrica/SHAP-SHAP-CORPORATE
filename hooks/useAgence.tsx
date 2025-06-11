@@ -1,9 +1,12 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api/base";
+import { useAuthContext } from "./contexts/authContext";
 
 export const useAgence = () => {
-  const username = localStorage.getItem("username");
+  const { getUsername } = useAuthContext();
+
+  const username = getUsername();
   return useQuery({
     queryKey: ["agences", username],
     queryFn: async () => {

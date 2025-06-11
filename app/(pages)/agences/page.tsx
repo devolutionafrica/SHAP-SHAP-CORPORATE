@@ -1,6 +1,6 @@
 "use client";
 import { Agence } from "@/app/Types/type";
-import MapView from "@/components/MapContainer";
+// ANCIEN : import MapView from "@/components/MapContainer";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,6 +12,12 @@ import {
 import { useAgenceContext } from "@/hooks/contexts/useAgenceContext";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic"; // Importer dynamic de next/dynamic
+
+const MapView = dynamic(() => import("@/components/MapContainer"), {
+  ssr: false,
+  loading: () => <p>Chargement de la carte...</p>,
+});
 
 export default function AgencePage() {
   const { agences } = useAgenceContext();
@@ -36,27 +42,31 @@ export default function AgencePage() {
         </p>
       </div>
 
-      <div>
-        {showCarte && (
-          <MapView longitude={0} latitude={0} onClose={setShowCarte} />
-        )}
-      </div>
-
       <Card className="shadow-lg border-0">
         <CardContent className="p-6">
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 text-center">
-            <MapPin className="w-16 h-16 mx-auto text-blue-600 mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">
-              Carte Interactive
-            </h3>
-            <p className="text-slate-600 mb-6">
-              Explorez nos agences à travers l'Afrique de l'Ouest sur notre
-              carte interactive
-            </p>
-            <Button className="bg-[#223268]" onClick={() => setShowCarte(true)}>
-              Ouvrir la Carte
-            </Button>
+          <div>
+            {showCarte && (
+              <MapView longitude={0} latitude={0} onClose={setShowCarte} />
+            )}
           </div>
+          {showCarte == false && (
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 text-center">
+              <MapPin className="w-16 h-16 mx-auto text-blue-600 mb-4" />
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                Carte Interactive
+              </h3>
+              <p className="text-slate-600 mb-6">
+                Explorez nos agences à travers l'Afrique de l'Ouest sur notre
+                carte interactive
+              </p>
+              <Button
+                className="bg-[#223268]"
+                onClick={() => setShowCarte(true)}
+              >
+                Ouvrir la Carte
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

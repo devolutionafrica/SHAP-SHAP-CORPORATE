@@ -84,23 +84,23 @@ export default function HeaderComponent({}: {}) {
               </div>
 
               <nav className="hidden md:flex space-x-6">
-                {tabUrl.map(
-                  (item) =>
-                    getTypeUser() == 2 &&
-                    item.name !== "Mon Profil" && (
-                      <button
-                        key={item.name}
-                        onClick={() => handleNavigate(item.url, item.name)}
-                        className={`flex items-center text-[12px] space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                          activeTab === item.name
-                            ? "bg-[#1b338570] text-blue-700 font-medium"
-                            : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                        }`}
-                      >
-                        <item.icon className="w-4 h-4" />
-                        <span>{item.name}</span>
-                      </button>
-                    )
+                {tabUrl.map((item) =>
+                  getTypeUser() == 2 && item.name == "Mon Profil" ? (
+                    ""
+                  ) : (
+                    <button
+                      key={item.name}
+                      onClick={() => handleNavigate(item.url, item.name)}
+                      className={`flex items-center text-[12px] space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                        activeTab === item.name
+                          ? "bg-[#1b338570] text-blue-700 font-medium"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.name}</span>
+                    </button>
+                  )
                 )}
               </nav>
             </div>

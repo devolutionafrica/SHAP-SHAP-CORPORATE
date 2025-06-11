@@ -1,7 +1,18 @@
+import React from "react";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
+import dayjs from "dayjs"; // Importer dayjs
 
 const ContractInfoCard = () => {
   const { contrat } = useContratContext();
+
+  // Fonction utilitaire pour formater les dates
+  const formatDate = (dateString: string | undefined): string => {
+    if (!dateString) {
+      return "N/A";
+    }
+
+    return dayjs(dateString).format("DD/MM/YYYY");
+  };
 
   return (
     <div className="bg-white rounded shadow-lg p-6 space-y-4">
@@ -14,11 +25,17 @@ const ContractInfoCard = () => {
           <Field label="Type de Police" value={contrat.TypePolice} />
           <Field label="Durée de la Police" value={contrat.DureePolice} />
           <Field label="Périodicité" value={contrat.PeriodicieCotisation} />
-          <Field label="Date début Effet" value={contrat.DateDebutPolice} />
-          <Field label="Date Fin Effet" value={contrat.DateFinPolice} />
+          <Field
+            label="Date début Effet"
+            value={formatDate(contrat.DateDebutPolice)}
+          />
+          <Field
+            label="Date Fin Effet"
+            value={formatDate(contrat.DateFinPolice)} // Appliquer le formatage
+          />
           <Field
             label="Date signature contrat"
-            value={contrat.DateSignatureConventionPolice}
+            value={formatDate(contrat.DateSignatureConventionPolice)} // Appliquer le formatage
           />
           <Field label="Libellé Produit" value={contrat.DESC_PRODUIT} />
         </div>

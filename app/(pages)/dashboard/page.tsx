@@ -271,7 +271,7 @@ export default function DashboardPage() {
                             {contract.LIBELLE_CONVENTION}
                           </h3>
                           <p className="text-sm text-slate-500">
-                            Contrat #{contract.NUMERO_DE_CONVENTION}
+                            Convention #{contract.NUMERO_DE_CONVENTION}
                           </p>
                         </div>
                       </div>

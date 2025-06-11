@@ -38,7 +38,7 @@ const tableHeaders = [
   { key: "NomAssure", label: "Nom" },
   { key: "PrenomsAssure", label: "Prénom" },
   { key: "NUMERO_POLICE", label: "N° Contrat" },
-  { key: "DATE_DEBUT_POLICE", label: "Date Début Police" },
+  { key: "DateDebutPolice", label: "Date Début Police" },
   { key: "PERIODICITE_COTISATION", label: "Périodicité Cotisation" },
   { key: "EtatPolice", label: "État Police" },
 ];

@@ -16,11 +16,10 @@ export default async function RootLayout({
 }>) {
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-2 relative ">
-      {/* Conditionally render HeaderComponent based on 'shouldShowHeader' */}
       {<HeaderComponent />}
 
       {/* Main Content */}
-      <div className="content p-8">{children}</div>
+      <div className="content p-4">{children}</div>
     </div>
   );
 }

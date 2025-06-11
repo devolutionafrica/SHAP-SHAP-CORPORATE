@@ -1,6 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api/base";
+import { useAuthContext } from "./contexts/authContext";
 
 const getLocalStorageItem = (key: string): string | null => {
   if (typeof window !== "undefined") {
@@ -10,7 +11,9 @@ const getLocalStorageItem = (key: string): string | null => {
 };
 
 export const useUserInfo = () => {
-  const username = localStorage.getItem("username");
+  const { getUsername } = useAuthContext();
+
+  const username = getUsername();
   return useQuery({
     queryKey: ["user", username],
     queryFn: async () => {

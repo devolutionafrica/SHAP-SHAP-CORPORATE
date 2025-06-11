@@ -7,6 +7,7 @@ export type AuthData = {
 interface UserContextType {
   username: string | null;
   isAuth: boolean;
+  getUsername: any;
   setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
   setUserName: React.Dispatch<React.SetStateAction<string | null>>;
 }
@@ -32,8 +33,19 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log("Username from localStorage:", username);
   }, [isAuth, username]);
 
+  const getUsername = () => {
+    if (typeof window !== "undefined") {
+      const storedUsername = localStorage.getItem("username");
+
+      return storedUsername;
+    }
+    return null;
+  };
+
   return (
-    <AuthContext.Provider value={{ username, setUserName, isAuth, setIsAuth }}>
+    <AuthContext.Provider
+      value={{ username, setUserName, isAuth, setIsAuth, getUsername }}
+    >
       {children}
     </AuthContext.Provider>
   );

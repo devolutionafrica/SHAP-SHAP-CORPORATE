@@ -21,11 +21,9 @@ export async function GET(
 
   try {
     const pool = await poolPromise;
-    const result = await pool
-      .request()
-      .input("Login", sql.VarChar, username)
-      .input("NUMERO_CONTRAT", sql.VarChar, idContrat).query(`SELECT * 
-    FROM dbo.FnConsultationPoliceDetail(@Login) Where NumeroContrat = @NUMERO_CONTRAT`);
+    const result = await pool.request().input("Contrat", sql.Int, idContrat)
+      .query(`SELECT *
+    FROM dbo.FnConsultationPoliceDetailInd(@Contrat)`);
     let souscripteur = null;
     if (result.recordset) {
       const ideClient = result.recordset[0].IDE_CLIENT_UNIQUE;

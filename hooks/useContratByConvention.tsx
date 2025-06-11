@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api/base";
 
 export const useContratByConvention = (id: string) => {
-  //   const username = localStorage.getItem("username");
   return useQuery({
     queryKey: ["listeContrat", id],
     queryFn: async () => {

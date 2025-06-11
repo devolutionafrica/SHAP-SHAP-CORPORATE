@@ -43,7 +43,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       return "Mes Contrats";
     } else {
       if (getTypeUser() == 2) {
-        return "Mes Convention";
+        return "Mes Conventions";
       } else {
         return "Chargement ...";
       }

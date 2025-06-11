@@ -1,8 +1,9 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useReactToPrint } from "react-to-print";
 
 import {
   Card,
@@ -32,6 +33,7 @@ import { useParams } from "next/navigation";
 import { useCotisationTotal } from "@/hooks/useSummaryCotisation";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useUser } from "@/hooks/contexts/userContext";
+import ContractPrintView from "./ContratPrintView";
 
 dayjs.extend(customParseFormat);
 
@@ -48,7 +50,7 @@ export default function CotisationPage() {
   const contratId = param.id as string;
 
   const [cotisations, setCotisations] = useState<CotisationClientIndiv[]>([]);
-  const [summaryCotisations, setSummaryCotisation] = useState<any>();
+  const [summaryCotisations, setSummaryCotisation] = useState<any>(null); // Initialisé à null pour indiquer que les données ne sont pas encore chargées
 
   const fetchCotisation = useCotisation(
     startDate.format("YYYY-MM-DD"),
@@ -57,8 +59,8 @@ export default function CotisationPage() {
   );
 
   const summary = useCotisationTotal(
-    startDate.format("DD/MM/YYYY"), // Format YYYY-MM-DD pour l'API SQL
-    endDate.format("DD/MM/YYYY"), // Format YYYY-MM-DD pour l'API SQL
+    startDate.format("DD/MM/YYYY"),
+    endDate.format("DD/MM/YYYY"),
     contratId
   );
 
@@ -66,32 +68,108 @@ export default function CotisationPage() {
     await fetchCotisation
       .refetch()
       .then((response) => {
-        console.log("Cotisations fetched:", response.data.data);
-        setCotisations(response.data.data as CotisationClientIndiv[]);
+        // ** Défensivement, s'assurer que response.data.data est un tableau valide
+        setCotisations((response.data && response.data.data) || []);
       })
       .catch((error) => {
         console.error(
           "Erreur lors de la récupération des cotisations :",
           error
         );
+        setCotisations([]); // En cas d'erreur, s'assurer que c'est un tableau vide
         alert("Erreur lors de la récupération des cotisations.");
       });
 
     await summary
       .refetch()
       .then((response) => {
-        console.log("Summary fetched:", response.data.data);
-        setSummaryCotisation(response.data.data);
+        // ** Défensivement, s'assurer que response.data.data est un objet valide
+        setSummaryCotisation((response.data && response.data.data) || null); // Utilisez null si aucun résumé, ou {} si toujours un objet vide
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération du summary : ", error);
+        setSummaryCotisation(null); // En cas d'erreur, s'assurer que c'est null
         alert("Erreur lors de la récupération du summary.");
       });
   };
 
+  const preparedPrintData = () => {
+    return {
+      nom: contrat?.NomAssure || "N/A",
+      prenoms: contrat?.PrenomsAssure || "N/A",
+      adresse: contrat?.AdressePostaleAssure || "N/A",
+      numero: contrat?.NumeroAssure || "N/A",
+      numeroPolice: contrat?.NumeroContrat || "N/A",
+      libelleProduit: contrat?.DESC_PRODUIT || "N/A",
+      dateEffetPolice: contrat?.DateDebutPolice
+        ? dayjs(contrat.DateDebutPolice).format("DD/MM/YYYY")
+        : "N/A",
+      finEffetPolice: contrat?.DateFinPolice
+        ? dayjs(contrat.DateFinPolice).format("DD/MM/YYYY")
+        : "N/A",
+      souscripteurNomComplet: `${contrat?.NomAssure || "N/A"} ${
+        contrat?.PrenomsAssure || ""
+      }`.trim(),
+      modeDePaiement: "N/A",
+
+      quittances: cotisations.map((cotisation) => ({
+        NUMERO_QUITTANCE: String(cotisation.NumeroQuittance),
+        DATE_QUITTANCE: dayjs(cotisation.Echeance).format("DD/MM/YYYY"),
+        DEBUT_PERIODE: dayjs(cotisation.DebutPeriode).format("DD/MM/YYYY"),
+        FIN_PERIODE: dayjs(cotisation.FinPeriode).format("DD/MM/YYYY"),
+        MONTANT_EMIS: formatNumberToFCFA(cotisation.MontantEmis),
+        PRIME_PERIODIQUE: formatNumberToFCFA(cotisation.PrimePeriodique),
+        ECHEANCE_D_AVANCE: formatNumberToFCFA(cotisation.EcheanceAvance),
+        FRAIS_REJET: formatNumberToFCFA(cotisation.FraisRejet),
+        MONTANT_COTISE: formatNumberToFCFA(cotisation.MontantEncaisse),
+        MONTANT_REGULARISE: formatNumberToFCFA(cotisation.MontantRegularise),
+        ETAT_DE_LA_QUITTANCE: cotisation.EtatQuittance,
+      })),
+
+      nombreTotalEmission: cotisations.length,
+      montantTotalEmis: summaryCotisations?.MontantEmis || 0,
+      nombreTotalEncaissement: cotisations.filter(
+        (q) => q.EtatQuittance === "Soldée" || q.MontantEncaisse > 0
+      ).length,
+      montantTotalEncaisse: summaryCotisations?.MontantEncaisse || 0,
+      nombreTotalImpayes: cotisations.filter(
+        (q) => q.EtatQuittance !== "Soldée" && q.MontantEncaisse === 0
+      ).length,
+      montantTotalImpayes: summaryCotisations?.MontantImpaye || 0,
+      echeanceAvanceNonReglee: summaryCotisations?.EncoursAvanceImpayes || 0,
+      nombreDeQuittancesEncaissees: cotisations.filter(
+        (q) => q.EtatQuittance === "Soldée" || q.MontantEncaisse > 0
+      ).length,
+      montantTotalDesQuittancesEncaissees:
+        summaryCotisations?.MontantEncaisse || 0,
+    };
+  };
+
   useEffect(() => {
     fetchCotisationData();
-  }, [startDate, endDate, contratId]); // IdleDeadline n'est pas une dépendance valide pour useEffect
+    if (cotisations) {
+      setPrintdata(preparedPrintData());
+    }
+  }, [startDate, endDate, contratId]);
+
+  const componentRef = useRef<HTMLDivElement>(null);
+
+  const formatNumberToFCFA = (num: number | null | undefined): string => {
+    if (num === null || num === undefined) return "0";
+    return new Intl.NumberFormat("fr-FR").format(num);
+  };
+
+  const [printData, setPrintdata] = useState<any>(null);
+
+  const handlePrint = useReactToPrint({
+    pageStyle: `@page { size: A4 portrait; margin: 5mm; }`,
+    documentTitle: "ContratCotisations",
+    contentRef: componentRef,
+  });
+
+  const printContent = () => {
+    window.print();
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -142,22 +220,19 @@ export default function CotisationPage() {
                 <DatePicker
                   label="Date début"
                   value={startDate}
-                  // C'est ici que vous définissez le format d'affichage pour l'utilisateur
-                  format="DD/MM/YYYY" // <-- Ajoutez cette ligne pour le format d'affichage
+                  format="DD/MM/YYYY"
                   onChange={(date) => {
-                    if (date) setStartDate(date); // Mettez à jour avec l'objet Dayjs directement
+                    if (date) setStartDate(date);
                   }}
-                  // Vous pouvez également ajouter `views={['day', 'month', 'year']}` si vous voulez restreindre la sélection à ces vues
                 />
               </Grid>
               <Grid>
                 <DatePicker
                   label="Date fin"
                   value={endDate}
-                  // C'est ici que vous définissez le format d'affichage pour l'utilisateur
-                  format="DD/MM/YYYY" // <-- Ajoutez cette ligne pour le format d'affichage
+                  format="DD/MM/YYYY"
                   onChange={(date) => {
-                    if (date) setEndDate(date); // Mettez à jour avec l'objet Dayjs directement
+                    if (date) setEndDate(date);
                   }}
                 />
               </Grid>
@@ -188,11 +263,10 @@ export default function CotisationPage() {
                 <TableHead className="bg-[#223268]">
                   <TableRow>
                     {[
-                      "NUMÉRO POLICE",
-                      "DATE", // J'ai renommé pour correspondre à votre type CotisationClientIndiv.Echeance
+                      "NUMÉRO QUITTANCE",
+                      "DATE",
                       "DÉBUT PÉRIODE",
                       "FIN PÉRIODE",
-
                       "PRIME PÉRIODIQUE",
                       "MONTANT ENCAISSÉ",
                       "ÉTAT QUITTANCE",
@@ -200,7 +274,7 @@ export default function CotisationPage() {
                       <TableCell
                         key={header}
                         sx={{ fontWeight: "500", fontSize: "12px" }}
-                        className="text-center text-[11px] text-black"
+                        className="text-center text-[11px] text-white"
                       >
                         {header}
                       </TableCell>
@@ -208,12 +282,14 @@ export default function CotisationPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {fetchCotisation.isLoading && (
-                    <div className="p-8 flex justify-center items-center">
-                      Chargement des données en cours...
-                    </div>
-                  )}
-                  {cotisations.length > 0 ? (
+                  {fetchCotisation.isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center">
+                        <CircularProgress size={24} /> Chargement des données en
+                        cours...
+                      </TableCell>
+                    </TableRow>
+                  ) : cotisations.length > 0 ? (
                     cotisations.map((cotisation) => (
                       <TableRow
                         key={cotisation.NumeroQuittance}
@@ -236,22 +312,12 @@ export default function CotisationPage() {
                           {cotisation.FinPeriode &&
                             dayjs(cotisation.FinPeriode).format("DD/MM/YYYY")}
                         </TableCell>
-                        {/* <TableCell className="text-center">
-                          {cotisation.MontantEmis} FCFA
-                        </TableCell> */}
                         <TableCell className="text-center">
-                          {cotisation.PrimePeriodique} FCFA
+                          {formatNumberToFCFA(cotisation.PrimePeriodique)} FCFA
                         </TableCell>
-                        {/* <TableCell className="text-center">
-                          {cotisation.EcheanceAvance} FCFA{" "}
-                          
-                        </TableCell> */}
                         <TableCell className="text-center">
-                          {cotisation.MontantEncaisse} FCFA
+                          {formatNumberToFCFA(cotisation.MontantEncaisse)} FCFA
                         </TableCell>
-                        {/* <TableCell className="text-center">
-                          {cotisation.MontantRegularise} FCFA
-                        </TableCell> */}
                         <TableCell className="text-center">
                           {cotisation.EtatQuittance}
                         </TableCell>
@@ -259,7 +325,7 @@ export default function CotisationPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center py-4">
+                      <TableCell colSpan={7} className="text-center py-4">
                         Aucune cotisation trouvée pour cette période.
                       </TableCell>
                     </TableRow>
@@ -269,13 +335,15 @@ export default function CotisationPage() {
             </TableContainer>
             {/* Boutons */}
             <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
-              {getTypeUser() == 1 && (
+              {getTypeUser() === 1 && (
                 <Button variant="contained" color="error">
                   Régler Prime
                 </Button>
               )}
 
-              <Button variant="outlined">Imprimer</Button>
+              <Button variant="outlined" onClick={() => handlePrint()}>
+                Imprimer
+              </Button>
             </Box>
           </CardContent>
         </Card>
@@ -306,18 +374,24 @@ export default function CotisationPage() {
                 },
               ].map((item) => (
                 <Grid key={item.label}>
-                  {" "}
-                  {/* Ajout de 'item' pour chaque Grid */}
                   <Typography variant="subtitle2" color="text.secondary">
                     {item.label}
                   </Typography>
-                  <Typography fontWeight="bold">{item.value} FCFA</Typography>
+                  <Typography fontWeight="bold">
+                    {formatNumberToFCFA(item.value)} FCFA
+                  </Typography>
                 </Grid>
               ))}
             </Grid>
           </CardContent>
         </Card>
       </Box>
+      {/* Le composant ContractPrintView pour l'impression, masqué à l'écran */}
+      <div style={{ display: "none" }}>
+        {printData && (
+          <ContractPrintView ref={componentRef} data={printData!} />
+        )}
+      </div>
     </LocalizationProvider>
   );
 }
