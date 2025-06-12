@@ -15,11 +15,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-2 relative ">
+    <div className="p-2 relative ">
       {<HeaderComponent />}
 
       {/* Main Content */}
-      <div className="content p-4">{children}</div>
+      <div className="p-4">{children}</div>
     </div>
   );
 }

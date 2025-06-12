@@ -203,7 +203,7 @@ export default function AdhesionTable() {
                         >
                           {(adhesion[
                             header.key as keyof Convention
-                          ] as React.ReactNode) || "N/A"}
+                          ] as React.ReactNode) || ""}
                         </TableCell>
                       ))}
                     </motion.tr>

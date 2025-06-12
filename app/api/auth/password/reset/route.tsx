@@ -4,9 +4,7 @@ import { poolPromise, sql } from "@/app/api/lib/db";
 import { findUserByUsername } from "@/app/models/user.model";
 import { verifyAuthToken } from "@/app/api/lib/auth";
 
-export async function UPDATE(request: NextRequest) {
-  // Récupération des paramètres de requête
-
+export async function PATCH(request: NextRequest) {
   const auth = verifyAuthToken(request);
 
   if (!auth)
@@ -14,9 +12,7 @@ export async function UPDATE(request: NextRequest) {
       status: 401,
     });
 
-  const login = request.nextUrl.searchParams.get("username");
-  const password = request.nextUrl.searchParams.get("password");
-  const newPassword = request.nextUrl.searchParams.get("newPassword");
+  const { login, password, newPassword } = await request.json();
 
   const user = await findUserByUsername(login!);
 
@@ -48,14 +44,14 @@ export async function UPDATE(request: NextRequest) {
       .input("Login", sql.VarChar, login)
 
       .input("NewPassword", sql.VarChar, newPassword).query(`
-         UPDATE Utilisateurs
-         SET MOT_DE_PASSE = @newPassword
+         UPDATE Utilisateur
+         SET MOT_DE_PASSE = @NewPassword, ISFIRSTCONNEXION=1
          WHERE LOGIN = @Login
         `);
 
     return NextResponse.json({}, { status: 200 });
   } catch (err) {
-    console.error("Erreur procédure stockée :", err);
+    console.error("Erreur SQL", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

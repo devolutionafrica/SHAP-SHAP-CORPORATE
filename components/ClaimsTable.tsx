@@ -127,7 +127,7 @@ export default function ClaimTable({ claims }: ClaimTableProps) {
                             )}`
                           : (claim[
                               header.key as keyof Sinistre // Utilise Sinistre ici
-                            ] as React.ReactNode) || "N/A"}
+                            ] as React.ReactNode) || ""}
                       </TableCell>
                     ))}
                   </motion.tr>

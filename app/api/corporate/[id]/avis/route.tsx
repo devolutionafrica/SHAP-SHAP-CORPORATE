@@ -33,8 +33,8 @@ export async function GET(
       .request()
       .input("ANNEE", sql.Int, date)
       .input("CODE_FILIALE", sql.VarChar, codeFiliale)
-      .input("CONVENTION", sql.Int, convention)
-      .execute(`Reporting.Avis_Situation_Police_CU_GROUP`);
+      .input("POLICE", sql.Int, convention)
+      .execute(`Reporting.Avis_Situation_Police_CU`);
 
     return NextResponse.json({ data: result.recordset }, { status: 200 });
   } catch (err) {

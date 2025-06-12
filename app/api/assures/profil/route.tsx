@@ -120,7 +120,7 @@ export async function PATCH(req: NextRequest) {
       photoUtilisateur ? Buffer.from(photoUtilisateur, "base64") : null
     );
 
-    await request.execute("SpModifierInfoClientParLogin");
+    await request.execute("SpModifierInfoClientParLogin2");
 
     return NextResponse.json({ message: "Mise à jour effectuée avec succès." });
   } catch (error) {

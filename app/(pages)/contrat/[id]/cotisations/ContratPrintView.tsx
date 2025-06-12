@@ -35,7 +35,7 @@ interface ContractPrintViewProps {
     nombreTotalEncaissement: number;
     montantTotalEncaisse: number;
     nombreTotalImpayes: number;
-    montantTotalImpayes: number;
+    montantTotalImpayes: number; // Attention: ce champ est dupliqué, assurez-vous que c'est intentionnel ou corrigez le type
     echeanceAvanceNonReglee: number;
     nombreDeQuittancesEncaissees: number;
     montantTotalDesQuittancesEncaissees: number;
@@ -57,9 +57,12 @@ const ContractPrintView = React.forwardRef<
 
   return (
     <div ref={ref} className="p-6 bg-white shadow-lg print-page">
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        QUITTANCES RÉGLÉES ET IMPAYÉES
-      </h1>
+      {/* Entête bleue ajoutée ici */}
+      <div className="bg-[#223268] text-white p-4 mb-4 rounded-t-lg">
+        <h1 className="text-2xl font-bold text-center">
+          QUITTANCES RÉGLÉES ET IMPAYÉES
+        </h1>
+      </div>
       <p className="text-sm text-right mb-6">
         Date Heure Edition: {printDate} {printTime}
       </p>
@@ -119,42 +122,41 @@ const ContractPrintView = React.forwardRef<
       </p>
 
       <h2 className="text-lg font-semibold mb-3">Situation des Cotisations</h2>
-      {/* Retirer overflow-x-auto ici pour l'impression, laisser la table gérer le fit */}
       <div className="mb-6">
         <table className="w-full divide-y divide-gray-200 border border-gray-300">
           <thead className="!bg-[#223268]">
             <tr className="font-[300] text-[11px]">
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-quittance-no">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-quittance-no">
                 NUMERO QUITTANCE
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-date">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-date">
                 DATE QUITTANCE
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-date">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-date">
                 DEBUT PERIODE
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-date">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-date">
                 FIN PERIODE
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-amount">
                 MONTANT EMIS
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-amount">
                 PRIME PERIODIQUE
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-amount">
                 ECHEANCE D'AVANCE
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-amount">
                 FRAIS REJET
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-amount">
                 MONTANT COTISE
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem]  text-gray-700 uppercase tracking-wider border-r print-col-amount">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-amount">
                 MONTANT REGULARISE
               </th>
-              <th className="px-2 py-2 text-left text-[0.6rem] text-gray-700 uppercase tracking-wider print-col-status">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider print-col-status">
                 ETAT DE LA QUITTANCE
               </th>
             </tr>
@@ -218,38 +220,55 @@ const ContractPrintView = React.forwardRef<
       <div className="mb-6 border p-4 rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
           <p>
-            <strong>NOMBRE TOTAL EMISSION:</strong> {data.nombreTotalEmission}
+            <strong>NOMBRE TOTAL EMISSION:</strong>{" "}
+            <span className="text-[#223268]">{data.nombreTotalEmission}</span>
           </p>
           <p>
             <strong>MONTANT TOTAL EMIS:</strong>{" "}
-            {formatNumberToFCFA(data.montantTotalEmis)} FCFA
+            <span className="text-[#223268]">
+              {formatNumberToFCFA(data.montantTotalEmis)} FCFA
+            </span>
           </p>
           <p>
             <strong>NOMBRE TOTAL ENCAISSEMENT:</strong>{" "}
-            {data.nombreTotalEncaissement}
+            <span className="text-[#223268]">
+              {data.nombreTotalEncaissement}
+            </span>
           </p>
           <p>
             <strong>MONTANT TOTAL ENCAISSE:</strong>{" "}
-            {formatNumberToFCFA(data.montantTotalEncaisse)} FCFA
+            <span className="text-[#223268]">
+              {formatNumberToFCFA(data.montantTotalEncaisse)} FCFA
+            </span>
           </p>
           <p>
-            <strong>NOMBRE TOTAL DES IMPAYES:</strong> {data.nombreTotalImpayes}
+            <strong>NOMBRE TOTAL DES IMPAYES:</strong>{" "}
+            <span className="text-[#223268]">{data.nombreTotalImpayes}</span>
           </p>
           <p>
             <strong>MONTANT TOTAL DES IMPAYES:</strong>{" "}
-            {formatNumberToFCFA(data.montantTotalImpayes)} FCFA
+            <span className="text-[#223268]">
+              {formatNumberToFCFA(data.montantTotalImpayes)} FCFA
+            </span>
           </p>
           <p>
             <strong>ECHEANCE D'AVANCE NON REGLEE:</strong>{" "}
-            {formatNumberToFCFA(data.echeanceAvanceNonReglee)} FCFA
+            <span className="text-[#223268]">
+              {formatNumberToFCFA(data.echeanceAvanceNonReglee)} FCFA
+            </span>
           </p>
           <p>
             <strong>NOMBRE DE QUITTANCES ENCAISSEES:</strong>{" "}
-            {data.nombreDeQuittancesEncaissees}
+            <span className="text-[#223268]">
+              {data.nombreDeQuittancesEncaissees}
+            </span>
           </p>
           <p>
             <strong>MONTANT TOTAL DES QUITTANCES ENCAISSEES:</strong>{" "}
-            {formatNumberToFCFA(data.montantTotalDesQuittancesEncaissees)} FCFA
+            <span className="text-[#223268]">
+              {formatNumberToFCFA(data.montantTotalDesQuittancesEncaissees)}{" "}
+              FCFA
+            </span>
           </p>
         </div>
       </div>
@@ -288,7 +307,7 @@ const ContractPrintView = React.forwardRef<
             overflow-wrap: break-word; /* Standard property for word wrapping */
           }
           thead {
-            background-color: #223268;
+            background-color: #223268 !important;
             text-align: start;
           }
           .print-col-quittance-no {

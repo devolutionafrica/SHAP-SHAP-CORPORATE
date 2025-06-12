@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-import "@/lib/api/setup";
-
-import PageTabs from "./component/PageTab";
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"; // Assurez-vous que framer-motion est installé
 import { useParams } from "next/navigation";
-import { Contrat } from "@/app/Types/type";
-import { useContratDetails } from "@/hooks/useContrat";
+
+// Assurez-vous que les imports de vos composants et hooks sont corrects
+import PageTabs from "./component/PageTab"; // Votre composant de tabs responsive
 import { useContratContext } from "@/hooks/contexts/useContratContext";
-import "./styles.scss";
+// import { useContratDetails } from "@/hooks/useContrat"; // Commenté car non utilisé dans le rendu direct
+
+// Assurez-vous que ce fichier CSS existe et est bien importé si vous l'utilisez pour des styles spécifiques
+// import "./styles.scss"; // Assurez-vous que ce fichier est compilé par Next.js
+
 export default function ModernDashboard({
   children,
 }: {
@@ -21,25 +22,28 @@ export default function ModernDashboard({
   const params = useParams();
   const id = params?.id;
 
-  const { setContrat, contrat } = useContratContext();
-  //   const contratDetails = useContratDetails(id as string);
+  const { contrat } = useContratContext();
 
   useEffect(() => {}, [id, contrat]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-2 contrat">
-      {/* Main Content */}
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8 font-sans text-gray-800">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="p-4 md:p-8 mx-auto"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="max-w-6xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden p-6 md:p-10"
       >
-        <h1 className="text-2xl font-bold mb-6 text-primary">
-          Détails du contrat
-        </h1>
+        <motion.h1
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+          className="text-3xl md:text-4xl font-heading font-extrabold text-primary mb-8 leading-tight"
+        >
+          Détails du Contrat
+        </motion.h1>
 
+        {/* Composant de tabs */}
         <PageTabs
           tabs={[
             {
@@ -54,11 +58,6 @@ export default function ModernDashboard({
               label: "Avis de situation",
               url: `/contrat/${id}/avis-situation`,
             },
-
-            // {
-            //   label: "Demande prestation",
-            //   url: `/contrat/${id}/cotisations`,
-            // },
             {
               label: "Prestation effectuées",
               url: `/contrat/${id}/sinistre`,
@@ -68,7 +67,14 @@ export default function ModernDashboard({
           setCurrentTab={setCurrentTab}
         />
 
-        <div className="">{children}</div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
+          className="mt-8 text-lg leading-relaxed text-gray-700"
+        >
+          {children}
+        </motion.div>
       </motion.div>
     </div>
   );

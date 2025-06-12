@@ -8,7 +8,7 @@ export const useContrat = () => {
 
   const username = getUsername();
   return useQuery({
-    queryKey: ["contrat", username],
+    queryKey: ["contrats", Date.now()],
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await api.get(`/contrat`, {
@@ -19,7 +19,7 @@ export const useContrat = () => {
       });
       return response.data;
     },
-    // staleTime: 1000 * 60 * 5,
+    staleTime: Infinity,
     // retry: false,
     enabled: false,
   });

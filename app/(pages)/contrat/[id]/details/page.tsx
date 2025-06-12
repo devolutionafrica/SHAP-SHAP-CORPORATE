@@ -24,7 +24,7 @@ export default function ContractDetailsPage() {
   const fetchDetails = async () => {
     try {
       const result = await contratDetails.refetch();
-      console.log("Fetched contract details:\n\n", result.data);
+
       if (result.data.sizes > 0) {
         setContrat(result.data.data[0] as Contrat);
       }

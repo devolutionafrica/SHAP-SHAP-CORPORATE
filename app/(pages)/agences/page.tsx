@@ -44,11 +44,6 @@ export default function AgencePage() {
 
       <Card className="shadow-lg border-0">
         <CardContent className="p-6">
-          <div>
-            {showCarte && (
-              <MapView longitude={0} latitude={0} onClose={setShowCarte} />
-            )}
-          </div>
           {showCarte == false && (
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 text-center">
               <MapPin className="w-16 h-16 mx-auto text-blue-600 mb-4" />
@@ -67,6 +62,12 @@ export default function AgencePage() {
               </Button>
             </div>
           )}
+
+          <div>
+            {showCarte && (
+              <MapView longitude={0} latitude={0} onClose={setShowCarte} />
+            )}
+          </div>
         </CardContent>
       </Card>
 

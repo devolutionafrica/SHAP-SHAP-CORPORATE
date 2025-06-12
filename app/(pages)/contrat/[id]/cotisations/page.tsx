@@ -37,6 +37,11 @@ import ContractPrintView from "./ContratPrintView";
 
 dayjs.extend(customParseFormat);
 
+export const formatNumberToFCFA = (num: number | null | undefined): string => {
+  if (num === null || num === undefined) return "0";
+  return new Intl.NumberFormat("fr-FR").format(num);
+};
+
 export default function CotisationPage() {
   const { contrat } = useContratContext();
   const [startDate, setStartDate] = useState<Dayjs>(
@@ -50,7 +55,7 @@ export default function CotisationPage() {
   const contratId = param.id as string;
 
   const [cotisations, setCotisations] = useState<CotisationClientIndiv[]>([]);
-  const [summaryCotisations, setSummaryCotisation] = useState<any>(null); // Initialisé à null pour indiquer que les données ne sont pas encore chargées
+  const [summaryCotisations, setSummaryCotisation] = useState<any>(null);
 
   const fetchCotisation = useCotisation(
     startDate.format("YYYY-MM-DD"),
@@ -65,120 +70,134 @@ export default function CotisationPage() {
   );
 
   const fetchCotisationData = async () => {
-    await fetchCotisation
-      .refetch()
-      .then((response) => {
-        // ** Défensivement, s'assurer que response.data.data est un tableau valide
-        setCotisations((response.data && response.data.data) || []);
-      })
-      .catch((error) => {
-        console.error(
-          "Erreur lors de la récupération des cotisations :",
-          error
-        );
-        setCotisations([]); // En cas d'erreur, s'assurer que c'est un tableau vide
-        alert("Erreur lors de la récupération des cotisations.");
-      });
-
-    await summary
-      .refetch()
-      .then((response) => {
-        // ** Défensivement, s'assurer que response.data.data est un objet valide
-        setSummaryCotisation((response.data && response.data.data) || null); // Utilisez null si aucun résumé, ou {} si toujours un objet vide
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la récupération du summary : ", error);
-        setSummaryCotisation(null); // En cas d'erreur, s'assurer que c'est null
-        alert("Erreur lors de la récupération du summary.");
-      });
-  };
-
-  const preparedPrintData = () => {
-    return {
-      nom: contrat?.NomAssure || "N/A",
-      prenoms: contrat?.PrenomsAssure || "N/A",
-      adresse: contrat?.AdressePostaleAssure || "N/A",
-      numero: contrat?.NumeroAssure || "N/A",
-      numeroPolice: contrat?.NumeroContrat || "N/A",
-      libelleProduit: contrat?.DESC_PRODUIT || "N/A",
-      dateEffetPolice: contrat?.DateDebutPolice
-        ? dayjs(contrat.DateDebutPolice).format("DD/MM/YYYY")
-        : "N/A",
-      finEffetPolice: contrat?.DateFinPolice
-        ? dayjs(contrat.DateFinPolice).format("DD/MM/YYYY")
-        : "N/A",
-      souscripteurNomComplet: `${contrat?.NomAssure || "N/A"} ${
-        contrat?.PrenomsAssure || ""
-      }`.trim(),
-      modeDePaiement: "N/A",
-
-      quittances: cotisations.map((cotisation) => ({
-        NUMERO_QUITTANCE: String(cotisation.NumeroQuittance),
-        DATE_QUITTANCE: dayjs(cotisation.Echeance).format("DD/MM/YYYY"),
-        DEBUT_PERIODE: dayjs(cotisation.DebutPeriode).format("DD/MM/YYYY"),
-        FIN_PERIODE: dayjs(cotisation.FinPeriode).format("DD/MM/YYYY"),
-        MONTANT_EMIS: formatNumberToFCFA(cotisation.MontantEmis),
-        PRIME_PERIODIQUE: formatNumberToFCFA(cotisation.PrimePeriodique),
-        ECHEANCE_D_AVANCE: formatNumberToFCFA(cotisation.EcheanceAvance),
-        FRAIS_REJET: formatNumberToFCFA(cotisation.FraisRejet),
-        MONTANT_COTISE: formatNumberToFCFA(cotisation.MontantEncaisse),
-        MONTANT_REGULARISE: formatNumberToFCFA(cotisation.MontantRegularise),
-        ETAT_DE_LA_QUITTANCE: cotisation.EtatQuittance,
-      })),
-
-      nombreTotalEmission: cotisations.length,
-      montantTotalEmis: summaryCotisations?.MontantEmis || 0,
-      nombreTotalEncaissement: cotisations.filter(
-        (q) => q.EtatQuittance === "Soldée" || q.MontantEncaisse > 0
-      ).length,
-      montantTotalEncaisse: summaryCotisations?.MontantEncaisse || 0,
-      nombreTotalImpayes: cotisations.filter(
-        (q) => q.EtatQuittance !== "Soldée" && q.MontantEncaisse === 0
-      ).length,
-      montantTotalImpayes: summaryCotisations?.MontantImpaye || 0,
-      echeanceAvanceNonReglee: summaryCotisations?.EncoursAvanceImpayes || 0,
-      nombreDeQuittancesEncaissees: cotisations.filter(
-        (q) => q.EtatQuittance === "Soldée" || q.MontantEncaisse > 0
-      ).length,
-      montantTotalDesQuittancesEncaissees:
-        summaryCotisations?.MontantEncaisse || 0,
-    };
-  };
-
-  useEffect(() => {
-    fetchCotisationData();
-    if (cotisations) {
-      setPrintdata(preparedPrintData());
+    try {
+      const cotisationResponse = await fetchCotisation.refetch();
+      setCotisations(
+        (cotisationResponse.data && cotisationResponse.data.data) || []
+      );
+    } catch (error) {
+      console.error("Erreur lors de la récupération des cotisations :", error);
+      setCotisations([]);
+      alert("Erreur lors de la récupération des cotisations.");
     }
-  }, [startDate, endDate, contratId]);
 
-  const componentRef = useRef<HTMLDivElement>(null);
-
-  const formatNumberToFCFA = (num: number | null | undefined): string => {
-    if (num === null || num === undefined) return "0";
-    return new Intl.NumberFormat("fr-FR").format(num);
+    try {
+      const summaryResponse = await summary.refetch();
+      setSummaryCotisation(
+        (summaryResponse.data && summaryResponse.data.data) || null
+      );
+    } catch (error) {
+      console.error("Erreur lors de la récupération du summary : ", error);
+      alert("Erreur lors de la récupération du summary.");
+    }
   };
 
   const [printData, setPrintdata] = useState<any>(null);
 
+  const preparedPrintData = () => {
+    // Vérifier que les données sont disponibles avant de les préparer
+    if (
+      !summaryCotisations ||
+      cotisations === null ||
+      cotisations === undefined
+    ) {
+      console.log("Données non prêtes pour la préparation de printData.");
+      return null;
+    }
+
+    try {
+      return {
+        nom: contrat?.NomAssure || "",
+        prenoms: contrat?.PrenomsAssure || "",
+        adresse: contrat?.AdressePostaleAssure || "",
+        numero: contrat?.NumeroAssure || "",
+        numeroPolice: contrat?.NumeroContrat || "",
+        libelleProduit: contrat?.DESC_PRODUIT || "",
+        dateEffetPolice: contrat?.DateDebutPolice
+          ? dayjs(contrat.DateDebutPolice).format("DD/MM/YYYY")
+          : "",
+        finEffetPolice: contrat?.DateFinPolice
+          ? dayjs(contrat.DateFinPolice).format("DD/MM/YYYY")
+          : "",
+        souscripteurNomComplet: `${contrat?.NomAssure || ""} ${
+          contrat?.PrenomsAssure || ""
+        }`.trim(),
+        modeDePaiement: "N/A",
+
+        quittances: cotisations.map((cotisation) => ({
+          NUMERO_QUITTANCE: String(cotisation.NumeroQuittance),
+          DATE_QUITTANCE: dayjs(cotisation.Echeance).format("DD/MM/YYYY"),
+          DEBUT_PERIODE: dayjs(cotisation.DebutPeriode).format("DD/MM/YYYY"),
+          FIN_PERIODE: dayjs(cotisation.FinPeriode).format("DD/MM/YYYY"),
+          MONTANT_EMIS: formatNumberToFCFA(cotisation.MontantEmis),
+          PRIME_PERIODIQUE: formatNumberToFCFA(cotisation.PrimePeriodique),
+          ECHEANCE_D_AVANCE: formatNumberToFCFA(cotisation.EcheanceAvance),
+          FRAIS_REJET: formatNumberToFCFA(cotisation.FraisRejet),
+          MONTANT_COTISE: formatNumberToFCFA(cotisation.MontantEncaisse),
+          MONTANT_REGULARISE: formatNumberToFCFA(cotisation.MontantRegularise),
+          ETAT_DE_LA_QUITTANCE: cotisation.EtatQuittance,
+        })),
+
+        nombreTotalEmission: cotisations.length,
+        montantTotalEmis: summaryCotisations?.MontantEmis || 0,
+        nombreTotalEncaissement: cotisations.filter(
+          (q) => q.EtatQuittance === "Soldée" || q.MontantEncaisse > 0
+        ).length,
+        montantTotalEncaisse: summaryCotisations?.MontantEncaisse || 0,
+        nombreTotalImpayes: cotisations.filter(
+          (q) => q.EtatQuittance !== "Soldée" && q.MontantEncaisse === 0
+        ).length,
+        montantTotalImpayes: summaryCotisations?.MontantImpaye || 0,
+        echeanceAvanceNonReglee: summaryCotisations?.EncoursAvanceImpayes || 0,
+        nombreDeQuittancesEncaissees: cotisations.filter(
+          (q) => q.EtatQuittance === "Soldée" || q.MontantEncaisse > 0
+        ).length,
+        montantTotalDesQuittancesEncaissees:
+          summaryCotisations?.MontantEncaisse || 0,
+      };
+    } catch (e) {
+      console.error("Erreur de chargement des données du pdf", e);
+      alert("Erreur de chargement des données du pdf");
+      return null;
+    }
+  };
+
+  // Premier useEffect: Déclenche la récupération des données lorsque les dates ou l'ID du contrat changent.
+  useEffect(() => {
+    fetchCotisationData();
+  }, [startDate, endDate, contratId]);
+
+  // Deuxième useEffect: Prépare les données pour l'impression une fois que les cotisations
+  // et le résumé des cotisations sont disponibles.
+  useEffect(() => {
+    if (
+      cotisations !== null &&
+      cotisations !== undefined &&
+      summaryCotisations !== null
+    ) {
+      setPrintdata(preparedPrintData());
+    }
+  }, [cotisations, summaryCotisations]); // Dépend des données nécessaires à printData
+
+  const componentRef = useRef<HTMLDivElement>(null);
+
   const handlePrint = useReactToPrint({
-    pageStyle: `@page { size: A4 portrait; margin: 5mm; }`,
+    pageStyle: `@page { size: A4 portrait; margin: 4mm; }`,
     documentTitle: "ContratCotisations",
     contentRef: componentRef,
   });
 
-  const printContent = () => {
-    window.print();
-  };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box p={3}>
-        {/* Header infos */}
         {contrat && (
           <div>
-            <div className="p-2 bg-[#223268] text-white rounded px-6">
-              <Grid container spacing={12}>
+            <div className="p-2 bg-[#223268] text-white rounded px-6 felx flex-row justify-between flex-wrap">
+              <Grid
+                container
+                spacing={12}
+                className="flex flex-row justify-between"
+              >
                 <Grid>
                   <Typography variant="subtitle2" className="text-white">
                     Libellé Produit

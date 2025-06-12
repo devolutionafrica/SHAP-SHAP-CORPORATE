@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ButtonOutline } from "./component/ButtonOutline";
 import { useConvention } from "@/hooks/useConvention";
+import { useContrat } from "@/hooks/useContrat";
 
 export default function DashboardPage() {
   const { user, labelType } = useUser();
@@ -36,9 +37,18 @@ export default function DashboardPage() {
   } = useUser();
   const userinfo = useUserInfo();
 
-  const { contrats, conventions, handleLoadConvention } = useContratContext();
+  const {
+    contrats,
+    setContrats,
+    conventions,
+    handleLoadConvention,
+    handleLoadContrat,
+    totalContratConvention,
+  } = useContratContext();
 
   const { agences, setAgence } = useAgenceContext();
+
+  const loaderContrat = useContrat();
 
   const formatTypeUser = (civility: string) => {
     switch (civility) {
@@ -54,22 +64,36 @@ export default function DashboardPage() {
     }
   };
 
+  const fetchContrat = async () => {
+    await loaderContrat
+      .refetch()
+      .then((data) => {
+        if (data.data) {
+          console.log("Contrat Chargé", data.data);
+          setContrats(data.data as Contrat[]);
+        } else {
+          console.log("Contrat Non Chargé");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const handleLoadUserData = async () => {
-    await userinfo
+    userinfo
       .refetch()
       .then((result) => {
         if (result.data) {
-          console.log("User data fetched:", result.data);
           setUser(result.data.data);
           setPercentProfile!(result.data.pourcentage);
-          console.log("User data loaded successfully:", user?.CIVILITE);
+
           if (user) {
             localStorage.setItem(
               "type_user",
               formatTypeUser(user.CIVILITE).toString()
             );
-            console.log("Type contrats:\n\n", getTypeUser());
-            console.log("UTILISATEUR :\n\n\n", user);
+
             setTypeUtilisateur(formatTypeUser(user.CIVILITE));
           }
         }
@@ -87,9 +111,7 @@ export default function DashboardPage() {
       .refetch()
       .then((result) => {
         if (result.data) {
-          console.log("Agences data fetched:", result.data);
           setAgence(result.data.agences);
-          console.log("Agences loaded successfully:", agences);
         }
       })
       .catch((error) => {
@@ -102,7 +124,18 @@ export default function DashboardPage() {
     const token = localStorage.getItem("token");
     handleLoadUserData();
     handleLoadAgences();
-    handleLoadConvention();
+
+    try {
+      handleLoadConvention();
+    } catch (e) {
+      console.log("Error loading convention:", e);
+    }
+
+    try {
+      handleLoadContrat();
+    } catch (e) {
+      console.log("Error loading convention:", e);
+    }
   }, [user, contrats, conventions]);
 
   if (!user) {
@@ -116,11 +149,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main className="max-w-7xl mx-auto md:px-4 sm:px-6 lg:px-8 py-8">
       <div className="space-y-8">
         {/* Welcome Section */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-slate-900">
+          <h1 className="text-xl md:text-4xl font-bold text-slate-900">
             Bienvenue,{" "}
             <span className="text-[#223268] bg-clip-text">
               {user?.NOM_CLIENT || "Utilisateur"}
@@ -137,6 +170,25 @@ export default function DashboardPage() {
           {/* Contrat card */}
           <ContratCard />
 
+          {getTypeUser() == 2 && (
+            <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-yellow-700">
+                  Nombre Total des contrats
+                </CardTitle>
+                <MapPin className="h-6 w-6 text-yellow-600 group-hover:scale-110 transition-transform" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-yellow-900">
+                  {totalContratConvention}
+                </div>
+                <p className="text-xs text-yellow-600 mt-1">
+                  Nombre total de tous les contrats pour les conventions
+                </p>
+                <div className="mt-3"></div>
+              </CardContent>
+            </Card>
+          )}
           <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-green-700">
@@ -211,7 +263,7 @@ export default function DashboardPage() {
             <div className="divide-y divide-slate-100">
               {getTypeUser() == 1 &&
                 contrats != null &&
-                contrats!.map((contract: Contrat) => (
+                contrats.slice(0, 8)!.map((contract: Contrat) => (
                   <div
                     key={Date.now() + contract.NumeroContrat}
                     className="p-6 hover:bg-slate-50 transition-colors cursor-pointer group"
@@ -242,7 +294,7 @@ export default function DashboardPage() {
                           {contract.EtatPolice}
                         </Badge>
                         <p className="text-sm text-slate-500 mt-1">
-                          Expire: {contract.DateFinPolice ?? "N/A"}
+                          Expire: {contract.DateFinPolice ?? ""}
                         </p>
                       </div>
                     </div>
@@ -251,7 +303,7 @@ export default function DashboardPage() {
 
               {getTypeUser() == 2 &&
                 conventions != null &&
-                conventions!.map((contract: Convention) => (
+                conventions!.slice(1, 6).map((contract: Convention) => (
                   <div
                     key={Date.now() + contract.NUMERO_DE_CONVENTION}
                     className="p-6 hover:bg-slate-50 transition-colors cursor-pointer group"
@@ -263,7 +315,7 @@ export default function DashboardPage() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[#223268] rounded-lg flex items-center justify-center">
                           <FileText className="w-6 h-6 text-white" />
                         </div>
                         <div>
@@ -283,7 +335,7 @@ export default function DashboardPage() {
                           {contract.EtatPolice}
                         </Badge>
                         <p className="text-sm text-slate-500 mt-1">
-                          Expire: {contract.DateFinPolice ?? "N/A"}
+                          Expire: {contract.DateFinPolice ?? ""}
                         </p>
                       </div> */}
                     </div>

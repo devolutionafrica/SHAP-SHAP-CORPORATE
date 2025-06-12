@@ -46,7 +46,11 @@ export default function LoginPage() {
           localStorage.setItem("username", response.username);
           document.cookie = "isAuth=true; path=/";
           setUserName(response.username);
-          router.push("/dashboard");
+          if (response.isFirstConnection == 1) {
+            router.push("/dashboard");
+          } else {
+            router.push("/login/first-connexion");
+          }
         },
         onError: (error) => {
           console.error("Erreur de connexion :", error);

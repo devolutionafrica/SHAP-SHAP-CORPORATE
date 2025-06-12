@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Protéger ces chemins (inchangé)
 const protectedRoutes = [
   "/dashboard",
   "/profile",
   "/admin",
   "/agences",
   "/contrat",
-]; // "/agences" et "/contrat" sont déjà dans matcher, mais c'est bien de les avoir ici si vous les considérez comme "protégés"
+  "login/first-connexion",
+];
 
 export function middleware(request: NextRequest) {
   const isAuth = request.cookies.get("isAuth")?.value;
@@ -34,6 +34,7 @@ export const config = {
     "/profile/:path*",
     "/admin/:path*",
     "/",
+    "/first-connexion",
     "/agences",
     "/contrat/:path*",
   ],

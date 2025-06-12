@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   table: {
-    display: "table",
     width: "auto",
     marginVertical: 10,
     borderStyle: "solid",
@@ -77,12 +76,7 @@ const CotisationsPDF = ({ data }: { data: CotisationClientIndiv[] }) => (
         {/* Header */}
         <View style={[styles.row, styles.header]}>
           {headers.map((header, i) => (
-            <Text
-              key={header}
-              style={[styles.cell, i == headers.length - 1 && styles.lastCell]}
-            >
-              {header}
-            </Text>
+            <Text key={header}>{header}</Text>
           ))}
         </View>
 

@@ -6,7 +6,7 @@ import { useContratContext } from "@/hooks/contexts/useContratContext";
 import { useEffect } from "react";
 import { useConvention } from "@/hooks/useConvention";
 import { useUser } from "@/hooks/contexts/userContext";
-import { Convention } from "@/app/Types/type";
+import { Contrat, Convention } from "@/app/Types/type";
 
 export default function ContratCard({}) {
   const useContratQuery = useContrat();
@@ -16,32 +16,36 @@ export default function ContratCard({}) {
     conventions,
     setConvention,
     handleLoadConvention,
+    handleLoadContrat,
   } = useContratContext();
   const loaderConvention = useConvention();
 
   const { getTypeUser, labelType } = useUser();
 
-  const handleLoadContrats = async () => {
-    await useContratQuery
-      .refetch()
-      .then((result) => {
-        if (result.data) {
-          setContrats(result.data.data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error loading contrats:", error);
-        alert("Erreur lors du chargement des contrats.");
-      });
-  };
+  // const handleLoadContrats = async () => {
+  //   await useContratQuery
+  //     .refetch()
+  //     .then((result) => {
+  //       if (result.data) {
+  //         setContrats(result.data.data as Contrat[]);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error loading contrats:", error);
+  //       alert("Erreur lors du chargement des contrats.");
+  //     });
+  // };
 
   useEffect(() => {
+    console.log("Le type de personne connecté est ", getTypeUser());
     if (getTypeUser() == 1) {
-      handleLoadContrats();
-    } else {
+      handleLoadContrat();
+    }
+
+    if (getTypeUser() == 2) {
       handleLoadConvention();
     }
-  }, [contrats, conventions]);
+  }, [contrats, conventions, getTypeUser()]);
 
   return (
     <div>
