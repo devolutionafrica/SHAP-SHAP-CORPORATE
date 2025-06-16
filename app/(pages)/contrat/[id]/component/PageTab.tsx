@@ -16,7 +16,7 @@ const PageTabs = ({
     setCurrentTab(label);
   };
 
-  console.log("Current Tab:", currentTab);
+  
 
   return (
     // Conteneur principal pour le défilement horizontal

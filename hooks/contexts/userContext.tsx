@@ -3,7 +3,7 @@ interface UserContextType {
   user: User | null;
   typeUtilisateur: Number | undefined;
   setTypeUtilisateur: (number: Number) => void;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   percentProfile?: number | null;
   setPercentProfile?: (percent: number) => void;
   getTypeUser: any;

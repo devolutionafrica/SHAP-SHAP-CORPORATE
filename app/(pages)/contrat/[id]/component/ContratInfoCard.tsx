@@ -8,7 +8,7 @@ const ContractInfoCard = () => {
   // Fonction utilitaire pour formater les dates
   const formatDate = (dateString: string | undefined): string => {
     if (!dateString) {
-      return "N/A";
+      return "";
     }
 
     return dayjs(dateString).format("DD/MM/YYYY");

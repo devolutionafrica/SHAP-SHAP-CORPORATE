@@ -3,6 +3,8 @@ import { Contrat, Convention, User } from "@/app/Types/type";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useConvention } from "../useConvention";
 import { useContrat } from "../useContrat";
+import { useAuthContext } from "./authContext";
+import { useUser } from "./userContext";
 interface ContratContextType {
   contrats: Contrat[] | null;
   contrat: Contrat | null;
@@ -13,6 +15,7 @@ interface ContratContextType {
   handleLoadConvention: any;
   handleLoadContrat: any;
   totalContratConvention: number;
+  initializeData: any;
 }
 
 const ContratContext = createContext<ContratContextType | undefined>(undefined);
@@ -35,7 +38,7 @@ const ContratProvider: React.FC<{ children: React.ReactNode }> = ({
   const [totalContratConvention, setTotalContratConvention] = useState(0);
   const loaderConvention = useConvention();
   const loadContrat = useContrat();
-
+  const { getTypeUser, labelType, setTypeUtilisateur, setUser } = useUser();
   const handleLoadConvention = async () => {
     await loaderConvention
       .refetch()
@@ -67,11 +70,19 @@ const ContratProvider: React.FC<{ children: React.ReactNode }> = ({
       });
   };
 
+  const initializeData = () => {
+    setContrats([]);
+    setConvention([]);
+    setTypeUtilisateur(0);
+    setUser(null);
+  };
+
   useEffect(() => {}, [contrats, contrat]);
 
   return (
     <ContratContext.Provider
       value={{
+        initializeData,
         totalContratConvention,
         handleLoadContrat,
         contrats,

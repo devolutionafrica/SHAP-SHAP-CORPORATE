@@ -102,7 +102,7 @@ export default function ContratPage() {
   }, []);
 
   useEffect(() => {
-    // handleLoadContrat();
+    handleLoadContrat();
     setCurrentPage(1);
   }, [searchTerm]);
 

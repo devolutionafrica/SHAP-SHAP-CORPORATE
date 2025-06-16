@@ -18,12 +18,12 @@ export const poolPromiseDHW = new sql.ConnectionPool(altDbConfig)
   .connect()
   .then((pool) => {
     console.log(
-      `✅ Connecté à SQL Server "${altDbConfig.server}" (DB: "${altDbConfig.database}")`
+      `Connecté à SQL Server "${altDbConfig.server}" (DB: "${altDbConfig.database}")`
     );
     return pool;
   })
   .catch((err) => {
-    console.error("❌ Erreur connexion SQL Server", err);
+    console.error("Erreur connexion SQL Server", err);
     throw err;
   });
 

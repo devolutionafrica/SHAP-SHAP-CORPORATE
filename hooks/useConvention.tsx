@@ -8,7 +8,7 @@ export const useConvention = () => {
 
   const username = getUsername();
   return useQuery({
-    queryKey: ["conventions", Date.now()],
+    queryKey: ["conventions", username],
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await api.get(`/corporate/${username}/convention`, {
@@ -19,9 +19,9 @@ export const useConvention = () => {
       });
       return response.data;
     },
-    staleTime: Infinity,
-    // retry: false,
-    enabled: false,
+
+    retry: true,
+    enabled: true,
   });
 };
 

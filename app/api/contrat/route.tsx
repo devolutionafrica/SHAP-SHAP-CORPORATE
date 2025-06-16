@@ -11,12 +11,7 @@ export async function GET(request: NextRequest) {
 
   const idClient = request.nextUrl.searchParams.get("username");
 
-  // if (!idClient) {
-  //   return NextResponse.json(
-  //     { error: "Paramètres manquants" },
-  //     { status: 400 }
-  //   );
-  // }
+ 
 
   try {
     const pool = await poolPromise;

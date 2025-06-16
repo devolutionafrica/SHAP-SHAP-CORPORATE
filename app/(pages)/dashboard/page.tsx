@@ -102,41 +102,32 @@ export default function DashboardPage() {
       });
   };
 
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   handleLoadUserData();
+  //   handleLoadAgences();
+
+  //   try {
+  //     handleLoadConvention();
+  //   } catch (e) {
+  //     console.log("Error loading convention:", e);
+  //   }
+
+  //   try {
+  //     handleLoadContrat();
+  //   } catch (e) {
+  //     console.log("Error loading convention:", e);
+  //   }
+  // }, []);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     handleLoadUserData();
     handleLoadAgences();
-
-    try {
-      handleLoadConvention();
-    } catch (e) {
-      console.log("Error loading convention:", e);
-    }
-
-    try {
-      handleLoadContrat();
-    } catch (e) {
-      console.log("Error loading convention:", e);
-    }
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    handleLoadUserData();
-    handleLoadAgences();
-
-    try {
-      handleLoadConvention();
-    } catch (e) {
-      console.log("Error loading convention:", e);
-    }
-
-    try {
-      handleLoadContrat();
-    } catch (e) {
-      console.log("Error loading convention:", e);
-    }
-  }, [user, contrats, conventions]);
+    handleLoadConvention();
+    handleLoadContrat();
+    router.refresh();
+  }, [getTypeUser(), user, contrats, conventions]);
 
   if (!user) {
     return (
@@ -303,7 +294,7 @@ export default function DashboardPage() {
 
               {getTypeUser() == 2 &&
                 conventions != null &&
-                conventions!.slice(1, 6).map((contract: Convention) => (
+                conventions!.slice(0, 6).map((contract: Convention) => (
                   <div
                     key={Date.now() + contract.NUMERO_DE_CONVENTION}
                     className="p-6 hover:bg-slate-50 transition-colors cursor-pointer group"

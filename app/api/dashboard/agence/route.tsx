@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   const authResult = verifyAuthToken(request);
 
   if (authResult instanceof Response) {
-    return authResult; // Si c'est une réponse d'erreur, on la renvoie
+    return authResult; 
   }
   const pool = await poolPromise;
   const agences = await pool.request().query("SELECT * FROM AGENCES");

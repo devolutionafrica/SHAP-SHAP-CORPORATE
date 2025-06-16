@@ -25,12 +25,15 @@ import { useAuthContext } from "@/hooks/contexts/authContext";
 // Importation de Headless UI
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
+import { useContratContext } from "@/hooks/contexts/useContratContext";
 
 export default function HeaderComponent({}: {}) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, getTypeUser, labelType } = useUser();
   const { isAuth } = useAuthContext();
+
+  const { initializeData } = useContratContext();
 
   // État pour gérer l'ouverture/fermeture du menu mobile
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,6 +43,7 @@ export default function HeaderComponent({}: {}) {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("type_user");
+    initializeData();
     router.push("/login");
   };
 
@@ -71,7 +75,7 @@ export default function HeaderComponent({}: {}) {
     } else {
       setActiveTab("Accueil");
     }
-  }, [pathname]);
+  }, [pathname, labelType()]);
 
   const handleNavigate = (url: string, name: string) => {
     setActiveTab(name);
