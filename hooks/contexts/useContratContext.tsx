@@ -1,6 +1,6 @@
 "use client";
 import { Contrat, Convention, User } from "@/app/Types/type";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useConvention } from "../useConvention";
 import { useContrat } from "../useContrat";
 interface ContratContextType {
@@ -66,6 +66,8 @@ const ContratProvider: React.FC<{ children: React.ReactNode }> = ({
         alert("Erreur lors du chargement de la convention.");
       });
   };
+
+  useEffect(() => {}, [contrats, contrat]);
 
   return (
     <ContratContext.Provider

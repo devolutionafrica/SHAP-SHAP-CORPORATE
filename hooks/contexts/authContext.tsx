@@ -33,9 +33,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log("Username from localStorage:", username);
   }, [isAuth, username]);
 
-  const getUsername = () => {
+  const getUsername = (key?: string | null) => {
     if (typeof window !== "undefined") {
-      const storedUsername = localStorage.getItem("username");
+      key = key ?? "username";
+      const storedUsername = localStorage.getItem(key);
 
       return storedUsername;
     }

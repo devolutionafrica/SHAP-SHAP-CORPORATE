@@ -48,8 +48,6 @@ export default function DashboardPage() {
 
   const { agences, setAgence } = useAgenceContext();
 
-  const loaderContrat = useContrat();
-
   const formatTypeUser = (civility: string) => {
     switch (civility) {
       case "MONSIEUR":
@@ -62,22 +60,6 @@ export default function DashboardPage() {
       default:
         return 2;
     }
-  };
-
-  const fetchContrat = async () => {
-    await loaderContrat
-      .refetch()
-      .then((data) => {
-        if (data.data) {
-          console.log("Contrat Chargé", data.data);
-          setContrats(data.data as Contrat[]);
-        } else {
-          console.log("Contrat Non Chargé");
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
   const handleLoadUserData = async () => {
@@ -119,6 +101,24 @@ export default function DashboardPage() {
         alert("Erreur lors du chargement des agences.");
       });
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    handleLoadUserData();
+    handleLoadAgences();
+
+    try {
+      handleLoadConvention();
+    } catch (e) {
+      console.log("Error loading convention:", e);
+    }
+
+    try {
+      handleLoadContrat();
+    } catch (e) {
+      console.log("Error loading convention:", e);
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");

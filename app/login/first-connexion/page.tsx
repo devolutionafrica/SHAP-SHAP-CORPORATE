@@ -16,6 +16,8 @@ import { CheckCircle, MailWarning } from "lucide-react";
 const schema = z.object({
   oldPassword: z.string().min(6, "Mot de passe actuel requis"),
   newPassword: z.string().min(6, "Nouveau mot de passe trop court"),
+  email: z.string().email("Veuillez entrer votre adresse mail"),
+  phone: z.string().min(8, "Veuillez saisir un numéro valide"),
 });
 
 type PasswordFormData = z.infer<typeof schema>;
@@ -40,6 +42,8 @@ export default function WelcomeFirstLogin() {
       {
         newPassword: data.oldPassword,
         password: data.newPassword,
+        email: data.email,
+        phone: data.phone,
       },
       {
         onSuccess: (response) => {
@@ -59,27 +63,26 @@ export default function WelcomeFirstLogin() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br login-page">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }} // Animation de LoginPage
-        animate={{ opacity: 1, scale: 1 }} // Animation de LoginPage
-        transition={{ duration: 0.5 }} // Animation de LoginPage
-        className="flex flex-col md:flex-row bg-white backdrop-blur-md shadow-xl rounded-xl overflow-hidden max-w-4xl w-full h-[80vh]" // Classes de LoginPage
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col md:flex-row bg-white backdrop-blur-md shadow-xl rounded-xl md:overflow-hidden max-w-4xl w-full h-[80vh]" // Classes de LoginPage
       >
-        {/* Illustration - Adaptée de LoginPage */}
         <div className="relative hidden md:block w-full md:w-1/2 h-full">
           <Image
-            src={WelcomeIllustration} // Utilise l'illustration originale
+            src={WelcomeIllustration}
             alt="Bienvenue"
             layout="fill"
-            objectFit="contain" // Utilise "contain" pour les SVG pour éviter la distorsion
-            className="rounded-l-xl p-6" // Ajout de padding et arrondi à gauche
+            objectFit="contain"
+            className="rounded-l-xl p-6"
           />
         </div>
 
         {/* Formulaire - Adapté de LoginPage */}
-        <Card className="w-full md:w-1/2 p-6 flex flex-col justify-center">
+        <Card className="w-full md:w-1/2 p-6 flex flex-col justify-center sm:overflow-y-auto">
           <h1
             // Supprime les animations motion pour correspondre à LoginPage
-            className="font-extrabold text-[28px] text-[#223268] text-center" // Classes de LoginPage pour le titre
+            className="font-extrabold text-[28px] text-[#223268] text-center"
           >
             Bienvenue !
           </h1>
@@ -92,33 +95,64 @@ export default function WelcomeFirstLogin() {
             className="flex flex-col gap-4 mt-6"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <label className="flex flex-col text-sm">
-              Mot de passe actuel :
-              <input
-                type="password"
-                {...register("oldPassword")}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400" // rounded-md
-              />
-              {errors.oldPassword && (
-                <span className="text-red-500 text-xs mt-1">
-                  {errors.oldPassword.message}
-                </span>
-              )}
-            </label>
+            <div className="md:flex md:flex-row sm:flex-col gap-4">
+              <label className="flex flex-col text-sm">
+                Mot de passe actuel :
+                <input
+                  type="password"
+                  {...register("oldPassword")}
+                  className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400" // rounded-md
+                />
+                {errors.oldPassword && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {errors.oldPassword.message}
+                  </span>
+                )}
+              </label>
 
-            <label className="flex flex-col text-sm">
-              Nouveau mot de passe :
-              <input
-                type="password"
-                {...register("newPassword")}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400" // rounded-md
-              />
-              {errors.newPassword && (
-                <span className="text-red-500 text-xs mt-1">
-                  {errors.newPassword.message}
-                </span>
-              )}
-            </label>
+              <label className="flex flex-col text-sm">
+                Nouveau mot de passe :
+                <input
+                  type="password"
+                  {...register("newPassword")}
+                  className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400" // rounded-md
+                />
+                {errors.newPassword && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {errors.newPassword.message}
+                  </span>
+                )}
+              </label>
+            </div>
+
+            <div className="md:flex md:flex-row sm:flex-col gap-4">
+              <label className="flex flex-col text-sm">
+                Adresse email:
+                <input
+                  type="email"
+                  {...register("email")}
+                  className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400" // rounded-md
+                />
+                {errors.email && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
+                  </span>
+                )}
+              </label>
+              <label className="flex flex-col text-sm">
+                Numéro téléphone :
+                <input
+                  type="number"
+                  {...register("phone")}
+                  className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400" // rounded-md
+                />
+                {errors.phone && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {errors.phone.message}
+                  </span>
+                )}
+              </label>
+            </div>
 
             {useChangePassword.isSuccess && (
               <div>
@@ -147,7 +181,7 @@ export default function WelcomeFirstLogin() {
                 type="submit"
                 className="!bg-[#ca9a2c] text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-200"
               >
-                {useChangePassword.isPending
+                {useChangePassword.isPending && !useChangePassword.isSuccess
                   ? "Chargemen ..."
                   : "Modifier et continuer"}
               </button>

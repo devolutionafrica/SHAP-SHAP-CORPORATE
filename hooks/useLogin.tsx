@@ -21,19 +21,25 @@ export const useLogin = () =>
 export const useResetPassword = () => {
   const { getUsername } = useAuthContext();
   const login = getUsername();
-  const token = localStorage.getItem("token");
+
   return useMutation({
     mutationFn: async ({
       password,
       newPassword,
+      phone,
+      email,
     }: {
       password: string;
       newPassword: string;
+      phone: string;
+      email: string;
     }) => {
       const response = await api.patch("/auth/password/reset", {
         login,
         password,
         newPassword,
+        phone,
+        email,
       });
       return response.data;
     },

@@ -214,42 +214,50 @@ export default function AdhesionTable() {
           </Table>
         </div>
 
-        {/* Pagination */}
-        {totalPages > 0 && ( // Only show pagination if there are pages
+        {totalPages > 0 && (
           <div className="flex flex-col sm:flex-row justify-between items-center p-4 bg-gray-50 border-t border-gray-200 flex-wrap gap-4 rounded-b-xl">
             <span className="text-sm text-gray-600 font-semibold">
               Page {currentPage} sur {totalPages}
             </span>
             <div className="flex space-x-2">
+              {/* Bouton Premier : Masqué sur les très petits écrans, visible à partir de 'sm' */}
               <MuiButton
                 onClick={() => handlePageChange(1)}
                 disabled={currentPage === 1 || loaderConvention.isLoading}
-                className="hidden sm:flex px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+                className="hidden sm:inline-flex px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200 items-center justify-center"
               >
                 <ChevronsLeft className="h-4 w-4 mr-1" /> Premier
               </MuiButton>
+
+              {/* Bouton Précédent : Texte masqué sur les très petits écrans, icône seule */}
               <MuiButton
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1 || loaderConvention.isLoading}
-                className="px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+                className="px-2 sm:px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center"
               >
-                <ChevronLeft className="h-4 w-4 mr-1" /> Précédent
+                <ChevronLeft className="h-4 w-4 mr-0 sm:mr-1" />{" "}
+                <span className="hidden sm:inline">Précédent</span>
               </MuiButton>
+
+              {/* Bouton Suivant : Texte masqué sur les très petits écrans, icône seule */}
               <MuiButton
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={
                   currentPage === totalPages || loaderConvention.isLoading
                 }
-                className="px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+                className="px-2 sm:px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center"
               >
-                Suivant <ChevronRight className="h-4 w-4 ml-1" />
+                <span className="hidden sm:inline">Suivant</span>{" "}
+                <ChevronRight className="h-4 w-4 ml-0 sm:ml-1" />
               </MuiButton>
+
+              {/* Bouton Dernier : Masqué sur les très petits écrans, visible à partir de 'sm' */}
               <MuiButton
                 onClick={() => handlePageChange(totalPages)}
                 disabled={
                   currentPage === totalPages || loaderConvention.isLoading
                 }
-                className="hidden sm:flex px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+                className="hidden sm:inline-flex px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200 items-center justify-center"
               >
                 Dernier <ChevronsRight className="h-4 w-4 ml-1" />
               </MuiButton>

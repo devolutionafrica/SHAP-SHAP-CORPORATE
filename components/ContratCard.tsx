@@ -18,23 +18,8 @@ export default function ContratCard({}) {
     handleLoadConvention,
     handleLoadContrat,
   } = useContratContext();
-  const loaderConvention = useConvention();
 
   const { getTypeUser, labelType } = useUser();
-
-  // const handleLoadContrats = async () => {
-  //   await useContratQuery
-  //     .refetch()
-  //     .then((result) => {
-  //       if (result.data) {
-  //         setContrats(result.data.data as Contrat[]);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error loading contrats:", error);
-  //       alert("Erreur lors du chargement des contrats.");
-  //     });
-  // };
 
   useEffect(() => {
     console.log("Le type de personne connecté est ", getTypeUser());
@@ -45,7 +30,7 @@ export default function ContratCard({}) {
     if (getTypeUser() == 2) {
       handleLoadConvention();
     }
-  }, [contrats, conventions, getTypeUser()]);
+  }, [, contrats, conventions, getTypeUser()]);
 
   return (
     <div>

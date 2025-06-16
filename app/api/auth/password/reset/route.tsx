@@ -12,7 +12,7 @@ export async function PATCH(request: NextRequest) {
       status: 401,
     });
 
-  const { login, password, newPassword } = await request.json();
+  const { login, password, newPassword, phone, email } = await request.json();
 
   const user = await findUserByUsername(login!);
 
@@ -48,7 +48,50 @@ export async function PATCH(request: NextRequest) {
          SET MOT_DE_PASSE = @NewPassword, ISFIRSTCONNEXION=1
          WHERE LOGIN = @Login
         `);
+    let idClientUnique = await pool.request().input("Login", sql.VarChar, login)
+      .query(`
+      select u.ide_client_unique
+      from utilisateur u
+      where u.login = @Login
+      `);
+    idClientUnique = idClientUnique.recordset[0].ide_client_unique;
+    console.log("IDE client \n\n\n:", idClientUnique);
+    await pool
+      .request()
+      .input("Email", sql.VarChar, email)
+      .input("Login", sql.VarChar, login)
+      .input("IDE_CU", sql.BigInt, idClientUnique)
+      .input("phone", sql.VarChar, phone).query(`
+        BEGIN TRY
+          BEGIN TRANSACTION;
 
+          -- Première mise à jour
+          UPDATE Utilisateur
+          SET EMAIL = @Email,
+              Mobile = @phone
+          WHERE LOGIN = @Login;
+
+          -- Deuxième mise à jour
+          UPDATE CLIENT_UNIQUE
+          SET TELEPHONE = @phone
+          WHERE IDE_CLIENT_UNIQUE = @IDE_CU;
+
+          -- Si tout se passe bien, validez la transaction
+          COMMIT TRANSACTION;
+      END TRY
+        BEGIN CATCH
+            -- Si une erreur survient, annulez la transaction
+            IF @@TRANCOUNT > 0
+                ROLLBACK TRANSACTION;
+
+            -- Vous pouvez loguer l'erreur ou la remonter si nécessaire
+            -- Exemple pour remonter l'erreur à l'application
+            DECLARE @ErrorMessage NVARCHAR(MAX), @ErrorSeverity INT, @ErrorState INT;
+            SELECT @ErrorMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE();
+
+            RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+        END CATCH;
+      `);
     return NextResponse.json({}, { status: 200 });
   } catch (err) {
     console.error("Erreur SQL", err);

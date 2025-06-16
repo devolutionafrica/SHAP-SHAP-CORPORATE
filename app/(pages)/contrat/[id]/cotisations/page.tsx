@@ -22,6 +22,7 @@ import {
   Box,
   CircularProgress,
   Skeleton,
+  IconButton,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -34,6 +35,7 @@ import { useCotisationTotal } from "@/hooks/useSummaryCotisation";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useUser } from "@/hooks/contexts/userContext";
 import ContractPrintView from "./ContratPrintView";
+import { BugPlay } from "lucide-react";
 
 dayjs.extend(customParseFormat);
 
@@ -339,6 +341,9 @@ export default function CotisationPage() {
                         </TableCell>
                         <TableCell className="text-center">
                           {cotisation.EtatQuittance}
+                          <button className="px-6 py-2 mx-6 bg-[#22326866] border-[#223268] text-[#223268] text-[11px] rounded shadow-sm flex flex-row gap-2">
+                            Régler
+                          </button>
                         </TableCell>
                       </TableRow>
                     ))

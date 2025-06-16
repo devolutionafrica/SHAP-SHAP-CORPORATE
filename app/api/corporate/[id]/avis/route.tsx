@@ -12,10 +12,10 @@ export async function GET(
   const authResult = verifyAuthToken(request);
   if (authResult instanceof NextResponse) return authResult;
 
-  // Récupération des paramètres de requête
   const params = await context.params;
   console.log("params: \n\n", params.id);
   const convention = params.id;
+  const date = request.nextUrl.searchParams.get("ANNEE");
   const codeFiliale = "CM_VIE";
 
   if (!convention) {
@@ -27,7 +27,7 @@ export async function GET(
 
   try {
     const pool = await poolPromiseDHW;
-    const date = new Date().getFullYear() - 1;
+
     console.log("date: \n\n", date);
     const result = await pool
       .request()

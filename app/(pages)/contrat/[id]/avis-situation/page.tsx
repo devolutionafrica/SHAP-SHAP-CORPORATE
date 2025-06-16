@@ -4,18 +4,22 @@ import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import NotFound from "@/public/avis_not_found.svg";
 import Image from "next/image";
+import dayjs from "dayjs";
 import { Select } from "@mui/material";
+import YearSelector from "./Components/YearSelector";
 const ReportViewerAndDownloader = () => {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPdf, setShowPdf] = useState(false);
+  const currentYear = dayjs().year();
+  const [selectedYear, setSelectedYead] = useState(currentYear - 1);
 
   const param = useParams();
 
   const id = param.id;
 
-  const apiUrl = `/api/generate-pdf/avis?police=${id}`;
+  const apiUrl = `/api/generate-pdf/avis?police=${id}&ANNEE=${selectedYear}`;
 
   const fetchAndDisplayPdf = async () => {
     setLoading(true);
@@ -85,48 +89,59 @@ const ReportViewerAndDownloader = () => {
       style={{ padding: "20px", textAlign: "center" }}
       className="my-12 shadow-lg w-auto rounded-sm"
     >
-      <h1>Rapport de Situation</h1>
+      <div className="items-center flex flex-col">
+        <h1 className="font-extrabold">Rapport de Situation</h1>
 
-      <button
-        onClick={
-          showPdf == false ? fetchAndDisplayPdf : () => setShowPdf(false)
-        }
-        disabled={loading}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          backgroundColor: "#223268",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: loading ? "not-allowed" : "pointer",
-          opacity: loading ? 0.7 : 1,
-          marginRight: "10px",
-        }}
-      >
-        {loading
-          ? "Chargement du PDF..."
-          : showPdf == true
-          ? "Masquer le PDF"
-          : "Afficher le PDF"}
-      </button>
+        <div className="max-w-[220px]">
+          <YearSelector
+            onSelectYear={setSelectedYead}
+            selectedYear={selectedYear}
+          />
+        </div>
 
-      <button
-        onClick={handleDownloadPdf}
-        disabled={!pdfUrl || loading}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          backgroundColor: "#ca9a2c",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: !pdfUrl || loading ? "not-allowed" : "pointer",
-          opacity: !pdfUrl || loading ? 0.9 : 1,
-        }}
-      >
-        Télécharger le PDF
-      </button>
+        <div className="flex flex-row my-4">
+          <button
+            onClick={
+              showPdf == false ? fetchAndDisplayPdf : () => setShowPdf(false)
+            }
+            disabled={loading}
+            style={{
+              padding: "10px 20px",
+              fontSize: "16px",
+              backgroundColor: "#223268",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.7 : 1,
+              marginRight: "10px",
+            }}
+          >
+            {loading
+              ? "Chargement du PDF..."
+              : showPdf == true
+              ? "Masquer le PDF"
+              : "Afficher le PDF"}
+          </button>
+
+          <button
+            onClick={handleDownloadPdf}
+            disabled={!pdfUrl || loading}
+            style={{
+              padding: "10px 20px",
+              fontSize: "16px",
+              backgroundColor: "#ca9a2c",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: !pdfUrl || loading ? "not-allowed" : "pointer",
+              opacity: !pdfUrl || loading ? 0.9 : 1,
+            }}
+          >
+            Télécharger le PDF
+          </button>
+        </div>
+      </div>
 
       {error && (
         <p style={{ color: "red", marginTop: "10px" }}>Erreur: {error}</p>
@@ -150,7 +165,7 @@ const ReportViewerAndDownloader = () => {
             title="Aperçu du rapport"
             width="100%"
             height="100%"
-            style={{ border: "none" }}
+            className="border-2 rounded-lg"
             // Vous pouvez ajouter allowFullScreen si nécessaire
           >
             Votre navigateur ne supporte pas les iframes, ou le PDF ne peut pas

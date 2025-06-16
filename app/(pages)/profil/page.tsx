@@ -17,8 +17,9 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+
 import { useUpdateProfile } from "@/hooks/useUpdateProfil";
+import { useAuthContext } from "@/hooks/contexts/authContext";
 
 dayjs.extend(customParseFormat);
 
@@ -52,6 +53,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 export default function ProfilPage() {
   const { user, getTypeUser } = useUser();
+  const { getUsername } = useAuthContext();
   const [isEditing, setIsEditing] = useState(false);
   const updateUser = useUpdateProfile();
 
@@ -92,7 +94,7 @@ export default function ProfilPage() {
   const onSubmit = async (data: ProfileFormData) => {
     try {
       const request = {
-        login: localStorage.getItem("username"),
+        // login: getUsername(),
         telephone: data.TELEPHONE,
         profession: data.PROFESSION,
         lieuNaissance: data.LIEU_NAISSANCE,

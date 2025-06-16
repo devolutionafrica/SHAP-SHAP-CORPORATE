@@ -91,7 +91,6 @@ export default function ContratPage() {
     return filteredContrats.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredContrats, currentPage, itemsPerPage]);
 
-  // Gérer le changement de page de la pagination
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -100,8 +99,12 @@ export default function ContratPage() {
 
   useEffect(() => {
     handleLoadContrat();
+  }, []);
+
+  useEffect(() => {
+    // handleLoadContrat();
     setCurrentPage(1);
-  }, [searchTerm, contrats]);
+  }, [searchTerm]);
 
   const rowVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -262,28 +265,30 @@ export default function ContratPage() {
               <MuiButton
                 onClick={() => handlePageChange(1)}
                 disabled={currentPage === 1 || contratLoad.isLoading}
-                className="hidden sm:flex px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+                className="hidden sm:inline-flex px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200 items-center justify-center"
               >
                 <ChevronsLeft className="h-4 w-4 mr-1" /> Premier
               </MuiButton>
               <MuiButton
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1 || contratLoad.isLoading}
-                className="px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+                className="px-2 sm:px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center"
               >
-                <ChevronLeft className="h-4 w-4 mr-1" /> Précédent
+                <ChevronLeft className="h-4 w-4 mr-0 sm:mr-1" />{" "}
+                <span className="hidden sm:inline">Précédent</span>
               </MuiButton>
               <MuiButton
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages || contratLoad.isLoading}
-                className="px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+                className="px-2 sm:px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center"
               >
-                Suivant <ChevronRight className="h-4 w-4 ml-1" />
+                <span className="hidden sm:inline">Suivant</span>{" "}
+                <ChevronRight className="h-4 w-4 ml-0 sm:ml-1" />
               </MuiButton>
               <MuiButton
                 onClick={() => handlePageChange(totalPages)}
                 disabled={currentPage === totalPages || contratLoad.isLoading}
-                className="hidden sm:flex px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+                className="hidden sm:inline-flex px-3 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 transition-colors duration-200 items-center justify-center"
               >
                 Dernier <ChevronsRight className="h-4 w-4 ml-1" />
               </MuiButton>

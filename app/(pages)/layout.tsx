@@ -15,11 +15,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="p-2 relative ">
+    <div className="p-2 relative">
       {<HeaderComponent />}
 
       {/* Main Content */}
-      <div className="p-4">{children}</div>
+      <div className="md:p-4">{children}</div>
     </div>
   );
 }
