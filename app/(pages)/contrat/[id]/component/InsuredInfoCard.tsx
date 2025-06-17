@@ -10,27 +10,28 @@ import dayjs from "dayjs"; // Importer dayjs
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
 // dayjs.extend(customParseFormat);
 
+const formatDate = (dateString: string | undefined): string => {
+  if (!dateString) {
+    return ""; // Retourne "" si la date est undefined ou null
+  }
+
+  // Tente de parser la date. Si dateString est "YYYYMMDD", dayjs devrait le gérer.
+  // Si vous rencontrez des problèmes, et que le format est strict "YYYYMMDD",
+  // vous pouvez utiliser : dayjs(dateString, "YYYYMMDD").format("DD/MM/YYYY");
+  // (nécessite le plugin customParseFormat si ce n'est pas un format reconnu par défaut)
+  try {
+    const date = dayjs(dateString);
+    if (date.isValid()) {
+      return date.format("DD/MM/YYYY");
+    }
+  } catch (error) {
+    console.error("Error formatting date:", dateString, error);
+  }
+  return dateString;
+};
+
 export const InsuredInfoCard = ({ user }: { user: User }) => {
   // Fonction utilitaire pour formater les dates
-  const formatDate = (dateString: string | undefined): string => {
-    if (!dateString) {
-      return ""; // Retourne "" si la date est undefined ou null
-    }
-
-    // Tente de parser la date. Si dateString est "YYYYMMDD", dayjs devrait le gérer.
-    // Si vous rencontrez des problèmes, et que le format est strict "YYYYMMDD",
-    // vous pouvez utiliser : dayjs(dateString, "YYYYMMDD").format("DD/MM/YYYY");
-    // (nécessite le plugin customParseFormat si ce n'est pas un format reconnu par défaut)
-    try {
-      const date = dayjs(dateString);
-      if (date.isValid()) {
-        return date.format("DD/MM/YYYY");
-      }
-    } catch (error) {
-      console.error("Error formatting date:", dateString, error);
-    }
-    return dateString; // Retourne la chaîne originale si le formatage échoue
-  };
 
   return (
     <div className="bg-white rounded shadow-lg p-6">

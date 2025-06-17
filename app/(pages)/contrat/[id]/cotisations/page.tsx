@@ -341,9 +341,11 @@ export default function CotisationPage() {
                         </TableCell>
                         <TableCell className="text-center">
                           {cotisation.EtatQuittance}
-                          <button className="px-6 py-2 mx-6 bg-[#22326866] border-[#223268] text-[#223268] text-[11px] rounded shadow-sm flex flex-row gap-2">
-                            Régler
-                          </button>
+                          {cotisation.EtatQuittance == "Impayée" && (
+                            <button className="px-6 py-2 mx-6 bg-[#22326866] border-[#223268] text-[#223268] text-[11px] rounded shadow-sm flex flex-row gap-2">
+                              Régler
+                            </button>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))

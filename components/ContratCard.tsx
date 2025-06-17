@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useConvention } from "@/hooks/useConvention";
 import { useUser } from "@/hooks/contexts/userContext";
 import { Contrat, Convention } from "@/app/Types/type";
+import { useRouter } from "next/navigation";
 
 export default function ContratCard({}) {
   const useContratQuery = useContrat();
@@ -20,6 +21,7 @@ export default function ContratCard({}) {
   } = useContratContext();
 
   const { getTypeUser, labelType } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     console.log("Le type de personne connecté est ", getTypeUser());
@@ -59,6 +61,9 @@ export default function ContratCard({}) {
               variant="ghost"
               size="sm"
               className="text-blue-700 hover:bg-blue-200 p-0"
+              onClick={() =>
+                router.push(getTypeUser() == 1 ? "/contrat" : "/conventions")
+              }
             >
               Voir les détails →
             </Button>

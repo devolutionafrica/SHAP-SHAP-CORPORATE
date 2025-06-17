@@ -102,24 +102,6 @@ export default function DashboardPage() {
       });
   };
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   handleLoadUserData();
-  //   handleLoadAgences();
-
-  //   try {
-  //     handleLoadConvention();
-  //   } catch (e) {
-  //     console.log("Error loading convention:", e);
-  //   }
-
-  //   try {
-  //     handleLoadContrat();
-  //   } catch (e) {
-  //     console.log("Error loading convention:", e);
-  //   }
-  // }, []);
-
   useEffect(() => {
     const token = localStorage.getItem("token");
     handleLoadUserData();
@@ -199,6 +181,7 @@ export default function DashboardPage() {
                   variant="ghost"
                   size="sm"
                   className="text-green-700 hover:bg-green-200 p-0"
+                  onClick={() => router.push("/agences")}
                 >
                   Localiser →
                 </Button>
@@ -218,7 +201,9 @@ export default function DashboardPage() {
                 {percentProfile} %
               </div>
               <Progress value={percentProfile} className="mt-2 h-2" />
-              <ButtonOutline>Compléter →</ButtonOutline>
+              <ButtonOutline onClick={() => router.push("/profil")}>
+                Compléter →
+              </ButtonOutline>
             </CardContent>
           </Card>
         </div>
