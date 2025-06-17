@@ -27,12 +27,12 @@ export default function ModernDashboard({
   useEffect(() => {}, [id, contrat]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8 font-sans text-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-1/2 md:p-8 font-sans text-gray-800">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="max-w-6xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden p-6 md:p-10"
+        className="max-w-6xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden p-1 md:p-10"
       >
         <motion.h1
           initial={{ opacity: 0, scale: 0.9 }}

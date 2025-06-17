@@ -16,6 +16,8 @@ interface ContratContextType {
   handleLoadContrat: any;
   totalContratConvention: number;
   initializeData: any;
+  souscripteur: User | null;
+  setSouscripteur: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const ContratContext = createContext<ContratContextType | undefined>(undefined);
@@ -38,6 +40,7 @@ const ContratProvider: React.FC<{ children: React.ReactNode }> = ({
   const [totalContratConvention, setTotalContratConvention] = useState(0);
   const loaderConvention = useConvention();
   const loadContrat = useContrat();
+  const [souscripteur, setSouscripteur] = useState<User | null>(null);
   const { getTypeUser, labelType, setTypeUtilisateur, setUser } = useUser();
   const handleLoadConvention = async () => {
     await loaderConvention
@@ -82,6 +85,8 @@ const ContratProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <ContratContext.Provider
       value={{
+        souscripteur,
+        setSouscripteur,
         initializeData,
         totalContratConvention,
         handleLoadContrat,

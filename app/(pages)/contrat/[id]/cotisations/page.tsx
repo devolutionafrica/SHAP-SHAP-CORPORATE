@@ -45,7 +45,7 @@ export const formatNumberToFCFA = (num: number | null | undefined): string => {
 };
 
 export default function CotisationPage() {
-  const { contrat } = useContratContext();
+  const { contrat, souscripteur } = useContratContext();
   const [startDate, setStartDate] = useState<Dayjs>(
     dayjs(contrat?.DateDebutPolice)
   );
@@ -97,7 +97,6 @@ export default function CotisationPage() {
   const [printData, setPrintdata] = useState<any>(null);
 
   const preparedPrintData = () => {
-    // Vérifier que les données sont disponibles avant de les préparer
     if (
       !summaryCotisations ||
       cotisations === null ||
@@ -109,10 +108,10 @@ export default function CotisationPage() {
 
     try {
       return {
-        nom: contrat?.NomAssure || "",
-        prenoms: contrat?.PrenomsAssure || "",
-        adresse: contrat?.AdressePostaleAssure || "",
-        numero: contrat?.NumeroAssure || "",
+        nom: souscripteur?.NOM_CLIENT || "",
+        prenoms: souscripteur?.PRENOMS_CLIENT || "",
+        adresse: souscripteur?.ADRESSE_POSTALE || "",
+        numero: souscripteur?.TELEPHONE || "",
         numeroPolice: contrat?.NumeroContrat || "",
         libelleProduit: contrat?.DESC_PRODUIT || "",
         dateEffetPolice: contrat?.DateDebutPolice
@@ -121,8 +120,8 @@ export default function CotisationPage() {
         finEffetPolice: contrat?.DateFinPolice
           ? dayjs(contrat.DateFinPolice).format("DD/MM/YYYY")
           : "",
-        souscripteurNomComplet: `${contrat?.NomAssure || ""} ${
-          contrat?.PrenomsAssure || ""
+        souscripteurNomComplet: `${souscripteur?.NOM_CLIENT || ""} ${
+          souscripteur?.PRENOMS_CLIENT || ""
         }`.trim(),
         modeDePaiement: "N/A",
 
@@ -164,13 +163,10 @@ export default function CotisationPage() {
     }
   };
 
-  // Premier useEffect: Déclenche la récupération des données lorsque les dates ou l'ID du contrat changent.
   useEffect(() => {
     fetchCotisationData();
   }, [startDate, endDate, contratId]);
 
-  // Deuxième useEffect: Prépare les données pour l'impression une fois que les cotisations
-  // et le résumé des cotisations sont disponibles.
   useEffect(() => {
     if (
       cotisations !== null &&
@@ -179,7 +175,7 @@ export default function CotisationPage() {
     ) {
       setPrintdata(preparedPrintData());
     }
-  }, [cotisations, summaryCotisations]); // Dépend des données nécessaires à printData
+  }, [cotisations, summaryCotisations]);
 
   const componentRef = useRef<HTMLDivElement>(null);
 
@@ -194,10 +190,10 @@ export default function CotisationPage() {
       <Box p={3}>
         {contrat && (
           <div>
-            <div className="p-2 bg-[#223268] text-white rounded px-6 felx flex-row justify-between flex-wrap">
+            <div className="p-2 bg-[#223268] text-white rounded px-6 flex flex-wrap justify-between">
               <Grid
                 container
-                spacing={12}
+                spacing={{ xs: 2, md: 4 }}
                 className="flex flex-row justify-between"
               >
                 <Grid>
@@ -281,8 +277,8 @@ export default function CotisationPage() {
             {/* Table */}
             <TableContainer component={Paper}>
               <Table>
-                <TableHead className="bg-[#223268]">
-                  <TableRow>
+                <TableHead className="bg-[#223268] text-white">
+                  <TableRow className="text-white">
                     {[
                       "NUMÉRO QUITTANCE",
                       "DATE",
@@ -295,7 +291,7 @@ export default function CotisationPage() {
                       <TableCell
                         key={header}
                         sx={{ fontWeight: "500", fontSize: "12px" }}
-                        className="text-center text-[11px] text-white"
+                        className="text-center text-[12px] !text-white"
                       >
                         {header}
                       </TableCell>
@@ -404,7 +400,7 @@ export default function CotisationPage() {
                     {item.label}
                   </Typography>
                   <Typography fontWeight="bold">
-                    {formatNumberToFCFA(item.value)} FCFA
+                    {formatNumberToFCFA(item.value)} XOF
                   </Typography>
                 </Grid>
               ))}

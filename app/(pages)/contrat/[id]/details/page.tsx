@@ -13,12 +13,13 @@ import LoaderData from "@/components/LoaderComponent";
 import { useUserInfoById } from "@/hooks/useUserInfo";
 
 export default function ContractDetailsPage() {
-  const { contrat, setContrat } = useContratContext();
+  const { contrat, setContrat, setSouscripteur, souscripteur } =
+    useContratContext();
 
   const params = useParams();
   const id = params?.id;
   const [userId, setUserId] = useState();
-  const [user, setUser] = useState(null);
+
   const userDetails = useUserInfoById(contrat?.NumeroSouscripteur!);
   const contratDetails = useContratDetails(id as string);
   const fetchDetails = async () => {
@@ -28,7 +29,8 @@ export default function ContractDetailsPage() {
       if (result.data.sizes > 0) {
         setContrat(result.data.data[0] as Contrat);
       }
-      setUser(result.data.suscripber);
+
+      setSouscripteur(result.data.suscripber);
     } catch (error) {
       console.error("Error fetching contract details:", error);
     }
@@ -37,7 +39,7 @@ export default function ContractDetailsPage() {
   useEffect(() => {
     fetchDetails();
     // fetchUser();
-  }, [contrat, user]);
+  }, [contrat, souscripteur]);
 
   return (
     <motion.div
@@ -51,7 +53,7 @@ export default function ContractDetailsPage() {
       )}
       <div className="flex flex-row flex-wrap gap-4 items-stretch justify-start">
         {contratDetails.data && <ContractInfoCard />}
-        {user && <InsuredInfoCard user={user!} />}
+        {souscripteur && <InsuredInfoCard user={souscripteur!} />}
       </div>
     </motion.div>
   );

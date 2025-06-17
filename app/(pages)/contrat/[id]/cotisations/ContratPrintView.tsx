@@ -2,7 +2,6 @@
 import React from "react";
 import dayjs from "dayjs";
 
-// Définir les types (comme précédemment)
 interface QuittancePrintData {
   NUMERO_QUITTANCE: string;
   DATE_QUITTANCE: string;
@@ -35,14 +34,13 @@ interface ContractPrintViewProps {
     nombreTotalEncaissement: number;
     montantTotalEncaisse: number;
     nombreTotalImpayes: number;
-    montantTotalImpayes: number; // Attention: ce champ est dupliqué, assurez-vous que c'est intentionnel ou corrigez le type
+    montantTotalImpayes: number;
     echeanceAvanceNonReglee: number;
     nombreDeQuittancesEncaissees: number;
     montantTotalDesQuittancesEncaissees: number;
   };
 }
 
-// Le composant utilisant React.forwardRef
 const ContractPrintView = React.forwardRef<
   HTMLDivElement,
   ContractPrintViewProps
@@ -57,9 +55,10 @@ const ContractPrintView = React.forwardRef<
 
   return (
     <div ref={ref} className="p-6 bg-white shadow-lg print-page">
-      {/* Entête bleue ajoutée ici */}
+      {/* En-tête du document */}
+      {/* Supprimez le bg-[#223268] du h1, car le div parent le gère déjà */}
       <div className="bg-[#223268] text-white p-4 mb-4 rounded-t-lg">
-        <h1 className="text-2xl font-bold text-center">
+        <h1 className="text-2xl font-bold text-center p-4">
           QUITTANCES RÉGLÉES ET IMPAYÉES
         </h1>
       </div>
@@ -67,6 +66,7 @@ const ContractPrintView = React.forwardRef<
         Date Heure Edition: {printDate} {printTime}
       </p>
 
+      {/* Informations sur le Preneur d'assurance */}
       <div className="mb-6 border p-4 rounded-lg">
         <h2 className="text-lg font-semibold mb-3">
           Informations sur le Preneur d'assurance
@@ -96,6 +96,7 @@ const ContractPrintView = React.forwardRef<
         </div>
       </div>
 
+      {/* Informations sur le Souscripteur */}
       <div className="mb-6 border p-4 rounded-lg">
         <h2 className="text-lg font-semibold mb-3">
           Informations sur le Souscripteur
@@ -124,9 +125,12 @@ const ContractPrintView = React.forwardRef<
       <h2 className="text-lg font-semibold mb-3">Situation des Cotisations</h2>
       <div className="mb-6">
         <table className="w-full divide-y divide-gray-200 border border-gray-300">
+          {/* En-tête du tableau */}
+          {/* Les classes !bg-[#223268] sur thead et tr sont une bonne pratique Tailwind.
+              La règle dans le style jsx est là pour garantir l'impression. */}
           <thead className="!bg-[#223268]">
-            <tr className="font-[300] text-[11px]">
-              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-quittance-no">
+            <tr className="font-[300] text-[10px] !bg-[#223268] text-white">
+              <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase border-r print-col-quittance-no">
                 NUMERO QUITTANCE
               </th>
               <th className="px-2 py-2 text-left text-[0.6rem] text-white uppercase tracking-wider border-r print-col-date">
@@ -226,7 +230,7 @@ const ContractPrintView = React.forwardRef<
           <p>
             <strong>MONTANT TOTAL EMIS:</strong>{" "}
             <span className="text-[#223268]">
-              {formatNumberToFCFA(data.montantTotalEmis)} FCFA
+              {formatNumberToFCFA(data.montantTotalEmis)} XOF
             </span>
           </p>
           <p>
@@ -238,7 +242,7 @@ const ContractPrintView = React.forwardRef<
           <p>
             <strong>MONTANT TOTAL ENCAISSE:</strong>{" "}
             <span className="text-[#223268]">
-              {formatNumberToFCFA(data.montantTotalEncaisse)} FCFA
+              {formatNumberToFCFA(data.montantTotalEncaisse)} XOF
             </span>
           </p>
           <p>
@@ -248,13 +252,13 @@ const ContractPrintView = React.forwardRef<
           <p>
             <strong>MONTANT TOTAL DES IMPAYES:</strong>{" "}
             <span className="text-[#223268]">
-              {formatNumberToFCFA(data.montantTotalImpayes)} FCFA
+              {formatNumberToFCFA(data.montantTotalImpayes)} XOF
             </span>
           </p>
           <p>
             <strong>ECHEANCE D'AVANCE NON REGLEE:</strong>{" "}
             <span className="text-[#223268]">
-              {formatNumberToFCFA(data.echeanceAvanceNonReglee)} FCFA
+              {formatNumberToFCFA(data.echeanceAvanceNonReglee)} XOF
             </span>
           </p>
           <p>
@@ -266,15 +270,14 @@ const ContractPrintView = React.forwardRef<
           <p>
             <strong>MONTANT TOTAL DES QUITTANCES ENCAISSEES:</strong>{" "}
             <span className="text-[#223268]">
-              {formatNumberToFCFA(data.montantTotalDesQuittancesEncaissees)}{" "}
-              FCFA
+              {formatNumberToFCFA(data.montantTotalDesQuittancesEncaissees)} XOF
             </span>
           </p>
         </div>
       </div>
 
       <p className="text-sm italic mb-4">
-        N.B.: les quittances régularisées d'un montant total de 0 FCFA sont des
+        N.B.: les quittances régularisées d'un montant total de 0 XOF sont des
         quittances impayées qui ont fait l'objet d'une régularisation par
         prélèvement des frais de gestion, de décès et des éventuelles échéances
         d'avance sur le capital acquis. Ces quittances ne sont donc pas dues.
@@ -286,39 +289,45 @@ const ContractPrintView = React.forwardRef<
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
+          strong {
+            color: #223268;
+          }
           .print-page {
             box-shadow: none;
             margin: 0;
-            padding: 0.1cm; /* Small padding for print margins */
-            font-family: Arial, sans-serif; /* Consistent font for print */
+            padding: 0.1cm;
+            font-family: Arial, sans-serif;
           }
           table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* Ensures columns fit within the table width */
+            table-layout: fixed;
           }
           th,
           td {
             border: 1px solid #ccc;
-            padding: 4px 2px; /* Reduced padding for print */
+            padding: 4px 2px;
             text-align: left;
-            font-size: 8pt; /* Smaller font size for print */
-            word-wrap: break-word; /* Allows long words to break */
-            overflow-wrap: break-word; /* Standard property for word wrapping */
+            font-size: 8pt;
           }
+
           thead {
             background-color: #223268 !important;
             text-align: start;
           }
+
+          th {
+            color: white !important;
+          }
           .print-col-quittance-no {
-            width: 10%; /* Adjust widths as needed for your data */
+            width: 10%;
           }
           .print-col-date {
             width: 8%;
           }
           .print-col-amount {
             width: 9%;
-            text-align: right; /* Ensure amounts are right-aligned in print */
+            text-align: right;
           }
           .print-col-status {
             width: 12%;
@@ -326,16 +335,14 @@ const ContractPrintView = React.forwardRef<
           .no-print {
             display: none !important;
           }
-          /* Specific adjustments for smaller cells if necessary */
-          td:nth-child(1), /* NUMERO QUITTANCE */
-          td:nth-child(2), /* DATE QUITTANCE */
-          td:nth-child(3), /* DEBUT PERIODE */
-          td:nth-child(4) /* FIN PERIODE */ {
-            width: 8%; /* Adjust for dates */
+          td:nth-child(1),
+          td:nth-child(2),
+          td:nth-child(3),
+          td:nth-child(4) {
+            width: 8%;
           }
           td:nth-child(11) {
-            /* ETAT DE LA QUITTANCE */
-            white-space: normal; /* Allow text to wrap for status */
+            white-space: normal;
             width: 12%;
           }
         }
