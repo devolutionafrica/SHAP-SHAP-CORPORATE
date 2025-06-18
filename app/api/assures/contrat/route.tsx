@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { poolPromise, sql } from "@/app/api/lib/db";
 import { verifyAuthToken } from "@/app/api/lib/auth";
+import extractUsernameIntoken from "../../auth/login/route";
 
 export async function GET(request: NextRequest) {
   // Vérification JWT
@@ -8,7 +9,18 @@ export async function GET(request: NextRequest) {
   if (authResult instanceof NextResponse) return authResult;
 
   // Récupération des paramètres de requête
-  const username = request.nextUrl.searchParams.get("login");
+  const username = extractUsernameIntoken(request);
+
+  console.log("Username: \n\n", username);
+
+  if (username == null) {
+    return new NextResponse("Veuillez entrer un token valide", {
+      status: 401,
+      headers: {
+        "Set-Cookie": "jwt=; Max-Age=0",
+      },
+    });
+  }
 
   if (!username) {
     return NextResponse.json(

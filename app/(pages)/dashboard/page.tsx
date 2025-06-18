@@ -14,29 +14,37 @@ import { Progress } from "@/components/ui/progress";
 import { useAuthContext } from "@/hooks/contexts/authContext";
 import { useAgenceContext } from "@/hooks/contexts/useAgenceContext";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
-import { useUser } from "@/hooks/contexts/userContext";
+// import { useUser } from "@/hooks/contexts/userContext";
 import { useAgence } from "@/hooks/useAgence";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { Calendar, FileText, Mail, MapPin, Phone, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ButtonOutline } from "./component/ButtonOutline";
-import { useConvention } from "@/hooks/useConvention";
-import { useContrat } from "@/hooks/useContrat";
+import { useUserStore } from "@/store/userStore";
+// import { useConvention } from "@/hooks/useConvention";
+// import { useContrat } from "@/hooks/useContrat";
 
 export default function DashboardPage() {
-  const { user, labelType } = useUser();
+  // const { user, labelType } = useUser();
 
-  const {
-    setUser,
-    percentProfile,
-    setPercentProfile,
-    setTypeUtilisateur,
-    typeUtilisateur,
-    getTypeUser,
-  } = useUser();
+  // const {
+  //   setUser,
+  //   percentProfile,
+  //   setPercentProfile,
+  //   setTypeUtilisateur,
+  //   typeUtilisateur,
+  //   getTypeUser,
+  // } = useUser();
   const userinfo = useUserInfo();
-
+  const setUser = useUserStore((state) => state.setUser);
+  const user = useUserStore((state) => state.user);
+  const setTypeUtilisateur = useUserStore((state) => state.setTypeUtilisateur);
+  const percentProfile = useUserStore((state) => state.percentProfile);
+  const setPercentProfile = useUserStore((state) => state.setPercentProfile);
+  const getTypeUser = useUserStore((state) => state.getTypeUser);
+  const labelType = useUserStore((state) => state.getLabelType);
+  const setLabelType = useUserStore((state) => state.setLabelType);
   const {
     contrats,
     setContrats,
@@ -77,6 +85,13 @@ export default function DashboardPage() {
             );
 
             setTypeUtilisateur(formatTypeUser(user.CIVILITE));
+            setLabelType!(
+              formatTypeUser(user.CIVILITE) == 1
+                ? "Mes Contrats"
+                : formatTypeUser(user.CIVILITE) == 2
+                ? "Mes Conventions"
+                : "Chargement ..."
+            );
           }
         }
       })
@@ -103,13 +118,12 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     handleLoadUserData();
     handleLoadAgences();
     handleLoadConvention();
     handleLoadContrat();
-    router.refresh();
-  }, [getTypeUser(), user, contrats, conventions]);
+    // router.refresh();
+  }, [getTypeUser(), user, contrats, conventions, setLabelType]);
 
   if (!user) {
     return (

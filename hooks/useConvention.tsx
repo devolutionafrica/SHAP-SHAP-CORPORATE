@@ -10,11 +10,11 @@ export const useConvention = () => {
   return useQuery({
     queryKey: ["conventions", username],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
+      // const token = localStorage.getItem("token");
       const response = await api.get(`/corporate/${username}/convention`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
         params: { username },
       });
       return response.data;

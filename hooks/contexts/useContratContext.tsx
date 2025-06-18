@@ -1,5 +1,10 @@
 "use client";
-import { Contrat, Convention, User } from "@/app/Types/type";
+import {
+  Contrat,
+  Convention,
+  SituationFinanciere,
+  User,
+} from "@/app/Types/type";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useConvention } from "../useConvention";
 import { useContrat } from "../useContrat";
@@ -18,6 +23,8 @@ interface ContratContextType {
   initializeData: any;
   souscripteur: User | null;
   setSouscripteur: React.Dispatch<React.SetStateAction<User | null>>;
+  situationFinanciere: SituationFinanciere | null;
+  setSituationFinanciere: any;
 }
 
 const ContratContext = createContext<ContratContextType | undefined>(undefined);
@@ -41,6 +48,7 @@ const ContratProvider: React.FC<{ children: React.ReactNode }> = ({
   const loaderConvention = useConvention();
   const loadContrat = useContrat();
   const [souscripteur, setSouscripteur] = useState<User | null>(null);
+  const [situationFinanciere, setSituationFinanciere] = useState<any>();
   const { getTypeUser, labelType, setTypeUtilisateur, setUser } = useUser();
   const handleLoadConvention = async () => {
     await loaderConvention
@@ -86,6 +94,8 @@ const ContratProvider: React.FC<{ children: React.ReactNode }> = ({
     <ContratContext.Provider
       value={{
         souscripteur,
+        situationFinanciere,
+        setSituationFinanciere,
         setSouscripteur,
         initializeData,
         totalContratConvention,

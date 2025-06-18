@@ -4,6 +4,8 @@ import Providers from "./providers";
 import HeaderComponent from "@/components/HeaderComponent";
 import { headers, cookies } from "next/headers"; // <-- Import 'cookies' to read cookies on the server
 import { Poppins } from "next/font/google";
+import { useOnlineStatus } from "@/hooks/useIsOnlineCheck";
+import { toast } from "@/components/ui/use-toast";
 export const metadata: Metadata = {
   title: "Shap Shap Corporate",
   description: "Created with v0",
@@ -22,6 +24,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // const isOnline = useOnlineStatus();
+
   return (
     <html lang="en" className={`${poppins.variable}`}>
       <body>

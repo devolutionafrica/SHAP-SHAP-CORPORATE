@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken } from "@/app/api/lib/auth";
 import { poolPromiseDHW } from "@/app/api/lib/dbdwh";
 import { sql } from "@/app/api/lib/dbdwh";
+import { poolPromise } from "@/lib/db";
 
 export async function GET(
   request: NextRequest,
@@ -13,7 +14,7 @@ export async function GET(
   if (authResult instanceof NextResponse) return authResult;
 
   const params = await context.params;
-  console.log("params: \n\n", params.id);
+
   const convention = params.id;
   const date = request.nextUrl.searchParams.get("ANNEE");
   const codeFiliale = "CM_VIE";
@@ -26,6 +27,8 @@ export async function GET(
   }
 
   try {
+    const pool2 = await poolPromise;
+
     const pool = await poolPromiseDHW;
 
     console.log("date: \n\n", date);
@@ -33,10 +36,15 @@ export async function GET(
       .request()
       .input("ANNEE", sql.Int, date)
       .input("CODE_FILIALE", sql.VarChar, codeFiliale)
-      .input("POLICE", sql.Int, convention)
-      .execute(`Reporting.Avis_Situation_Police_CU`);
+      .input("CONVENTION", sql.BigInt, convention)
+      .execute(`Reporting.Avis_Situation_Police_CU_GROUP`);
 
-    return NextResponse.json({ data: result.recordset }, { status: 200 });
+    return NextResponse.json(
+      {
+        data: result.recordset,
+      },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Erreur procédure stockée :", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });

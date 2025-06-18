@@ -10,11 +10,11 @@ export const useAgence = () => {
   return useQuery({
     queryKey: ["agences", username],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
+      // const token = localStorage.getItem("token");
       const response = await api.get(`/dashboard/agence`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
         params: { username },
       });
       return response.data;

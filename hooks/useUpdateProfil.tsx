@@ -6,13 +6,13 @@ import { useAuthContext } from "./contexts/authContext";
 
 export const useUpdateProfile = () => {
   const { getUsername } = useAuthContext();
-  const token = getUsername("token");
+  // const token = getUsername("token");
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await api.patch("/assures/profil", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await api.patch("/assures/profil/update", data, {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
       return response.data;
     },

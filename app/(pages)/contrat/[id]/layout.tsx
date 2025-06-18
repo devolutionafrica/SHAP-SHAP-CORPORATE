@@ -32,7 +32,7 @@ export default function ModernDashboard({
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="max-w-6xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden p-1 md:p-10"
+        className="max-w-6xl mx-auto  overflow-hidden p-1 md:p-10"
       >
         <motion.h1
           initial={{ opacity: 0, scale: 0.9 }}

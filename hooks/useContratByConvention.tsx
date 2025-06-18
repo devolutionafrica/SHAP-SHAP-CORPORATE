@@ -8,9 +8,6 @@ export const useContratByConvention = (id: string) => {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await api.get(`/corporate/${id}/contrat`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         // params: { username },
       });
       return response.data;

@@ -178,3 +178,46 @@ export interface Convention {
   NUMERO_DE_CONVENTION: string;
   LIBELLE_CONVENTION: string;
 }
+
+export interface SituationFinanciere {
+  NumeroPolice: number;
+  ValeurDeRachat: number;
+  MontantMaximumValeurRachatPartiel: number;
+  MontantRentePeriodiqueTheorique: number;
+  CapitalAuTerme: number;
+}
+
+export interface Integrageur {
+  idOperateur: number;
+  libelle: string;
+  isActif: number;
+  urlApi?: string | null;
+  urlApiRetour?: string | null;
+  logo: string;
+  description?: string | null;
+}
+
+export interface PayData {
+  montant: string;
+  devise: string;
+  refTransaction: string;
+  numero: string;
+  OTPcode: string;
+  quittances: CotisationClientIndiv[];
+  numecorClient: string;
+  codeFiliale: string;
+  codeOperateur: string;
+  operateur: string;
+  referenceId: string;
+  codeStatutTransaction: string;
+  descriptionPayement: string;
+}
+
+export interface SuiviPaiementQuittanceLog {
+  suiviPaiementQuittanceLog?: string | null;
+  numeroQuittance: number;
+  numeroPolice: number;
+  montantQuittance: number;
+  dateEnregistrement: string;
+  telephone: string;
+}

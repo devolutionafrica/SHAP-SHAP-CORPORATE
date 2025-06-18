@@ -66,7 +66,7 @@ function generateReportHtmlContent(reportData: any, date: string) {
           <div><strong>Numéro police :</strong> ${reportData.policeNumber}</div>
           <div><strong>Date effet :</strong> ${reportData.effectiveDate}</div>
           <div><strong>Numéro Assuré :</strong> ${reportData.insuredNumber}</div>
-          <div><strong>Type Contrat :</strong> ${reportData.contractType}</div>
+          <div><strong>Type Contrat :</strong> ${reportData.typePolice}</div>
         </div>
 
         <p><strong>${reportData.subscriberName}</strong><br>${reportData.subscriberAddress}</p>
@@ -146,7 +146,10 @@ export async function POST(req: NextRequest) {
     return new Response("Aucun avis trouvé pour votre police", { status: 400 });
   }
 
-  const sourceData = data!.data[0];
+  const sourceData = {
+    ...data!.data[0],
+    typePolice: data.typePolice,
+  };
 
   let reportData = {};
 

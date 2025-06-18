@@ -19,8 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { useUpdateProfile } from "@/hooks/useUpdateProfil";
-import { useAuthContext } from "@/hooks/contexts/authContext";
-
+// import { useAuthContext } from "@/hooks/contexts/authContext";
+import { useUserStore } from "@/store/userStore";
 dayjs.extend(customParseFormat);
 
 const profileSchema = z.object({
@@ -52,10 +52,16 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export default function ProfilPage() {
-  const { user, getTypeUser } = useUser();
-  const { getUsername } = useAuthContext();
+  // const { user, getTypeUser } = useUser();
+
+  // const { getUsername } = useAuthContext();
+
   const [isEditing, setIsEditing] = useState(false);
   const updateUser = useUpdateProfile();
+
+  //donnée utilisateur depuis zustand
+  const user = useUserStore((state) => state.user);
+  const getTypeUser = useUserStore((state) => state.getTypeUser);
 
   const {
     register,
@@ -94,7 +100,7 @@ export default function ProfilPage() {
   const onSubmit = async (data: ProfileFormData) => {
     try {
       const request = {
-        // login: getUsername(),
+        login: getUsername(),
         telephone: data.TELEPHONE,
         profession: data.PROFESSION,
         lieuNaissance: data.LIEU_NAISSANCE,

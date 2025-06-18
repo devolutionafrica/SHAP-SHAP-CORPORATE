@@ -39,10 +39,18 @@ export async function GET(
       `);
     }
 
+    const resultSituation = await pool
+      .request()
+      .input("NumeroPolice", sql.BigInt, idContrat)
+      .query(
+        " SELECT * FROM FnConsultationSituationFinanciere(@NumeroPolice,'') "
+      );
+
     return NextResponse.json({
       data: result.recordset,
       suscripber: souscripteur.recordset[0],
-      test: "",
+      situationFinanciere: resultSituation.recordset[0],
+
       sizes: result.recordset.length,
     });
   } catch (err) {

@@ -12,9 +12,6 @@ export const useContrat = () => {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await api.get(`/contrat`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         params: { username },
       });
       return response.data;
@@ -32,9 +29,6 @@ export const useContratDetails = (id: string) => {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await api.get(`/contrat/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         params: { username },
       });
       return response.data;

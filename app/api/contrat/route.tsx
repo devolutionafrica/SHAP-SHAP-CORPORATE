@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { poolPromise, sql } from "@/app/api/lib/db";
 import { verifyAuthToken } from "@/app/api/lib/auth";
+import extractUsernameIntoken from "../auth/login/route";
 
 export async function GET(request: NextRequest) {
   // Vérification JWT
@@ -9,13 +10,24 @@ export async function GET(request: NextRequest) {
 
   // Récupération des paramètres de requête
 
-  const idClient = request.nextUrl.searchParams.get("username");
+  // const idClient = request.nextUrl.searchParams.get("username");
 
- 
+  const username = extractUsernameIntoken(request);
+
+  if (username == null) {
+    return new NextResponse(null, {
+      status: 401,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  console.log("username:\n\n", username);
 
   try {
     const pool = await poolPromise;
-    const result = await pool.request().input("Login", sql.VarChar, idClient)
+    const result = await pool.request().input("Login", sql.VarChar, username)
       .query(`SELECT * FROM
           FnConsultationPoliceDetail(@Login)`);
 

@@ -8,13 +8,13 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const authResult = await verifyAuthToken(req);
+  const authResult = verifyAuthToken(req);
   if (!authResult)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const pool = await poolPromise;
-    const request = pool.request();
+    const request = await pool.request();
     request.input("username", id);
     const result = await request.query(
       `SELECT C.* FROM CONVENTION C inner join UTILISATEUR U on (C.IDE_CLIENT_UNIQUE=U.IDE_CLIENT_UNIQUE)

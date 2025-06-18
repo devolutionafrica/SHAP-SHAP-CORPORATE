@@ -17,11 +17,11 @@ export const useUserInfo = () => {
   return useQuery({
     queryKey: ["user", username],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
+      // const token = localStorage.getItem("token");
       const response = await api.get(`/assures/profil`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
         params: { login: username },
       });
       return response.data;

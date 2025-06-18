@@ -15,6 +15,15 @@ export function verifyAuthToken(request: NextRequest) {
     return decoded;
   } catch (e) {
     console.error("Erreur de vérification du token JWT :", e);
-    return NextResponse.json({ error: "Token invalide" }, { status: 403 });
+    return NextResponse.json({ error: "Token invalide" }, { status: 401 });
+  }
+}
+
+export default function checkTokenValidity(token: string) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    return decoded;
+  } catch (e) {
+    return null;
   }
 }

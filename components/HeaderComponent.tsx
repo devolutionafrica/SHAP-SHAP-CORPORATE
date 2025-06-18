@@ -16,21 +16,23 @@ import {
   LogOut,
   Menu as MenuIcon,
   X as CloseIcon,
+  SubscriptIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/hooks/contexts/userContext";
 import { useAuthContext } from "@/hooks/contexts/authContext";
 
-// Importation de Headless UI
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
-
+import Image from "next/image";
+import logo from "@/public/nsiavie.png";
+import { useUserStore } from "@/store/userStore";
 export default function HeaderComponent({}: {}) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, getTypeUser, labelType } = useUser();
+  // const { user, getTypeUser, labelType } = useUser();
   const { isAuth } = useAuthContext();
 
   const { initializeData } = useContratContext();
@@ -47,13 +49,21 @@ export default function HeaderComponent({}: {}) {
     router.push("/login");
   };
 
+  //data zustand
+  const typeUser = useUserStore((state) => state.getTypeUser);
+  const labelType = useUserStore((state) => state.getLabelType);
+  const user = useUserStore((state) => state.user);
+
+  const [dynamicUrlName, setDynamicUrlName] = useState("Chargement...");
+
   const tabUrl = [
     { name: "Accueil", url: "/dashboard", icon: TrendingUp },
     {
-      name: `${labelType()}`,
-      url: `${getTypeUser() == 1 ? "/contrat" : "/conventions"}`,
+      name: `${dynamicUrlName}`,
+      url: `${typeUser() == 1 ? "/contrat" : "/conventions"}`,
       icon: FileText,
     },
+    // { name: "Souscription", url: "/suscription", icon: SubscriptIcon },
     { name: "Mon Profil", url: "/profil", icon: User },
     { name: "Nos Agences", url: "/agences", icon: MapPin },
     { name: "Paramètres", url: "/settings", icon: Settings }, // Ajouté pour l'exemple
@@ -67,9 +77,9 @@ export default function HeaderComponent({}: {}) {
   ];
 
   const [activeTab, setActiveTab] = useState("Accueil");
-
   useEffect(() => {
     const matchingTab = tabUrl.find((item) => pathname.startsWith(item.url));
+    setDynamicUrlName(labelType());
     if (matchingTab) {
       setActiveTab(matchingTab.name);
     } else {
@@ -89,7 +99,7 @@ export default function HeaderComponent({}: {}) {
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
     }
-  }, [pathname]); // Déclencher à chaque changement de chemin d'URL
+  }, [pathname]);
 
   return (
     <div className="sticky top-0 z-50">
@@ -101,8 +111,15 @@ export default function HeaderComponent({}: {}) {
                 className="flex items-center space-x-3 cursor-pointer"
                 onClick={() => router.push("/")}
               >
-                <div className="w-8 h-8 bg-[#223268] rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-white" />
+                <div className="w-12 h-12 bg-[#223268] rounded-lg flex items-center justify-center">
+                  {/* <Shield className="w-5 h-5 text-white" /> */}
+                  <Image
+                    src={logo}
+                    alt="logo"
+                    width={48}
+                    height={58}
+                    objectFit="cover"
+                  />
                 </div>
                 <span className="text-xl font-bold text-[#223268] whitespace-nowrap">
                   NSIA ASSURANCE
@@ -120,7 +137,7 @@ export default function HeaderComponent({}: {}) {
                     (
                       item // Filtrer Déconnexion/Paramètres ici car ils ont un emplacement spécifique sur desktop
                     ) =>
-                      getTypeUser() == 2 && item.name == "Mon Profil" ? (
+                      typeUser() == 2 && item.name == "Mon Profil" ? (
                         ""
                       ) : (
                         <button
@@ -205,7 +222,7 @@ export default function HeaderComponent({}: {}) {
           <div className="md:hidden" id="mobile-menu">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-slate-200">
               {tabUrl.map((item) =>
-                getTypeUser() == 2 && item.name == "Mon Profil" ? (
+                typeUser() == 2 && item.name == "Mon Profil" ? (
                   ""
                 ) : (
                   <button

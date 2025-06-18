@@ -11,16 +11,23 @@ import { Contrat } from "@/app/Types/type";
 import { CircularProgress } from "@mui/material";
 import LoaderData from "@/components/LoaderComponent";
 import { useUserInfoById } from "@/hooks/useUserInfo";
+import SituationFinanciereCard from "../component/SituationFinanciereCard";
 
 export default function ContractDetailsPage() {
-  const { contrat, setContrat, setSouscripteur, souscripteur } =
-    useContratContext();
+  const {
+    contrat,
+    setContrat,
+    setSouscripteur,
+    souscripteur,
+    situationFinanciere,
+    setSituationFinanciere,
+  } = useContratContext();
 
   const params = useParams();
   const id = params?.id;
   const [userId, setUserId] = useState();
 
-  const userDetails = useUserInfoById(contrat?.NumeroSouscripteur!);
+  // const userDetails = useUserInfoById(contrat?.NumeroSouscripteur!);
   const contratDetails = useContratDetails(id as string);
   const fetchDetails = async () => {
     try {
@@ -31,6 +38,7 @@ export default function ContractDetailsPage() {
       }
 
       setSouscripteur(result.data.suscripber);
+      setSituationFinanciere(result.data.situationFinanciere);
     } catch (error) {
       console.error("Error fetching contract details:", error);
     }
@@ -51,9 +59,13 @@ export default function ContractDetailsPage() {
       {contratDetails.isLoading && (
         <LoaderData label="Chargement des données du contrat" />
       )}
-      <div className="flex flex-row flex-wrap gap-4 items-stretch justify-start">
+      <div className="flex flex-row flex-wrap gap-2 justify-start">
         {contratDetails.data && <ContractInfoCard />}
+
         {souscripteur && <InsuredInfoCard user={souscripteur!} />}
+        {situationFinanciere && (
+          <SituationFinanciereCard situation={situationFinanciere} />
+        )}
       </div>
     </motion.div>
   );

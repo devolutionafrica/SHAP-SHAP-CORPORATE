@@ -44,3 +44,19 @@ export async function POST(req: NextRequest) {
     { status: 200 }
   );
 }
+
+export default function extractUsernameIntoken(request: NextRequest) {
+  const header = request.headers.get("authorization");
+  let token = null;
+  if (header && header.startsWith("Bearer ")) {
+    token = header.split(" ")[1];
+  } else {
+    return null;
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+
+  if (decoded && typeof decoded == "object" && "username" in decoded) {
+    return decoded.username;
+  }
+  return null;
+}

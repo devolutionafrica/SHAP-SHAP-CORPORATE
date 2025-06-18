@@ -14,11 +14,11 @@ export const useCotisation = (
   return useQuery({
     queryKey: ["cotisation", numeroPolice],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
+      // const token = localStorage.getItem("token");
       const response = await api.get(`/cotisation`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
         params: { dateDeb, dateFin, numeroPolice },
       });
       return response.data;

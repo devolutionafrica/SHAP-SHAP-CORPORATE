@@ -8,7 +8,7 @@ import { useConvention } from "@/hooks/useConvention";
 import { useUser } from "@/hooks/contexts/userContext";
 import { Contrat, Convention } from "@/app/Types/type";
 import { useRouter } from "next/navigation";
-
+import { useUserStore } from "@/store/userStore";
 export default function ContratCard({}) {
   const useContratQuery = useContrat();
   const {
@@ -20,19 +20,21 @@ export default function ContratCard({}) {
     handleLoadContrat,
   } = useContratContext();
 
-  const { getTypeUser, labelType } = useUser();
+  // const { getTypeUser, labelType } = useUser();
+  const typeUser = useUserStore((state) => state.getTypeUser);
+  const labelType = useUserStore((state) => state.getLabelType);
   const router = useRouter();
 
   useEffect(() => {
-    console.log("Le type de personne connecté est ", getTypeUser());
-    if (getTypeUser() == 1) {
+    console.log("Le type de personne connecté est ", typeUser());
+    if (typeUser() == 1) {
       handleLoadContrat();
     }
 
-    if (getTypeUser() == 2) {
+    if (typeUser() == 2) {
       handleLoadConvention();
     }
-  }, [, contrats, conventions, getTypeUser()]);
+  }, [, contrats, conventions, typeUser()]);
 
   return (
     <div>
@@ -45,7 +47,7 @@ export default function ContratCard({}) {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-blue-900">
-            {getTypeUser() == 1
+            {typeUser() == 1
               ? contrats != null && contrats!.length > 0
                 ? contrats!.length
                 : 0
@@ -62,7 +64,7 @@ export default function ContratCard({}) {
               size="sm"
               className="text-blue-700 hover:bg-blue-200 p-0"
               onClick={() =>
-                router.push(getTypeUser() == 1 ? "/contrat" : "/conventions")
+                router.push(typeUser() == 1 ? "/contrat" : "/conventions")
               }
             >
               Voir les détails →

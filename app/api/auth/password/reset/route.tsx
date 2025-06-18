@@ -3,18 +3,28 @@ import { poolPromise, sql } from "@/app/api/lib/db";
 
 import { findUserByUsername } from "@/app/models/user.model";
 import { verifyAuthToken } from "@/app/api/lib/auth";
+import extractUsernameIntoken from "../../login/route";
 
 export async function PATCH(request: NextRequest) {
   const auth = verifyAuthToken(request);
 
-  if (!auth)
+  if (!auth) {
     return new Response("Unauthorized", {
       status: 401,
     });
+  }
+
+  const username = extractUsernameIntoken(request);
+
+  if (username == null) {
+    return new Response("Veuillez entrer un token valable", {
+      status: 401,
+    });
+  }
 
   const { login, password, newPassword, phone, email } = await request.json();
 
-  const user = await findUserByUsername(login!);
+  const user = await findUserByUsername(username!);
 
   if (!login || !password || !newPassword) {
     return new Response("Vérifiez les paramètres", {

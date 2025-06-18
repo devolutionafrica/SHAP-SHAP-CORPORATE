@@ -1,10 +1,8 @@
-// app/(main)/sinistres/page.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-// import ClaimTable from "../lib/data"; // Votre composant de tableau
-import { Card } from "@/components/ui/card"; // Composant Card de shadcn/ui ou votre implémentation
+import { Card } from "@/components/ui/card";
 import { Info } from "lucide-react";
 import ClaimTable from "@/components/ClaimsTable";
 import { sinistre } from "../lib/data";
@@ -12,12 +10,27 @@ import { useParams } from "next/navigation";
 import { useSinistre } from "@/hooks/useSinistre";
 import { Sinistre } from "@/app/Types/type";
 
+// Importez les composants shadcn/ui pour le bouton et le dialogue
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import DialogPrestation from "./Component/DialogDemandePrestation";
+
 export default function SinistresPage() {
   const params = useParams();
   const id = params?.id;
 
   const [sinistres, setSinistre] = useState<Sinistre[] | null>(null);
   const loaderSinistre = useSinistre(id as string);
+
+  // Nouvel état pour gérer l'ouverture/fermeture de la modale
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchSinistres = async () => {
     try {
@@ -51,6 +64,16 @@ export default function SinistresPage() {
       >
         Liste des Sinistres
       </motion.h1>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="flex justify-center mb-8"
+      >
+        {/* Nouvelle prestation */}
+        <DialogPrestation />
+      </motion.div>
 
       {/* Tableau des Sinistres */}
       <motion.div

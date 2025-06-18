@@ -19,7 +19,7 @@ const ReportViewerAndDownloader = () => {
 
   const id = param.id;
 
-  const apiUrl = `/api/generate-pdf/avis?police=${id}&ANNEE=${selectedYear}`;
+  const apiUrl = `/api/contrat/generate-pdf/avis?police=${id}&ANNEE=${selectedYear}`;
 
   const fetchAndDisplayPdf = async () => {
     setLoading(true);
