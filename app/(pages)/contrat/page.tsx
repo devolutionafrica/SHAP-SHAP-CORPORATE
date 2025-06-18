@@ -144,7 +144,7 @@ export default function ContratPage() {
           </div>
         </div>
 
-        {/* Conteneur du tableau avec défilement horizontal */}
+        
         <div className="overflow-x-auto relative min-h-[300px]">
           <Table className="w-full divide-y divide-gray-200">
             <TableHeader className="bg-gray-50">

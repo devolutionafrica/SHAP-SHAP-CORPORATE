@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
-import { verifyAuthToken } from "../../lib/auth";
-import { SourceData, transformToReportData } from "./utility";
+import { verifyAuthToken } from "@/app/api/lib/auth";
+import { SourceData, transformToReportData } from "../avis/utility";
 
 const reportData = {
   policeNumber: "21610858/0025543",
@@ -25,7 +25,7 @@ const reportData = {
   },
 };
 
-function generateReportHtmlContent(reportData: any, date: string) {
+export function generateReportHtmlContent(reportData: any, date: string) {
   // Styles CSS pour le PDF
   const styles = `
     <style>
@@ -69,7 +69,7 @@ function generateReportHtmlContent(reportData: any, date: string) {
           <div><strong>Type Contrat :</strong> ${reportData.typePolice}</div>
         </div>
 
-        <p><strong>${reportData.subscriberName}</strong><br>${reportData.subscriberAddress}</p>
+        <p>NOM ASSURE :<strong>${reportData.subscriberName}</strong><br>ADRESSE :${reportData.subscriberAddress}</p>
 
         <div class="section-title">AVIS DE SITUATION AU ${date}</div>
         <p>Cher souscripteur, Après l'arrêté des comptes au ${reportData.accountStatementDate} de NSIA Vie Assurances, filiale du Groupe NSIA, nous avons le plaisir de vous communiquer la situation de votre compte épargne qui s'établit comme suit :</p>
@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
   }
 
   const response = await fetch(
-    `http://localhost:3000/api/corporate/${police}/avis?ANNEE=${date}`,
+    `http://localhost:3000/api/contrat/${police}/avis_situation?ANNEE=${date}`,
     {
       method: "GET",
       headers: {

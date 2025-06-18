@@ -22,11 +22,11 @@ import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/hooks/contexts/userContext";
 import { useAuthContext } from "@/hooks/contexts/authContext";
 
-// Importation de Headless UI
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
-
+import Image from "next/image";
+import logo from "@/public/nsiavie.png";
 export default function HeaderComponent({}: {}) {
   const router = useRouter();
   const pathname = usePathname();
@@ -101,8 +101,15 @@ export default function HeaderComponent({}: {}) {
                 className="flex items-center space-x-3 cursor-pointer"
                 onClick={() => router.push("/")}
               >
-                <div className="w-8 h-8 bg-[#223268] rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-white" />
+                <div className="w-12 h-12 bg-[#223268] rounded-lg flex items-center justify-center">
+                  {/* <Shield className="w-5 h-5 text-white" /> */}
+                  <Image
+                    src={logo}
+                    alt="logo"
+                    width={48}
+                    height={58}
+                    objectFit="cover"
+                  />
                 </div>
                 <span className="text-xl font-bold text-[#223268] whitespace-nowrap">
                   NSIA ASSURANCE

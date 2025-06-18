@@ -10,7 +10,7 @@ import dayjs from "dayjs"; // Importer dayjs
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
 // dayjs.extend(customParseFormat);
 
-const formatDate = (dateString: string | undefined): string => {
+export const formatDate = (dateString: string | undefined): string => {
   if (!dateString) {
     return ""; // Retourne "" si la date est undefined ou null
   }

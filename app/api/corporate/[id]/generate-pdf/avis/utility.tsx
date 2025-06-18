@@ -105,7 +105,7 @@ export function transformToReportData(
 
   // Assurez-vous que le nom de l'abonné est formaté comme vous le souhaitez.
   // Par exemple, si NOM_CLIENT et PRENOMS_CLIENT sont les bons champs pour le souscripteur.
-  const subscriberFullName = `${sourceData.NOM_CLIENT} ${
+  const subscriberFullName = `${sourceData.NOM_ASSURE} ${
     sourceData.PRENOMS_CLIENT || ""
   }`; // Ou sourceData.NOM_ASSURE / DESC_CIVILITE
 
@@ -115,7 +115,7 @@ export function transformToReportData(
     insuredNumber: sourceData.NUMERO_ASSURE,
     contractType: sourceData.DESC_PRODUIT,
     cityDate: cityDate,
-    subscriberName: subscriberFullName.trim(), // Supprimer les espaces blancs superflus
+    subscriberName: subscriberFullName.trim(),
     subscriberAddress: sourceData.ADRESSE_POSTALE,
     accountStatementDate: statementDate,
     typePolice: sourceData.typePolice,

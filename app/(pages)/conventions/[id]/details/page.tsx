@@ -12,7 +12,7 @@ import {
   TableCell,
   TableColumn,
 } from "../../../../../components/ui/table2";
-import { Button as MuiButton } from "@mui/material";
+import { Button, Button as MuiButton } from "@mui/material";
 import { Skeleton as MuiSkeleton } from "@mui/material";
 import "./style.scss";
 import {
@@ -267,6 +267,17 @@ export default function AdhesionTable() {
                 </MuiButton>
               </motion.div>
             )}
+          </div>
+        </div>
+
+        <div className="md:m-6">
+          <div>
+            <p>Avis de situation de la convention</p>
+            <Button
+              onClick={() => router.push(`/conventions/${id}/avis-situation`)}
+            >
+              Avis de situation
+            </Button>
           </div>
         </div>
 
