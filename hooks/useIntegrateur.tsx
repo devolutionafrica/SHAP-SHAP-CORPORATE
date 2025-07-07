@@ -15,6 +15,7 @@ export const useIntegrateur = () => {
       return response.data;
     },
 
-    enabled: false,
+    enabled: true,
+    retry: true,
   });
 };

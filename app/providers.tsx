@@ -1,4 +1,5 @@
 "use client";
+import { SessionModalProvider } from "@/components/providers/SessionModalProviders";
 import AuthProvider from "@/hooks/contexts/authContext";
 import AgenceProvider from "@/hooks/contexts/useAgenceContext";
 import ContratProvider from "@/hooks/contexts/useContratContext";
@@ -15,13 +16,15 @@ export default function Providers({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <UserProvider>
-          <ContratProvider>
-            <AgenceProvider>{children}</AgenceProvider>
-          </ContratProvider>
-        </UserProvider>
-      </AuthProvider>
+      <SessionModalProvider>
+        <AuthProvider>
+          <UserProvider>
+            <ContratProvider>
+              <AgenceProvider>{children}</AgenceProvider>
+            </ContratProvider>
+          </UserProvider>
+        </AuthProvider>
+      </SessionModalProvider>
     </QueryClientProvider>
   );
 }

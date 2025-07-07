@@ -7,10 +7,6 @@ import { useParams } from "next/navigation";
 // Assurez-vous que les imports de vos composants et hooks sont corrects
 import PageTabs from "./component/PageTab"; // Votre composant de tabs responsive
 import { useContratContext } from "@/hooks/contexts/useContratContext";
-// import { useContratDetails } from "@/hooks/useContrat"; // Commenté car non utilisé dans le rendu direct
-
-// Assurez-vous que ce fichier CSS existe et est bien importé si vous l'utilisez pour des styles spécifiques
-// import "./styles.scss"; // Assurez-vous que ce fichier est compilé par Next.js
 
 export default function ModernDashboard({
   children,

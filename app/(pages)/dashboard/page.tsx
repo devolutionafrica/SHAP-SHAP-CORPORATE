@@ -11,10 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useAuthContext } from "@/hooks/contexts/authContext";
 import { useAgenceContext } from "@/hooks/contexts/useAgenceContext";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
-// import { useUser } from "@/hooks/contexts/userContext";
 import { useAgence } from "@/hooks/useAgence";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { Calendar, FileText, Mail, MapPin, Phone, User } from "lucide-react";
@@ -22,20 +20,9 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ButtonOutline } from "./component/ButtonOutline";
 import { useUserStore } from "@/store/userStore";
-// import { useConvention } from "@/hooks/useConvention";
-// import { useContrat } from "@/hooks/useContrat";
+import { motion } from "framer-motion";
 
 export default function DashboardPage() {
-  // const { user, labelType } = useUser();
-
-  // const {
-  //   setUser,
-  //   percentProfile,
-  //   setPercentProfile,
-  //   setTypeUtilisateur,
-  //   typeUtilisateur,
-  //   getTypeUser,
-  // } = useUser();
   const userinfo = useUserInfo();
   const setUser = useUserStore((state) => state.setUser);
   const user = useUserStore((state) => state.user);
@@ -45,9 +32,9 @@ export default function DashboardPage() {
   const getTypeUser = useUserStore((state) => state.getTypeUser);
   const labelType = useUserStore((state) => state.getLabelType);
   const setLabelType = useUserStore((state) => state.setLabelType);
+  const setHeaderLabel = useUserStore((state) => state.setHeaderLabel);
   const {
     contrats,
-    setContrats,
     conventions,
     handleLoadConvention,
     handleLoadContrat,
@@ -92,6 +79,13 @@ export default function DashboardPage() {
                 ? "Mes Conventions"
                 : "Chargement ..."
             );
+            setHeaderLabel!(
+              formatTypeUser(user.CIVILITE) == 1
+                ? "Mes Contrats"
+                : formatTypeUser(user.CIVILITE) == 2
+                ? "Mes Conventions"
+                : "Chargement ..."
+            );
           }
         }
       })
@@ -122,8 +116,7 @@ export default function DashboardPage() {
     handleLoadAgences();
     handleLoadConvention();
     handleLoadContrat();
-    // router.refresh();
-  }, [getTypeUser(), user, contrats, conventions, setLabelType]);
+  }, [getTypeUser(), user, contrats, conventions]);
 
   if (!user) {
     return (
@@ -138,8 +131,12 @@ export default function DashboardPage() {
   return (
     <main className="max-w-7xl mx-auto md:px-4 sm:px-6 lg:px-8 py-8">
       <div className="space-y-8">
-        {/* Welcome Section */}
-        <div className="text-center space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center space-y-4"
+        >
           <h1 className="text-xl md:text-4xl font-bold text-slate-900">
             Bienvenue,{" "}
             <span className="text-[#223268] bg-clip-text">
@@ -150,79 +147,94 @@ export default function DashboardPage() {
             Gérez vos contrats d'assurance, consultez vos informations et restez
             connecté avec nos services.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Contrat card */}
           <ContratCard />
 
           {getTypeUser() == 2 && (
-            <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-yellow-700">
+                    Nombre Total des contrats
+                  </CardTitle>
+                  <MapPin className="h-6 w-6 text-yellow-600 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-yellow-900">
+                    {totalContratConvention}
+                  </div>
+                  <p className="text-xs text-yellow-600 mt-1">
+                    Nombre total de tous les contrats pour les conventions
+                  </p>
+                  <div className="mt-3"></div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-yellow-700">
-                  Nombre Total des contrats
+                <CardTitle className="text-sm font-medium text-green-700">
+                  Agences Disponibles
                 </CardTitle>
-                <MapPin className="h-6 w-6 text-yellow-600 group-hover:scale-110 transition-transform" />
+                <MapPin className="h-6 w-6 text-green-600 group-hover:scale-110 transition-transform" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-yellow-900">
-                  {totalContratConvention}
+                <div className="text-3xl font-bold text-green-900">
+                  {agences != null && agences!.length > 0 ? agences!.length : 0}
                 </div>
-                <p className="text-xs text-yellow-600 mt-1">
-                  Nombre total de tous les contrats pour les conventions
+                <p className="text-xs text-green-600 mt-1">
+                  Agence la plus proche
                 </p>
-                <div className="mt-3"></div>
+                <div className="mt-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-green-700 hover:bg-green-200 p-0"
+                    onClick={() => router.push("/agences")}
+                  >
+                    Localiser →
+                  </Button>
+                </div>
               </CardContent>
             </Card>
-          )}
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-green-700">
-                Agences Disponibles
-              </CardTitle>
-              <MapPin className="h-6 w-6 text-green-600 group-hover:scale-110 transition-transform" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-green-900">
-                {agences != null && agences!.length > 0 ? agences!.length : 0}
-              </div>
-              <p className="text-xs text-green-600 mt-1">
-                Agence la plus proche
-              </p>
-              <div className="mt-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-green-700 hover:bg-green-200 p-0"
-                  onClick={() => router.push("/agences")}
-                >
-                  Localiser →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          </motion.div>
 
-          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-purple-700">
-                Profil Complété
-              </CardTitle>
-              <User className="h-6 w-6 text-purple-600 group-hover:scale-110 transition-transform" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-purple-900">
-                {percentProfile} %
-              </div>
-              <Progress value={percentProfile} className="mt-2 h-2" />
-              <ButtonOutline onClick={() => router.push("/profil")}>
-                Compléter →
-              </ButtonOutline>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-purple-700">
+                  Profil Complété
+                </CardTitle>
+                <User className="h-6 w-6 text-purple-600 group-hover:scale-110 transition-transform" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-purple-900">
+                  {percentProfile} %
+                </div>
+                <Progress value={percentProfile} className="mt-2 h-2" />
+                <ButtonOutline onClick={() => router.push("/profil")}>
+                  Compléter →
+                </ButtonOutline>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
 
-        {/* Recent Contracts */}
         <Card className="shadow-lg border-0">
           <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-t-lg">
             <div className="flex items-center justify-between">
@@ -253,9 +265,12 @@ export default function DashboardPage() {
             <div className="divide-y divide-slate-100">
               {getTypeUser() == 1 &&
                 contrats != null &&
-                contrats.slice(0, 8)!.map((contract: Contrat) => (
-                  <div
-                    key={Date.now() + contract.NumeroContrat}
+                contrats.slice(0, 8)!.map((contract: Contrat, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
                     className="p-6 hover:bg-slate-50 transition-colors cursor-pointer group"
                     onClick={() =>
                       router.push(`/contrat/${contract.NumeroContrat}/details`)
@@ -284,18 +299,26 @@ export default function DashboardPage() {
                           {contract.EtatPolice}
                         </Badge>
                         <p className="text-sm text-slate-500 mt-1">
-                          Expire: {contract.DateFinPolice ?? ""}
+                          Expire:{" "}
+                          {contract.DateFinPolice
+                            ? new Date(
+                                contract.DateFinPolice
+                              ).toLocaleDateString()
+                            : ""}
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
 
               {getTypeUser() == 2 &&
                 conventions != null &&
-                conventions!.slice(0, 6).map((contract: Convention) => (
-                  <div
-                    key={Date.now() + contract.NUMERO_DE_CONVENTION}
+                conventions!.slice(0, 6).map((contract: Convention, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
                     className="p-6 hover:bg-slate-50 transition-colors cursor-pointer group"
                     onClick={() =>
                       router.push(
@@ -317,25 +340,13 @@ export default function DashboardPage() {
                           </p>
                         </div>
                       </div>
-                      {/* <div className="text-right">
-                        <Badge
-                          variant="secondary"
-                          className="bg-green-100 text-green-800 border-green-200"
-                        >
-                          {contract.EtatPolice}
-                        </Badge>
-                        <p className="text-sm text-slate-500 mt-1">
-                          Expire: {contract.DateFinPolice ?? ""}
-                        </p>
-                      </div> */}
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
         <Card className="shadow-lg border-0">
           <CardHeader>
             <CardTitle className="text-xl text-slate-900">
@@ -357,14 +368,20 @@ export default function DashboardPage() {
                 { icon: Phone, label: "Contact Support", color: "purple" },
                 { icon: Mail, label: "Messages", color: "orange" },
               ].map((action, index) => (
-                <Button
+                <motion.div
                   key={index}
-                  variant="outline"
-                  className="h-20 flex-col space-y-2 hover:shadow-md transition-all duration-200 group"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.15 }}
                 >
-                  <action.icon className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                  <span className="text-sm">{action.label}</span>
-                </Button>
+                  <Button
+                    variant="outline"
+                    className="h-20 flex-col space-y-2 hover:shadow-md transition-all duration-200 group w-full"
+                  >
+                    <action.icon className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    <span className="text-sm">{action.label}</span>
+                  </Button>
+                </motion.div>
               ))}
             </div>
           </CardContent>

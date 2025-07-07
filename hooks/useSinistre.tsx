@@ -20,6 +20,6 @@ export const useSinistre = (numeroPolice: string) => {
       return response.data;
     },
 
-    enabled: false,
+    enabled: true,
   });
 };

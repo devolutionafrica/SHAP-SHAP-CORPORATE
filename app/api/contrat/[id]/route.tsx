@@ -15,7 +15,7 @@ export async function GET(
   if (!authResult) {
     return new Response("Unauthorized", {
       status: 401,
-      headers: { "Content-Type": "application/json" },
+      
     });
   }
 

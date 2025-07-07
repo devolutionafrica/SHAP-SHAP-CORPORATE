@@ -14,6 +14,8 @@ import SessionsExpireComponent from "@/components/SessionExpireComponent"; // As
 interface SessionModalContextType {
   showSessionExpiredModal: () => void;
   hideSessionExpiredModal: () => void;
+  retry: boolean;
+  setRetry: any;
 }
 
 // Créer le contexte
@@ -40,7 +42,6 @@ interface SessionModalProviderProps {
 export const SessionModalProvider: React.FC<SessionModalProviderProps> = ({
   children,
 }) => {
-  // L'état initial doit être false pour que la modale ne s'affiche pas par défaut
   const [isVisible, setIsVisible] = useState(false);
 
   const showModal = useCallback(() => {
@@ -51,18 +52,22 @@ export const SessionModalProvider: React.FC<SessionModalProviderProps> = ({
     setIsVisible(false);
   }, []);
 
+  const [retry, setRetry] = useState(false);
+
   React.useEffect(() => {
     showModalFunction = showModal;
     return () => {
-      showModalFunction = null; // Nettoyer à la démonstration
+      showModalFunction = null;
     };
-  }, [showModal]);
+  }, [isVisible]);
 
   return (
     <SessionModalContext.Provider
       value={{
         showSessionExpiredModal: showModal,
         hideSessionExpiredModal: hideModal,
+        retry,
+        setRetry,
       }}
     >
       {children}

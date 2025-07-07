@@ -52,14 +52,14 @@ export default function HeaderComponent({}: {}) {
   //data zustand
   const typeUser = useUserStore((state) => state.getTypeUser);
   const labelType = useUserStore((state) => state.getLabelType);
+  const type = useUserStore((state) => state.typeUtilisateur);
   const user = useUserStore((state) => state.user);
-
-  const [dynamicUrlName, setDynamicUrlName] = useState("Chargement...");
+  const headerLabel = useUserStore((state) => state.headerLabel);
 
   const tabUrl = [
     { name: "Accueil", url: "/dashboard", icon: TrendingUp },
     {
-      name: `${dynamicUrlName}`,
+      name: `${headerLabel}`,
       url: `${typeUser() == 1 ? "/contrat" : "/conventions"}`,
       icon: FileText,
     },
@@ -79,27 +79,17 @@ export default function HeaderComponent({}: {}) {
   const [activeTab, setActiveTab] = useState("Accueil");
   useEffect(() => {
     const matchingTab = tabUrl.find((item) => pathname.startsWith(item.url));
-    setDynamicUrlName(labelType());
+
     if (matchingTab) {
       setActiveTab(matchingTab.name);
-    } else {
-      setActiveTab("Accueil");
     }
-  }, [pathname, labelType()]);
+  }, [pathname, typeUser()]);
 
   const handleNavigate = (url: string, name: string) => {
     setActiveTab(name);
     router.push(url);
     setIsMobileMenuOpen(false); // Ferme le menu mobile après navigation
   };
-
-  useEffect(() => {
-    // Si le menu mobile est ouvert et la route change (ex: par le bouton Précédent/Suivant du navigateur),
-    // on le ferme pour éviter un état incohérent.
-    if (isMobileMenuOpen) {
-      setIsMobileMenuOpen(false);
-    }
-  }, [pathname]);
 
   return (
     <div className="sticky top-0 z-50">
@@ -112,7 +102,6 @@ export default function HeaderComponent({}: {}) {
                 onClick={() => router.push("/")}
               >
                 <div className="w-12 h-12 bg-[#223268] rounded-lg flex items-center justify-center">
-                  {/* <Shield className="w-5 h-5 text-white" /> */}
                   <Image
                     src={logo}
                     alt="logo"
@@ -137,7 +126,7 @@ export default function HeaderComponent({}: {}) {
                     (
                       item // Filtrer Déconnexion/Paramètres ici car ils ont un emplacement spécifique sur desktop
                     ) =>
-                      typeUser() == 2 && item.name == "Mon Profil" ? (
+                      type == 2 && item.name == "Mon Profil" ? (
                         ""
                       ) : (
                         <button
@@ -225,22 +214,23 @@ export default function HeaderComponent({}: {}) {
                 typeUser() == 2 && item.name == "Mon Profil" ? (
                   ""
                 ) : (
-                  <button
-                    key={item.name}
-                    onClick={() =>
-                      item.action
-                        ? item.action()
-                        : handleNavigate(item.url, item.name)
-                    }
-                    className={`flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                      activeTab === item.name
-                        ? "bg-[#1b338570] text-blue-700"
-                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                    }`}
-                  >
-                    <item.icon className="h-5 w-5 mr-3" aria-hidden="true" />
-                    {item.name}
-                  </button>
+                  // <button
+                  //   key={item.name}
+                  //   onClick={() =>
+                  //     item.action
+                  //       ? item.action()
+                  //       : handleNavigate(item.url, item.name)
+                  //   }
+                  //   className={`flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  //     activeTab === item.name
+                  //       ? "bg-[#1b338570] text-blue-700"
+                  //       : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                  //   }`}
+                  // >
+                  //   <item.icon className="h-5 w-5 mr-3" aria-hidden="true" />
+                  //   {item.name}
+                  // </button>
+                  <div>ok</div>
                 )
               )}
               {/* Afficher les infos utilisateur dans le menu mobile aussi */}

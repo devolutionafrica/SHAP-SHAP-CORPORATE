@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
   try {
     const pool = await poolPromise;
     saveSuiviePaiementQuittanceLog(data, pool);
+    return 
   } catch (e: any) {
     return NextResponse.json(
       {},
@@ -97,6 +98,6 @@ export const saveSuiviePaiementQuittanceLog = async (
       }
     }
   } catch (e) {
-    return NextResponse.json({}, { status: 500 });
+    return NextResponse.json({}, { status: 500 ,statusText:"Erreur d'insertion "});
   }
 };

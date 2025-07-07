@@ -462,11 +462,12 @@ export default function CotisationPage() {
                           </span>
                         </TableCell>
                         <TableCell className="text-center text-sm px-4 py-3">
-                          {cotisation.EtatQuittance === "Impayée" && (
-                            <div>
-                              <ReglementPrimeModal data={cotisation} />
-                            </div>
-                          )}
+                          {cotisation.EtatQuittance === "Impayée" ||
+                            (true && (
+                              <div>
+                                <ReglementPrimeModal data={cotisation} />
+                              </div>
+                            ))}
                         </TableCell>
                       </motion.tr>
                     ))

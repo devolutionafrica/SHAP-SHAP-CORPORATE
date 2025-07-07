@@ -21,6 +21,8 @@ import { z } from "zod";
 import { useUpdateProfile } from "@/hooks/useUpdateProfil";
 // import { useAuthContext } from "@/hooks/contexts/authContext";
 import { useUserStore } from "@/store/userStore";
+import ForgotPasswordPage from "@/app/login/forgot/page";
+import ForgotPasswordComponent from "./Components/ChangePasswordComponent";
 dayjs.extend(customParseFormat);
 
 const profileSchema = z.object({
@@ -58,10 +60,12 @@ export default function ProfilPage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const updateUser = useUpdateProfile();
+  const getUsername = useUserStore((state) => state.username);
 
   //donnée utilisateur depuis zustand
   const user = useUserStore((state) => state.user);
   const getTypeUser = useUserStore((state) => state.getTypeUser);
+  const [cardView, setCardView] = useState("default");
 
   const {
     register,
@@ -100,7 +104,7 @@ export default function ProfilPage() {
   const onSubmit = async (data: ProfileFormData) => {
     try {
       const request = {
-        login: getUsername(),
+        login: getUsername,
         telephone: data.TELEPHONE,
         profession: data.PROFESSION,
         lieuNaissance: data.LIEU_NAISSANCE,
@@ -170,34 +174,41 @@ export default function ProfilPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="shadow-lg border-0">
-          <CardHeader className="text-center">
-            <Avatar className="w-24 h-24 mx-auto mb-4">
-              <AvatarImage src="/placeholder.svg?height=96&width=96" />
-              <AvatarFallback className="bg-[#223268] text-white text-2xl">
+        {cardView === "default" && (
+          <Card className="shadow-lg border-0">
+            <CardHeader className="text-center">
+              <Avatar className="w-24 h-24 mx-auto mb-4">
+                <AvatarImage src="/placeholder.svg?height=96&width=96" />
+                <AvatarFallback className="bg-[#223268] text-white text-2xl">
+                  {user
+                    ? user.NOM_CLIENT?.charAt(0) +
+                      user.PRENOMS_CLIENT?.charAt(0)
+                    : "DB"}
+                </AvatarFallback>
+              </Avatar>
+              <CardTitle>
                 {user
-                  ? user.NOM_CLIENT?.charAt(0) + user.PRENOMS_CLIENT?.charAt(0)
-                  : "DB"}
-              </AvatarFallback>
-            </Avatar>
-            <CardTitle>
-              {user
-                ? `${user.NOM_CLIENT || ""} ${user.PRENOMS_CLIENT || ""}`
-                : "Utilisateur"}
-            </CardTitle>
-            <CardDescription>
-              {user
-                ? `${user.PROFESSION || "Non renseigné"}`
-                : "Veuillez compléter votre profil pour plus d'informations."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button className="w-full bg-[#223268]">Modifier Photo</Button>
-            <Button variant="outline" className="w-full">
-              Changer Mot de Passe
-            </Button>
-          </CardContent>
-        </Card>
+                  ? `${user.NOM_CLIENT || ""} ${user.PRENOMS_CLIENT || ""}`
+                  : "Utilisateur"}
+              </CardTitle>
+              <CardDescription>
+                {user
+                  ? `${user.PROFESSION || "Non renseigné"}`
+                  : "Veuillez compléter votre profil pour plus d'informations."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button className="w-full bg-[#223268]">Modifier Photo</Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setCardView("password")}
+              >
+                Changer Mot de Passe
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {user == null && (
           <Card className="lg:col-span-2 shadow-lg border-0">
@@ -216,7 +227,7 @@ export default function ProfilPage() {
           </Card>
         )}
 
-        {user && (
+        {user && cardView != "password" && (
           <Card className="lg:col-span-2 shadow-lg border-0">
             <CardHeader>
               <CardTitle>Informations Personnelles</CardTitle>
@@ -225,8 +236,14 @@ export default function ProfilPage() {
             <CardContent className="space-y-6">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {renderField("Nom", user.NOM_CLIENT, null, false)}
-                  {renderField("Prénoms", user.PRENOMS_CLIENT, null, false)}
+                  {renderField(
+                    getTypeUser() == 1 ? "Nom" : "Nom commercial",
+                    user.NOM_CLIENT,
+                    null,
+                    false
+                  )}
+                  {getTypeUser() == 1 &&
+                    renderField("Prénoms", user.PRENOMS_CLIENT, null, false)}
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">
                       {getTypeUser() == 1
@@ -242,18 +259,20 @@ export default function ProfilPage() {
                     </div>
                   </div>
 
-                  {renderField(
-                    "Lieu de Naissance",
-                    user.LIEU_NAISSANCE,
-                    "LIEU_NAISSANCE"
-                  )}
+                  {getTypeUser() == 1 &&
+                    renderField(
+                      "Lieu de Naissance",
+                      user.LIEU_NAISSANCE,
+                      "LIEU_NAISSANCE"
+                    )}
                   {renderField("Téléphone (1)", user.TELEPHONE, "TELEPHONE")}
-                  {renderField(
+                  {/* { renderField(
                     "Téléphone (2)",
                     user.NUMERO_CLIENT,
                     "NUMERO_CLIENT"
-                  )}
-                  {renderField("Profession", user.PROFESSION, "PROFESSION")}
+                  )} */}
+                  {getTypeUser() == 1 &&
+                    renderField("Profession", user.PROFESSION, "PROFESSION")}
 
                   {renderField(
                     "Adresse Géographique",
@@ -306,6 +325,14 @@ export default function ProfilPage() {
               </form>
             </CardContent>
           </Card>
+        )}
+      </div>
+      <div className="w-full">
+        {user && cardView === "password" && (
+          <ForgotPasswordComponent
+            type={"Component"}
+            cancel={() => setCardView("default")}
+          />
         )}
       </div>
     </div>

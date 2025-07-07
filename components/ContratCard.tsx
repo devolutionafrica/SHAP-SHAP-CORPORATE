@@ -1,16 +1,12 @@
 import { FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { useContrat } from "@/hooks/useContrat";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
 import { useEffect } from "react";
-import { useConvention } from "@/hooks/useConvention";
-import { useUser } from "@/hooks/contexts/userContext";
-import { Contrat, Convention } from "@/app/Types/type";
-import { useRouter } from "next/navigation";
+
 import { useUserStore } from "@/store/userStore";
+import { useRouter } from "next/navigation";
 export default function ContratCard({}) {
-  const useContratQuery = useContrat();
   const {
     contrats,
     setContrats,

@@ -8,9 +8,7 @@ export async function GET(request: NextRequest) {
   const authResult = verifyAuthToken(request);
   if (authResult instanceof NextResponse) return authResult;
 
-  // Récupération des paramètres de requête
-
-  // const idClient = request.nextUrl.searchParams.get("username");
+  
 
   const username = extractUsernameIntoken(request);
 

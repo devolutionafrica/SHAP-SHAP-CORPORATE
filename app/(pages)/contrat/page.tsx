@@ -34,7 +34,7 @@ import { useUser } from "@/hooks/contexts/userContext";
 import { useContrat } from "@/hooks/useContrat";
 
 import { useRouter } from "next/navigation";
-
+import { useUserStore } from "@/store/userStore";
 const tableHeaders = [
   { key: "Produit", label: "Produit" },
   { key: "NumeroContrat", label: "Numéro" },
@@ -57,13 +57,13 @@ const TableRowSkeleton = ({ columns }: { columns: number }) => (
 export default function ContratPage() {
   const contratLoad = useContrat();
   const { contrats, handleLoadContrat } = useContratContext();
-  const { getTypeUser, labelType } = useUser(); // Contexte pour les informations utilisateur
+  const { getTypeUser, labelType } = useUser();
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Nombre d'éléments par page, peut être configuré
   const [searchTerm, setSearchTerm] = useState("");
-
+  const headerLabel = useUserStore((state) => state.headerLabel);
   const handleGotoDetails = (id: string) => {
     if (getTypeUser() == 2) {
       router.push(`/conventions/${id}/details`);
@@ -99,12 +99,8 @@ export default function ContratPage() {
 
   useEffect(() => {
     handleLoadContrat();
-  }, []);
-
-  useEffect(() => {
-    handleLoadContrat();
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, labelType()]);
 
   const rowVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -130,7 +126,7 @@ export default function ContratPage() {
         <div className="p-6 bg-gradient-to-r from-[#223268] to-[#1a254f] text-white flex items-center justify-between flex-wrap gap-4 rounded-t-xl">
           <h1 className="text-2xl md:text-3xl font-extrabold flex items-center gap-4">
             <Book className="w-8 h-8 text-blue-300" />
-            {labelType()}
+            {headerLabel}
           </h1>
           <div className="relative w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5" />
@@ -144,7 +140,6 @@ export default function ContratPage() {
           </div>
         </div>
 
-        
         <div className="overflow-x-auto relative min-h-[300px]">
           <Table className="w-full divide-y divide-gray-200">
             <TableHeader className="bg-gray-50">

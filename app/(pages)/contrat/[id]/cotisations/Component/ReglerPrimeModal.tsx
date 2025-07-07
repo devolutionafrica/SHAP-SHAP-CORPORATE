@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/select"; // Assurez-vous d'avoir ce composant de Shadcn
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -37,6 +37,7 @@ import { motion, AnimatePresence } from "framer-motion"; // Pour les animations
 import { usePayValidation } from "@/hooks/usePayValidation";
 import { useIntegrateur } from "@/hooks/useIntegrateur";
 import { useIntegrateurStore } from "@/store/useIntegrateurStore";
+import { FILE } from "dns";
 
 // Schéma de validation Zod pour le formulaire de paiement mobile
 const formSchema = z.object({
@@ -76,8 +77,17 @@ export default function ReglementPrimeModal({
   const loadIntegrateurs = async () => {
     try {
       const result = await useQuery.refetch();
-      if (result.data.sizes > 0) {
-        useStore.setIntegrateurs(result.data.data as Integrageur[]);
+      console.log(
+        "Résultat de la requête d'intégrateurs :",
+        result.data.data.length
+      );
+
+      if (result.data.data.length > 0) {
+        const filteredIntegrateurs = result.data.data.filter(
+          (integrateur: Integrageur) => integrateur.IS_ACTIF == true
+        );
+        useStore.setIntegrateurs(filteredIntegrateurs);
+        console.log("Intégrateurs filtrés :", filteredIntegrateurs);
       }
     } catch (error) {
       console.error("Erreur lors du chargement des intégrateurs :", error);
@@ -113,13 +123,13 @@ export default function ReglementPrimeModal({
 
   const handleSelectIntegrateur = (integrator: Integrageur) => {
     setSelectedIntegrator(integrator);
-    setCurrentStep(2); // Passer à l'étape suivante après sélection
+    setCurrentStep(2);
   };
 
   const handleBackToIntegratorSelection = () => {
     setSelectedIntegrator(null);
     setCurrentStep(1);
-    form.reset(); // Réinitialiser le formulaire quand on revient à l'étape 1
+    form.reset();
   };
 
   const payMutation = usePayValidation();
@@ -164,13 +174,17 @@ export default function ReglementPrimeModal({
     } catch (e) {}
   }
 
+  useEffect(() => {
+    loadIntegrateurs();
+  }, [isModalOpen]);
+
   return (
     <div className="">
       <Dialog
         open={isModalOpen}
         onOpenChange={(open) => {
           setIsModalOpen(open);
-          // Réinitialiser la modale à la fermeture
+
           if (!open) {
             setSelectedIntegrator(null);
             setCurrentStep(1);
@@ -227,16 +241,17 @@ export default function ReglementPrimeModal({
                   Veuillez choisir un moyen de paiement
                 </p>
                 <div className="flex flex-row flex-wrap gap-4 justify-center">
-                  {integrateurs != null &&
+                  {useQuery.isSuccess &&
+                    integrateurs != null &&
                     useQuery.isSuccess &&
                     integrateurs.map((item) => (
                       <motion.div
-                        key={item.idOperateur}
+                        key={item.IDE_OPERATEUR}
                         className={`bg-white/10 p-3 rounded-lg shadow-md cursor-pointer
                                        border-4 transition-all duration-300 ease-in-out
                                        ${
-                                         selectedIntegrator?.idOperateur ===
-                                         item.idOperateur
+                                         selectedIntegrator?.IDE_OPERATEUR ===
+                                         item.IDE_OPERATEUR
                                            ? "border-[#ca9a2c] scale-105 transform ring-4 ring-[#ca9a2c]/50"
                                            : "border-transparent hover:border-gray-400 hover:scale-[1.02]"
                                        }`}
@@ -248,15 +263,15 @@ export default function ReglementPrimeModal({
                         onClick={() => handleSelectIntegrateur(item)}
                       >
                         <Image
-                          src={item.logo}
-                          alt={item.libelle}
+                          src={`/INTEGRATEURS/` + item.LOGO}
+                          alt={item.LIBELLE}
                           width={120} // Taille des logos pour une meilleure présentation
                           height={120}
                           objectFit="contain" // Assure que le logo entier est visible
                           className="rounded-sm mb-2"
                         />
                         <p className="text-white font-semibold text-center text-sm mt-1">
-                          {item.libelle}
+                          {item.LIBELLE}
                         </p>
                       </motion.div>
                     ))}
@@ -277,16 +292,16 @@ export default function ReglementPrimeModal({
                   <p className="text-lg font-semibold text-center text-gray-100">
                     Vous avez choisi{" "}
                     <span className="text-yellow-300">
-                      {selectedIntegrator.libelle}
+                      {selectedIntegrator.LIBELLE}
                     </span>{" "}
                     pour régler votre Prime
                   </p>
                   <Image
-                    src={selectedIntegrator.logo}
+                    src={`/INTEGRATEURS/` + selectedIntegrator.LOGO}
                     width={150} // Taille plus grande pour le logo sélectionné
                     height={150}
                     objectFit="contain"
-                    alt={selectedIntegrator.libelle}
+                    alt={selectedIntegrator.LIBELLE}
                     className="rounded-lg shadow-lg border-2 border-[#ca9a2c] animate-bounce-slow"
                   />
                 </div>

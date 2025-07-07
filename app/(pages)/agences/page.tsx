@@ -1,6 +1,6 @@
 "use client";
 import { Agence } from "@/app/Types/type";
-// ANCIEN : import MapView from "@/components/MapContainer";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,7 +12,7 @@ import {
 import { useAgenceContext } from "@/hooks/contexts/useAgenceContext";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic"; // Importer dynamic de next/dynamic
+import dynamic from "next/dynamic";
 
 const MapView = dynamic(() => import("@/components/MapContainer"), {
   ssr: false,
@@ -114,11 +114,8 @@ export default function AgencePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agences.map((agence) => (
-              <div
-                key={agence.IdAgence}
-                className="p-4 bg-white rounded-lg shadow"
-              >
+            {agences.map((agence, index) => (
+              <div key={index} className="p-4 bg-white rounded-lg shadow">
                 <h4 className="font-semibold text-slate-900">
                   {agence.DistrictAgence}
                 </h4>

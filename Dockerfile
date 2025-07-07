@@ -1,4 +1,3 @@
-# Étape 1 : Build de l'app Next.js
 FROM node:18-alpine AS builder
 
 WORKDIR /app
@@ -7,7 +6,6 @@ RUN npm install --force
 COPY . .
 RUN npm run build
 
-# Étape 2 : Runtime pour prod
 FROM node:18-alpine
 
 WORKDIR /app

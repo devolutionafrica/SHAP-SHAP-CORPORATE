@@ -1,7 +1,7 @@
 "use client";
 import { triggerSessionExpiredModal } from "@/components/providers/SessionModalProviders";
 import axios from "axios";
-
+import { useUserStore } from "@/store/userStore";
 export const api = axios.create({
   baseURL: "/api",
   headers: {
@@ -28,26 +28,20 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Vérifiez le statut de l'erreur
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      console.error(
-        "Session expirée ou non autorisée. Affichage de la modale."
+    const count = useUserStore((state) => state.countSessionExpire);
+    if (
+      error.response?.status == 401 ||
+      (error.response?.status == 403 && !error.config._retry == false)
+    ) {
+      localStorage.removeItem("token");
+      console.log(
+        "Token supprimé du localStorage car l'utilisateur n'est pas autorisé ou la session a expiré."
       );
 
-      // Nettoyez le token localement
-      localStorage.removeItem("token");
-      // Si vous stockez d'autres infos utilisateur, effacez-les aussi
-      // localStorage.removeItem("user");
+      if (count == 0) {
+        triggerSessionExpiredModal();
+      }
 
-      // Déclenchez l'affichage de la modale d'expiration de session
-      // La fonction triggerSessionExpiredModal gérera si le provider est monté ou non
-      triggerSessionExpiredModal();
-
-      // Optionnel: Alerte pour le débogage, à retirer en production
-      // alert(`Erreur: ${error.response.status} - Votre session a expiré ou n'est pas valide.`);
-
-      // Rejetez la promesse pour arrêter le flux normal de la requête
-      // Cela empêchera les composants qui ont initié la requête de traiter cette erreur comme une erreur normale.
       return Promise.reject(error);
     }
 

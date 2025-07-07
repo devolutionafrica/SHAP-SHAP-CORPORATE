@@ -1,9 +1,8 @@
-// components/AdhesionTable.tsx
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-// Assuming these are Shadcn UI components
+
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -30,13 +29,13 @@ import { useParams, useRouter } from "next/navigation";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
 import { Convention } from "@/app/Types/type";
 
-// Headers du tableau pour un affichage plus lisible
+
 const tableHeaders = [
   { key: "NUMERO_DE_CONVENTION", label: "N° Convention" },
   { key: "LIBELLE_CONVENTION", label: "Libellé Convention" },
 ];
 
-// Skeleton row component for loading state
+
 const TableRowSkeleton = ({ columns }: { columns: number }) => (
   <TableRow className="animate-pulse bg-gray-100 h-12">
     {Array.from({ length: columns }).map((_, i) => (
@@ -49,7 +48,7 @@ const TableRowSkeleton = ({ columns }: { columns: number }) => (
 
 export default function AdhesionTable() {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Assuming fixed for now, but should be derived from API if paginated server-side
+  const itemsPerPage = 5;
   const [searchTerm, setSearchTerm] = useState("");
 
   const param = useParams();
@@ -70,10 +69,8 @@ export default function AdhesionTable() {
     );
   }, [conventions, searchTerm]);
 
-  // Calculate total pages based on filtered data (client-side pagination)
   const totalPages = Math.ceil(filteredConventions.length / itemsPerPage);
 
-  // Get current page data
   const currentConventions = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredConventions.slice(startIndex, startIndex + itemsPerPage);
@@ -187,7 +184,7 @@ export default function AdhesionTable() {
                 ) : (
                   currentConventions.map((adhesion: Convention, index) => (
                     <motion.tr
-                      key={adhesion.NUMERO_DE_CONVENTION} // Use a stable key
+                      key={index}
                       variants={rowVariants}
                       initial="hidden"
                       animate="visible"

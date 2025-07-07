@@ -7,9 +7,9 @@ import {
 } from "@/app/Types/type";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useConvention } from "../useConvention";
-import { useContrat } from "../useContrat";
-import { useAuthContext } from "./authContext";
+
 import { useUser } from "./userContext";
+import { useContrat } from "../useContrat";
 interface ContratContextType {
   contrats: Contrat[] | null;
   contrat: Contrat | null;

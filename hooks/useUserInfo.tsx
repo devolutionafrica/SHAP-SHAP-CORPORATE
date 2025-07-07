@@ -27,8 +27,8 @@ export const useUserInfo = () => {
       return response.data;
     },
     // staleTime: 1000 * 60 * 5,
-    // retry: false,
-    enabled: false,
+    retry: false,
+    enabled: true,
   });
 };
 

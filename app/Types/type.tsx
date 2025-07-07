@@ -188,13 +188,13 @@ export interface SituationFinanciere {
 }
 
 export interface Integrageur {
-  idOperateur: number;
-  libelle: string;
-  isActif: number;
-  urlApi?: string | null;
-  urlApiRetour?: string | null;
-  logo: string;
-  description?: string | null;
+  IDE_OPERATEUR: number;
+  LIBELLE: string;
+  IS_ACTIF: boolean;
+  URL_API?: string | null;
+  URL_API_RETOUR?: string | null;
+  LOGO: string;
+  DESCRIPTION?: string | null;
 }
 
 export interface PayData {

@@ -18,4 +18,6 @@ export async function GET({ request }: { request: NextRequest }) {
     .query(
       " SELECT Identifiant, Libelle, Id FROM [Extranet];[DemandePrestationTypes]"
     );
+
+  return
 }

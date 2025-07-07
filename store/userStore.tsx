@@ -1,7 +1,7 @@
 "use client";
 import { User } from "@/app/Types/type";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware"; // Pour la persistance dans localStorage
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface UserStoreState {
   user: User | null;
@@ -9,6 +9,7 @@ interface UserStoreState {
   percentProfile: number | null;
   labelType?: string | undefined;
   username: string | undefined;
+  headerLabel: string | undefined;
   // Actions
   setUser: (user: User | null) => void;
   setTypeUtilisateur: (type: number | undefined) => void;
@@ -17,18 +18,22 @@ interface UserStoreState {
   setUsername?: (label: string | undefined) => void;
   getTypeUser: () => number | undefined;
   getLabelType: () => string;
+  getUsername?: () => string | undefined;
+  setHeaderLabel?: (label: string | undefined) => void;
+  countSessionExpire: number;
+  setCountSessionExpire: () => void;
 }
 
 // Créez votre store Zustand
 export const useUserStore = create<UserStoreState>()(
   persist(
     (set, get) => ({
-      // --- État initial ---
       user: null,
       typeUtilisateur: undefined,
       percentProfile: null,
       username: undefined,
-      // --- Actions (Setters) ---
+      headerLabel: "Chargement ...",
+      countSessionExpire: 0,
       setUser: (user) => set({ user }),
       setTypeUtilisateur: (type) => {
         set({ typeUtilisateur: type });
@@ -39,21 +44,22 @@ export const useUserStore = create<UserStoreState>()(
           localStorage.removeItem("type_user");
         }
       },
+      setHeaderLabel: (label) => set({ headerLabel: label }),
       setLabelType: (label) => set({}),
       setPercentProfile: (percent) => set({ percentProfile: percent }),
       setUsername: (username) => set({ username }),
-      // --- Fonctions dérivées / Getters ---
-      // Ces fonctions accèdent à l'état via `get()`
+      setCountSessionExpire: () => {
+        let current = get().countSessionExpire;
+        set({ countSessionExpire: ++current });
+      },
       getTypeUser: () => {
         const currentType = get().typeUtilisateur;
         if (currentType === undefined) {
-          const storedType = localStorage.getItem("type_user");
-          // Si trouvé dans localStorage, mettez à jour l'état du store pour la prochaine fois
-          if (storedType) {
-            const parsedType = Number(storedType);
-            // set({ typeUtilisateur: parsedType }); // Ne pas faire de set() ici directement, car getTypeUser est un getter
-            return parsedType;
-          }
+          // const storedType = localStorage.getItem("type_user");
+          // if (storedType) {
+          //   const parsedType = Number(storedType);
+          //   return parsedType;
+          // }
         }
         return currentType;
       },
@@ -67,6 +73,9 @@ export const useUserStore = create<UserStoreState>()(
           return "Chargement ...";
         }
       },
+      getUsername: () => {
+        return get().username;
+      },
     }),
     {
       name: "user-storage",
@@ -74,22 +83,19 @@ export const useUserStore = create<UserStoreState>()(
       // Quelles parties de l'état doivent être persistées
       partialize: (state) => ({
         user: state.user,
-        // typeUtilisateur: state.typeUtilisateur, // Pas nécessaire si géré par localStorage dans setTypeUtilisateur/getTypeUser
         percentProfile: state.percentProfile,
+        typeUtilisateur: state.typeUtilisateur,
+        typeLabel: state.labelType,
+        username: state.username,
+        headerLabel: state.headerLabel,
       }),
-      // On hydrate le typeUtilisateur directement depuis localStorage lors de l'initialisation si nécessaire
-      // ou on s'assure que getTypeUser le gère dynamiquement
-      // La fonction de persistance ne gérera pas `typeUtilisateur` par défaut, car nous le traitons manuellement avec localStorage.
-      // Si `typeUtilisateur` doit être aussi persisté via Zustand, ajoutez-le dans `partialize`.
-      // Pour cet exemple, on se base sur `localStorage.getItem("type_user")` dans getTypeUser et setTypeUtilisateur.
     }
   )
 );
 
-useUserStore
-  .getState()
-  .setTypeUtilisateur(
-    localStorage.getItem("type_user")
-      ? Number(localStorage.getItem("type_user"))
-      : undefined
-  );
+useUserStore.getState();
+// .setTypeUtilisateur(
+//   localStorage.getItem("type_user")
+//     ? Number(localStorage.getItem("type_user"))
+//     : undefined
+// );
