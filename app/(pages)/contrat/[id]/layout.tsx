@@ -1,12 +1,10 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion"; // Assurez-vous que framer-motion est installé
+import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 
-// Assurez-vous que les imports de vos composants et hooks sont corrects
-import PageTabs from "./component/PageTab"; // Votre composant de tabs responsive
+import PageTabs from "./component/PageTab";
 import { useContratContext } from "@/hooks/contexts/useContratContext";
+import { useState } from "react";
 
 export default function ModernDashboard({
   children,
@@ -19,8 +17,6 @@ export default function ModernDashboard({
   const id = params?.id;
 
   const { contrat } = useContratContext();
-
-  useEffect(() => {}, [id, contrat]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-1/2 md:p-8 font-sans text-gray-800">

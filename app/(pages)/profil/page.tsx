@@ -23,6 +23,7 @@ import { useUpdateProfile } from "@/hooks/useUpdateProfil";
 import { useUserStore } from "@/store/userStore";
 import ForgotPasswordPage from "@/app/login/forgot/page";
 import ForgotPasswordComponent from "./Components/ChangePasswordComponent";
+import { CheckCircle, CheckIcon, XIcon } from "lucide-react";
 dayjs.extend(customParseFormat);
 
 const profileSchema = z.object({
@@ -33,12 +34,12 @@ const profileSchema = z.object({
     .regex(/^\+?\d{8,}$/, "Format de téléphone invalide")
     .optional()
     .or(z.literal("")),
-  NUMERO_CLIENT: z
-    .string()
-    .trim()
-    .regex(/^\+?\d{8,}$/, "Format de téléphone invalide")
-    .optional()
-    .or(z.literal("")),
+  // NUMERO_CLIENT: z
+  //   .string()
+  //   .trim()
+  //   .regex(/^\+?\d{8,}$/, "Format de téléphone invalide")
+  //   .optional()
+  //   .or(z.literal("")),
   PROFESSION: z.string().trim().optional().or(z.literal("")),
   ADRESSE_EMAIL: z
     .string()
@@ -77,10 +78,10 @@ export default function ProfilPage() {
     defaultValues: {
       LIEU_NAISSANCE: user?.LIEU_NAISSANCE || "",
       TELEPHONE: user?.TELEPHONE || "",
-      NUMERO_CLIENT: user?.NUMERO_CLIENT || "",
+
       PROFESSION: user?.PROFESSION || "",
 
-      ADRESSE_GEOGRAPHIQUE: user?.ADRESSE_POSTALE || "",
+      ADRESSE_GEOGRAPHIQUE: user?.ADRESSE_POSTALE || "r",
       VILLE_RESIDENCE: user?.LIEU_HABITATION || "",
       PAYS_RESIDENCE: user?.CODE_FILIALE || "",
     },
@@ -92,7 +93,7 @@ export default function ProfilPage() {
       reset({
         LIEU_NAISSANCE: user.LIEU_NAISSANCE || "",
         TELEPHONE: user.TELEPHONE || "",
-        NUMERO_CLIENT: user.NUMERO_CLIENT || "",
+
         PROFESSION: user.PROFESSION || "",
         ADRESSE_GEOGRAPHIQUE: user?.ADRESSE_POSTALE || "",
         VILLE_RESIDENCE: user?.LIEU_HABITATION || "",
@@ -165,7 +166,7 @@ export default function ProfilPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-4">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Mon Profil</h1>
         <p className="text-slate-600 mt-1">
@@ -300,6 +301,14 @@ export default function ProfilPage() {
                     >
                       Modifier
                     </Button>
+                  )}
+                  {isEditing && updateUser.isSuccess && (
+                    <div className="bg-green-400 text-[#223268s] text-center items-center flex flex-row px-3 rounded space-x-2">
+                      <CheckIcon />
+                      <label htmlFor="">Profil modifié avec succès !!!</label>
+
+                      {/* <XIcon className="hover:scale-100 hover-text-[red]" /> */}
+                    </div>
                   )}
                   {isEditing && (
                     <>

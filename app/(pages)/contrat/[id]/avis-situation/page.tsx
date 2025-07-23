@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 import NotFound from "@/public/avis_not_found.svg";
 import Image from "next/image";
 import dayjs from "dayjs";
-import { Select } from "@mui/material";
 import YearSelector from "./Components/YearSelector";
 const ReportViewerAndDownloader = () => {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -27,14 +26,16 @@ const ReportViewerAndDownloader = () => {
     setPdfUrl(null);
 
     try {
+      console.log("Géneration du fichier pdf");
       const response = await fetch(apiUrl, {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-
+      console.log("Fichier pdf recu");
+      // setLoading(false);
       if (!response.ok) {
         let errorMessage = `Erreur HTTP: ${response.status} ${response.statusText}`;
 
@@ -42,13 +43,14 @@ const ReportViewerAndDownloader = () => {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
         } catch (e) {}
-        throw new Error(errorMessage);
+        // throw new Error(errorMessage);
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       setPdfUrl(url);
       setShowPdf(true);
+      setLoading(false);
     } catch (err: any) {
       console.error(
         "Erreur lors de la récupération ou de l'affichage du PDF:",

@@ -37,6 +37,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatDate } from "@/app/(pages)/contrat/[id]/component/ContratInfoCard";
+import dayjs from "dayjs";
 
 const tableHeaders = [
   { key: "NomAssure", label: "Nom" },
@@ -83,6 +85,7 @@ export default function AdhesionTable() {
         .refetch()
         .then((response) => {
           const fetchedContrats = response.data.data as InfoPolice[];
+          console.log("Mes données :\n\n", response.data.data);
           setInitialContrats(fetchedContrats);
           setFilteredContrats(fetchedContrats);
           setCurrentPage(1);
@@ -356,6 +359,8 @@ export default function AdhesionTable() {
                             >
                               {adhesion.EtatPolice}
                             </span>
+                          ) : header.key == "DateDebutPolice" ? (
+                            dayjs(adhesion.DateDebutPolice).format("DD/MM/YYYY")
                           ) : (
                             (adhesion[
                               header.key as keyof InfoPolice

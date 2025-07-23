@@ -8,7 +8,6 @@ body {
 
 .table-header {
   color: white !important;
-  
 }
 
 @layer utilities {
@@ -88,6 +87,9 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+input {
+  color: black;
+}
 
 @layer base {
   * {
@@ -95,5 +97,6 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    /* background-color: #223268f1; */
   }
 }

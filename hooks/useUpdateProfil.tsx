@@ -13,6 +13,9 @@ export const useUpdateProfile = () => {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
+        params: {
+          login: getUsername(),
+        },
       });
       return response.data;
     },

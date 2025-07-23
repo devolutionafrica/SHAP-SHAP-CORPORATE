@@ -79,13 +79,24 @@ export default function WelcomeFirstLogin() {
         </div>
 
         {/* Formulaire - Adapté de LoginPage */}
-        <Card className="w-full md:w-1/2 p-6 flex flex-col justify-center sm:overflow-y-auto">
-          <h1
-            // Supprime les animations motion pour correspondre à LoginPage
-            className="font-extrabold text-[28px] text-[#223268] text-center"
-          >
-            Bienvenue !
-          </h1>
+        <Card className="w-full md:w-1/2 p-6 flex flex-col justify-center sm:overflow-y-auto bg-[#223268]">
+          <div className="flex flex-col justify-center items-center">
+            <Image
+              alt="logo-nsia"
+              src="/nsiavie.png"
+              width={200}
+              height={200}
+              objectFit="cover"
+              className=""
+            ></Image>
+            <h1
+              // Supprime les animations motion pour correspondre à LoginPage
+              className="font-extrabold text-[48px] text-[#ca9a2c] text-center"
+            >
+              Bienvenue !
+            </h1>
+          </div>
+
           <p className="text-center text-sm text-gray-600 mt-2">
             Pour votre sécurité, merci de modifier votre mot de passe avant de
             continuer.
@@ -96,12 +107,12 @@ export default function WelcomeFirstLogin() {
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="md:flex md:flex-row sm:flex-col gap-4">
-              <label className="flex flex-col text-sm">
+              <label className="flex flex-col text-sm text-white">
                 Mot de passe actuel :
                 <input
                   type="password"
                   {...register("oldPassword")}
-                  className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400" // rounded-md
+                  className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 text-black" // rounded-md
                 />
                 {errors.oldPassword && (
                   <span className="text-red-500 text-xs mt-1">
@@ -110,7 +121,7 @@ export default function WelcomeFirstLogin() {
                 )}
               </label>
 
-              <label className="flex flex-col text-sm">
+              <label className="flex flex-col text-sm text-white">
                 Nouveau mot de passe :
                 <input
                   type="password"
@@ -126,7 +137,7 @@ export default function WelcomeFirstLogin() {
             </div>
 
             <div className="md:flex md:flex-row sm:flex-col gap-4">
-              <label className="flex flex-col text-sm">
+              <label className="flex flex-col text-sm text-white">
                 Adresse email:
                 <input
                   type="email"
@@ -139,7 +150,7 @@ export default function WelcomeFirstLogin() {
                   </span>
                 )}
               </label>
-              <label className="flex flex-col text-sm">
+              <label className="flex flex-col text-sm text-white">
                 Numéro téléphone :
                 <input
                   type="number"
@@ -199,7 +210,7 @@ export default function WelcomeFirstLogin() {
               <div>
                 <button
                   type="button"
-                  className="!text-indigo-600 underline text-sm "
+                  className="!text-white underline text-sm "
                   onClick={() => {
                     router.push("/dashboard");
                   }}

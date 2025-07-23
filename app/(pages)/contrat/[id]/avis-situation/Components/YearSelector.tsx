@@ -39,7 +39,7 @@ export default function YearSelector({
         className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         onChange={(e) => onSelectYear(parseInt(e.target.value))}
         defaultValue={(currentYear - 1).toString()}
-        value={selectedYear || ""}
+        value={selectedYear}
       >
         <option value="">Sélectionner</option>
         {years.map((year) => (

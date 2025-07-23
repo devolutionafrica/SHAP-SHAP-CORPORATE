@@ -1,5 +1,3 @@
-"use client";
-
 import HeaderComponent from "@/components/HeaderComponent";
 import { headers, cookies } from "next/headers"; // <-- Import 'cookies' to read cookies on the server
 import AnimatedFooter from "@/components/FooterContainer";

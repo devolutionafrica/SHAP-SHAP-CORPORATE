@@ -14,19 +14,19 @@ export default function AnimatedFooter() {
     hidden: { opacity: 0, y: 50 },
     visible: {
       opacity: 1,
-      y: 0, // Position finale (visible, à sa place)
+      y: 0, //
       transition: {
-        duration: 0.6, // Durée de l'animation du conteneur principal
-        ease: "easeOut", // Effet d'accélération/décélération
-        when: "beforeChildren", // Anime le parent avant les enfants
-        staggerChildren: 0.2, // Délai entre l'animation de chaque enfant
+        duration: 0.6,
+        ease: "easeOut",
+        when: "beforeChildren",
+        staggerChildren: 0.2,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 }, // Position et opacité initiales des éléments enfants
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }, // Position et opacité finales des éléments enfants
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
   return (
@@ -57,7 +57,7 @@ export default function AnimatedFooter() {
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors duration-300 transform hover:scale-105"
             aria-label={`Appeler NSIA Assurance au ${companyPhoneNumber}`}
           >
-            <Phone size={20} className="text-teal-300" />{" "}
+            <Phone size={20} className="text-[#ca9a2c]" />{" "}
             {/* Icône téléphone */}
             <span className="font-semibold text-lg">{companyPhoneNumber}</span>
           </a>
@@ -67,7 +67,7 @@ export default function AnimatedFooter() {
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors duration-300 transform hover:scale-105"
             aria-label={`Envoyer un e-mail à ${companyEmail}`}
           >
-            <Mail size={20} className="text-teal-300" /> {/* Icône e-mail */}
+            <Mail size={20} className="text-[#ca9a2c]" /> {/* Icône e-mail */}
             <span className="font-semibold text-lg">{companyEmail}</span>
           </a>
         </motion.div>

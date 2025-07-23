@@ -5,6 +5,13 @@ import { useContratContext } from "@/hooks/contexts/useContratContext";
 import dayjs from "dayjs"; // Importer dayjs
 import { motion } from "framer-motion"; // Importer motion pour les animations
 
+export const formatDate = (dateString: string | undefined): string => {
+  if (!dateString) {
+    return "";
+  }
+  return dayjs(dateString).format("DD/MM/YYYY");
+};
+
 // Importer les icônes pertinentes de lucide-react
 import {
   FileText,
@@ -58,12 +65,6 @@ const ContractInfoCard = () => {
   const { contrat } = useContratContext();
 
   // Fonction utilitaire pour formater les dates
-  const formatDate = (dateString: string | undefined): string => {
-    if (!dateString) {
-      return "";
-    }
-    return dayjs(dateString).format("DD/MM/YYYY");
-  };
 
   return (
     <motion.div

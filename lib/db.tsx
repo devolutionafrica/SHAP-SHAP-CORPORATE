@@ -19,7 +19,7 @@ export const poolPromise = new sql.ConnectionPool(config)
     return pool;
   })
   .catch((err: unknown) => {
-    console.error("❌ Erreur connexion SQL Server", err);
+    console.error("Erreur connexion SQL Server", err);
     throw err;
   });
 

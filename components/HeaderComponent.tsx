@@ -39,12 +39,17 @@ export default function HeaderComponent({}: {}) {
 
   // État pour gérer l'ouverture/fermeture du menu mobile
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const setTypeUser = useUserStore((state) => state.setTypeUtilisateur);
+  const setLabelUser = useUserStore((state) => state.setLabelType);
+  const setHeaderLabel = useUserStore((state) => state.setHeaderLabel);
   const handleDeconnexion = () => {
     document.cookie = "isAuth=; Max-Age=0; path=/";
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("type_user");
+    setTypeUser(undefined);
+    setLabelUser!(undefined);
+    setHeaderLabel!("Chargement ...");
     initializeData();
     router.push("/login");
   };
@@ -55,7 +60,8 @@ export default function HeaderComponent({}: {}) {
   const type = useUserStore((state) => state.typeUtilisateur);
   const user = useUserStore((state) => state.user);
   const headerLabel = useUserStore((state) => state.headerLabel);
-
+  const activeTab = useUserStore((state) => state.activeTab);
+  const setActiveTab = useUserStore((state) => state.setActiveTab);
   const tabUrl = [
     { name: "Accueil", url: "/dashboard", icon: TrendingUp },
     {
@@ -76,14 +82,18 @@ export default function HeaderComponent({}: {}) {
     },
   ];
 
-  const [activeTab, setActiveTab] = useState("Accueil");
+  // const [activeTab, setActiveTab] = useState("Accueil");
   useEffect(() => {
     const matchingTab = tabUrl.find((item) => pathname.startsWith(item.url));
 
     if (matchingTab) {
-      setActiveTab(matchingTab.name);
+      if (matchingTab.name.includes("Chargement")) {
+        console.log("active tab 2: ", activeTab);
+      } else {
+        setActiveTab(matchingTab.name);
+      }
     }
-  }, [pathname, typeUser()]);
+  }, [pathname, typeUser(), activeTab]);
 
   const handleNavigate = (url: string, name: string) => {
     setActiveTab(name);
@@ -92,8 +102,8 @@ export default function HeaderComponent({}: {}) {
   };
 
   return (
-    <div className="sticky top-0 z-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <div className="sticky top-0 z-50 ">
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 !bg-[#223268] rounded-b-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
@@ -110,7 +120,7 @@ export default function HeaderComponent({}: {}) {
                     objectFit="cover"
                   />
                 </div>
-                <span className="text-xl font-bold text-[#223268] whitespace-nowrap">
+                <span className="md:text-xl font-bold text-[#ffffff] whitespace-nowrap">
                   NSIA ASSURANCE
                 </span>
               </div>
@@ -132,14 +142,16 @@ export default function HeaderComponent({}: {}) {
                         <button
                           key={item.name}
                           onClick={() => handleNavigate(item.url, item.name)}
-                          className={`flex items-center text-[12px] space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          className={`flex items-center text-[12px] space-x-2 px-2 py-2 rounded-3xl transition-all duration-200 ${
                             activeTab === item.name
-                              ? "bg-[#1b338570] text-blue-700 font-medium"
-                              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                              ? "bg-[#c4c4c470] text-white font-medium "
+                              : "text-white hover:text-white hover:bg-[#c4c4c470]"
                           }`}
                         >
-                          <item.icon className="w-4 h-4" />
-                          <span>{item.name}</span>
+                          <item.icon className="w-4 h-4 text-white" />
+                          <span className="text-white">
+                            {item.name.toUpperCase()}
+                          </span>
                         </button>
                       )
                   )}
@@ -157,32 +169,34 @@ export default function HeaderComponent({}: {}) {
                     <User color="white" />
                   </Avatar>
                   <div className="hidden sm:block">
-                    <p className="text-sm font-medium text-slate-900">
+                    <p className="text-sm font-medium text-white">
                       {user?.NOM_CLIENT || "Nom Utilisateur"}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-white">
                       {user?.PROFESSION || " "}
                     </p>
                   </div>
                   <Button variant="ghost" size="icon">
-                    <Settings className="w-4 h-4" />
+                    <Settings className="w-4 h-4 text-white" />
                   </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  className="relative flex flex-col items-center justify-center"
-                  onClick={handleDeconnexion}
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span className="text-[9px] mt-0.5">Déconnexion</span>
-                </Button>
+                <div className="">
+                  <Button
+                    variant="ghost"
+                    className="relative flex flex-col items-center justify-center text-white"
+                    onClick={handleDeconnexion}
+                  >
+                    <LogOut className="" />
+                    <span className="text-[9px] text-white">Déconnexion</span>
+                  </Button>
+                </div>
               </div>
 
               {/* Bouton pour menu mobile (visible sur écrans petits) */}
               <div className="md:hidden flex items-center">
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                  className="p-2 text-white hover:text-slate-900 hover:bg-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
                   aria-controls="mobile-menu"
                   aria-expanded={isMobileMenuOpen}
                 >
@@ -214,23 +228,23 @@ export default function HeaderComponent({}: {}) {
                 typeUser() == 2 && item.name == "Mon Profil" ? (
                   ""
                 ) : (
-                  // <button
-                  //   key={item.name}
-                  //   onClick={() =>
-                  //     item.action
-                  //       ? item.action()
-                  //       : handleNavigate(item.url, item.name)
-                  //   }
-                  //   className={`flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                  //     activeTab === item.name
-                  //       ? "bg-[#1b338570] text-blue-700"
-                  //       : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                  //   }`}
-                  // >
-                  //   <item.icon className="h-5 w-5 mr-3" aria-hidden="true" />
-                  //   {item.name}
-                  // </button>
-                  <div>ok</div>
+                  <button
+                    key={item.name}
+                    onClick={() =>
+                      item.action
+                        ? item.action()
+                        : handleNavigate(item.url, item.name)
+                    }
+                    className={`flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                      activeTab === item.name
+                        ? "bg-[#1b338570] text-blue-700"
+                        : "text-white hover:bg-slate-100 hover:text-slate-900"
+                    }`}
+                  >
+                    <item.icon className="h-5 w-5 mr-3" aria-hidden="true" />
+                    {item.name}
+                  </button>
+                  // <div>ok</div>
                 )
               )}
               {/* Afficher les infos utilisateur dans le menu mobile aussi */}

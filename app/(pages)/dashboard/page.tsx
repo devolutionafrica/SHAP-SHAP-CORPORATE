@@ -21,6 +21,7 @@ import { useEffect } from "react";
 import { ButtonOutline } from "./component/ButtonOutline";
 import { useUserStore } from "@/store/userStore";
 import { motion } from "framer-motion";
+import { useTauxEngagement } from "@/hooks/useEngagement";
 
 export default function DashboardPage() {
   const userinfo = useUserInfo();
@@ -33,6 +34,9 @@ export default function DashboardPage() {
   const labelType = useUserStore((state) => state.getLabelType);
   const setLabelType = useUserStore((state) => state.setLabelType);
   const setHeaderLabel = useUserStore((state) => state.setHeaderLabel);
+  const setUsername = useUserStore((state) => state.username);
+  const setEngagement = useUserStore((state) => state.setTauxEngagement);
+  const engagement = useUserStore((state) => state.tauxEngagement);
   const {
     contrats,
     conventions,
@@ -95,6 +99,8 @@ export default function DashboardPage() {
       });
   };
 
+  const useEngagement = useTauxEngagement();
+
   const agenceQuery = useAgence();
   const router = useRouter();
   const handleLoadAgences = async () => {
@@ -110,10 +116,25 @@ export default function DashboardPage() {
         alert("Erreur lors du chargement des agences.");
       });
   };
+  const loadEngagement = async () => {
+    await useEngagement
+      .refetch()
+      .then((result) => {
+        if (result.data) {
+          console.log("Taux d'engagement :", result.data.data);
+          // alert(result.data.data);
+          setEngagement(+result.data.data * 100);
+        }
+      })
+      .catch((e) => {
+        console.error("Mon erreur ", e);
+      });
+  };
 
   useEffect(() => {
     handleLoadUserData();
     handleLoadAgences();
+    loadEngagement();
     handleLoadConvention();
     handleLoadContrat();
   }, [getTypeUser(), user, contrats, conventions]);
@@ -150,65 +171,84 @@ export default function DashboardPage() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {getTypeUser() == 1 && (
+            // <motion.div>
+            <Card className="bg-gradient-to-br from-yellow-200 to-yellow-100 border-yellow-400 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-yellow-800">
+                  Mon Taux d'engagement
+                </CardTitle>
+                <MapPin className="h-6 w-6 text-yellow-600 group-hover:scale-110 transition-transform" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-yellow-900">
+                  {Math.floor(engagement ?? 0)} %
+                </div>
+                <p className="text-xs text-yellow-800 mt-1">
+                  Nombre total de tous les contrats pour les conventions
+                </p>
+                <div className="mt-3"></div>
+              </CardContent>
+            </Card>
+            // </motion.div>
+          )}
+
           <ContratCard />
 
           {getTypeUser() == 2 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-yellow-700">
-                    Nombre Total des contrats
-                  </CardTitle>
-                  <MapPin className="h-6 w-6 text-yellow-600 group-hover:scale-110 transition-transform" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-yellow-900">
-                    {totalContratConvention}
-                  </div>
-                  <p className="text-xs text-yellow-600 mt-1">
-                    Nombre total de tous les contrats pour les conventions
-                  </p>
-                  <div className="mt-3"></div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+            // <motion.div>
+            <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-green-700">
-                  Agences Disponibles
+                <CardTitle className="text-sm font-medium text-yellow-700">
+                  Nombre Total des contrats
                 </CardTitle>
-                <MapPin className="h-6 w-6 text-green-600 group-hover:scale-110 transition-transform" />
+                <MapPin className="h-6 w-6 text-yellow-600 group-hover:scale-110 transition-transform" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-green-900">
-                  {agences != null && agences!.length > 0 ? agences!.length : 0}
+                <div className="text-3xl font-bold text-yellow-900">
+                  {totalContratConvention}
                 </div>
-                <p className="text-xs text-green-600 mt-1">
-                  Agence la plus proche
+                <p className="text-xs text-yellow-600 mt-1">
+                  Nombre total de tous les contrats pour les conventions
                 </p>
-                <div className="mt-3">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-green-700 hover:bg-green-200 p-0"
-                    onClick={() => router.push("/agences")}
-                  >
-                    Localiser →
-                  </Button>
-                </div>
+                <div className="mt-3"></div>
               </CardContent>
             </Card>
-          </motion.div>
+            // </motion.div>
+          )}
+          {/* <motion.div
+            initial={{ opacity: 0, scale: 1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="h-full"
+          > */}
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-green-700">
+                Agences Disponibles
+              </CardTitle>
+              <MapPin className="h-6 w-6 text-green-600 group-hover:scale-110 transition-transform" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-green-900">
+                {agences != null && agences!.length > 0 ? agences!.length : 0}
+              </div>
+              <p className="text-xs text-green-600 mt-1">
+                Agence la plus proche
+              </p>
+              <div className="mt-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-green-700 hover:bg-green-200 p-0"
+                  onClick={() => router.push("/agences")}
+                >
+                  Localiser →
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          {/* </motion.div> */}
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -227,9 +267,12 @@ export default function DashboardPage() {
                   {percentProfile} %
                 </div>
                 <Progress value={percentProfile} className="mt-2 h-2" />
-                <ButtonOutline onClick={() => router.push("/profil")}>
+                <Button
+                  onClick={() => router.push("/profil")}
+                  className="bg-purple-100 text-purple-500 my-2 hover:bg-purple-400 hover:text-black"
+                >
                   Compléter →
-                </ButtonOutline>
+                </Button>
               </CardContent>
             </Card>
           </motion.div>

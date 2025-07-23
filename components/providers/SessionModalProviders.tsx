@@ -1,4 +1,3 @@
-// components/providers/SessionModalProvider.tsx
 "use client";
 
 import React, {
@@ -7,18 +6,15 @@ import React, {
   useState,
   useCallback,
   ReactNode,
+  useEffect,
 } from "react";
-import SessionsExpireComponent from "@/components/SessionExpireComponent"; // Assurez-vous que ce chemin est correct
+import SessionsExpireComponent from "@/components/SessionExpireComponent";
 
-// Définir le type du contexte
 interface SessionModalContextType {
   showSessionExpiredModal: () => void;
   hideSessionExpiredModal: () => void;
-  retry: boolean;
-  setRetry: any;
 }
 
-// Créer le contexte
 const SessionModalContext = createContext<SessionModalContextType | undefined>(
   undefined
 );
@@ -52,12 +48,10 @@ export const SessionModalProvider: React.FC<SessionModalProviderProps> = ({
     setIsVisible(false);
   }, []);
 
-  const [retry, setRetry] = useState(false);
-
-  React.useEffect(() => {
+  useEffect(() => {
     showModalFunction = showModal;
     return () => {
-      showModalFunction = null;
+      showModalFunction;
     };
   }, [isVisible]);
 
@@ -66,19 +60,19 @@ export const SessionModalProvider: React.FC<SessionModalProviderProps> = ({
       value={{
         showSessionExpiredModal: showModal,
         hideSessionExpiredModal: hideModal,
-        retry,
-        setRetry,
       }}
     >
       {children}
       {isVisible && (
-        <SessionsExpireComponent open={isVisible} onClose={hideModal} />
+        <SessionsExpireComponent
+          open={isVisible}
+          onClose={() => setIsVisible(false)}
+        />
       )}
     </SessionModalContext.Provider>
   );
 };
 
-// Hook personnalisé pour utiliser le contexte dans les composants React
 export const useSessionModal = () => {
   const context = useContext(SessionModalContext);
   if (context === undefined) {

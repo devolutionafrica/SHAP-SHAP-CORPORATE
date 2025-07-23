@@ -170,6 +170,7 @@ export interface InfoPolice {
   EtatPolice: string;
   NomAssure: string;
   PrenomsAssure: string;
+  DateDebutPolice: string;
 }
 
 export interface Convention {

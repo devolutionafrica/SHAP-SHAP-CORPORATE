@@ -9,7 +9,7 @@ interface UserStoreState {
   percentProfile: number | null;
   labelType?: string | undefined;
   username: string | undefined;
-  headerLabel: string | undefined;
+  headerLabel: string | "Chargement ...";
   // Actions
   setUser: (user: User | null) => void;
   setTypeUtilisateur: (type: number | undefined) => void;
@@ -22,6 +22,10 @@ interface UserStoreState {
   setHeaderLabel?: (label: string | undefined) => void;
   countSessionExpire: number;
   setCountSessionExpire: () => void;
+  activeTab: String | undefined;
+  setActiveTab: (active: String) => void;
+  tauxEngagement: number | undefined;
+  setTauxEngagement: (taux: number | undefined) => void;
 }
 
 // Créez votre store Zustand
@@ -34,6 +38,8 @@ export const useUserStore = create<UserStoreState>()(
       username: undefined,
       headerLabel: "Chargement ...",
       countSessionExpire: 0,
+      activeTab: "Accueil",
+      tauxEngagement: 0,
       setUser: (user) => set({ user }),
       setTypeUtilisateur: (type) => {
         set({ typeUtilisateur: type });
@@ -52,6 +58,8 @@ export const useUserStore = create<UserStoreState>()(
         let current = get().countSessionExpire;
         set({ countSessionExpire: ++current });
       },
+      setActiveTab: (value) => set({ activeTab: value }),
+      setTauxEngagement: (value) => set({ tauxEngagement: value }),
       getTypeUser: () => {
         const currentType = get().typeUtilisateur;
         if (currentType === undefined) {
@@ -76,6 +84,9 @@ export const useUserStore = create<UserStoreState>()(
       getUsername: () => {
         return get().username;
       },
+      getTauxEngagement: () => {
+        return get().tauxEngagement;
+      },
     }),
     {
       name: "user-storage",
@@ -88,6 +99,8 @@ export const useUserStore = create<UserStoreState>()(
         typeLabel: state.labelType,
         username: state.username,
         headerLabel: state.headerLabel,
+        activeTab: state.activeTab,
+        tauxEngagement: state.tauxEngagement,
       }),
     }
   )

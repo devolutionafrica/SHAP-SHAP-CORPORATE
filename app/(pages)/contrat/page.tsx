@@ -122,10 +122,10 @@ export default function ContratPage() {
 
   return (
     <div className="w-full md:mx-auto  md:p-6 md:lg:p-8">
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100">
+      <div className="bg-[white] shadow-lg rounded-lg overflow-hidden border border-gray-100">
         <div className="p-6 bg-gradient-to-r from-[#223268] to-[#1a254f] text-white flex items-center justify-between flex-wrap gap-4 rounded-t-xl">
-          <h1 className="text-2xl md:text-3xl font-extrabold flex items-center gap-4">
-            <Book className="w-8 h-8 text-blue-300" />
+          <h1 className="text-2xl md:text-3xl text-[#ca9a2c] font-extrabold flex items-center gap-4">
+            <Book className="w-8 h-8 text-[#ca9a2c]" />
             {headerLabel}
           </h1>
           <div className="relative w-full sm:w-auto">

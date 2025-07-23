@@ -11,12 +11,15 @@ export const useSinistre = (numeroPolice: string) => {
     queryKey: ["sinistres", numeroPolice],
     queryFn: async () => {
       // const token = localStorage.getItem("token");
-      const response = await api.get(`/prestation/sinistre`, {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-        params: { numeroPolice },
-      });
+      const response = await api.get(
+        `/contrat/${numeroPolice}/prestation/sinistre`,
+        {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+          // params: { numeroPolice },
+        }
+      );
       return response.data;
     },
 

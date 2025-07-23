@@ -30,7 +30,7 @@ export default function ContratCard({}) {
     if (typeUser() == 2) {
       handleLoadConvention();
     }
-  }, [, contrats, conventions, typeUser()]);
+  }, [, contrats, conventions, typeUser(), labelType]);
 
   return (
     <div>

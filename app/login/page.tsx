@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, scale } from "framer-motion";
 import Image from "next/image";
 
 import { Card } from "@/components/ui/card";
@@ -66,7 +66,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col md:flex-row bg-white backdrop-blur-md shadow-xl rounded-xl overflow-hidden max-w-4xl w-full h-[80vh]"
+        className="flex flex-col md:flex-row bg-white backdrop-blur-md shadow-xl rounded-3xl overflow-hidden max-w-4xl w-full h-[90vh]"
       >
         <div className="relative hidden md:block w-full md:w-1/2 h-full">
           <Image
@@ -79,12 +79,25 @@ export default function LoginPage() {
         </div>
 
         {/* Formulaire */}
-        <Card className="w-full md:w-1/2 p-6 flex flex-col justify-center">
-          <h1 className="font-extrabold text-[28px] text-[#223268] text-center">
-            CONNEXION
-          </h1>
+        <Card className="w-full md:w-1/2 p-6 flex flex-col rounded-none justify-center bg-[#223268] ">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-col items-center my-4"
+          >
+            <Image
+              src="/nsiavie.png"
+              alt="logo"
+              width={200}
+              height={200}
+            ></Image>
+            <h1 className="font-extrabold text-[28px] text-[#ca9a2c] text-center">
+              CONNEXION
+            </h1>
+          </motion.div>
           {/* <Image src={Logo} alt="NSIA" width={200} className="justify-center" /> */}
-          <p className="text-center text-sm text-gray-600 mt-1">
+          <p className="text-center text-sm text-white mt-1 ">
             Connectez-vous à votre compte pour accéder à toutes les
             fonctionnalités.
           </p>
@@ -93,12 +106,12 @@ export default function LoginPage() {
             className="flex flex-col gap-4 mt-6"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <label className="flex flex-col text-sm">
+            <label className="flex flex-col text-sm text-white">
               Email:
               <input
                 type="text"
                 {...register("email")}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400"
+                className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 text-black"
               />
               {errors.email && (
                 <span className="text-red-500 text-xs mt-1">
@@ -106,12 +119,12 @@ export default function LoginPage() {
                 </span>
               )}
             </label>
-            <label className="flex flex-col text-sm">
+            <label className="flex flex-col text-sm text-white">
               Mot de passe:
               <input
                 type="password"
                 {...register("password")}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400"
+                className="mt-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 text-black"
               />
               {errors.password && (
                 <span className="text-red-500 text-xs mt-1">
@@ -125,10 +138,7 @@ export default function LoginPage() {
               </div>
             )}
             <div className="flex flex-row items-center justify-between text-sm mt-2">
-              <a
-                href="/login/forgot"
-                className="text-indigo-600 hover:underline"
-              >
+              <a href="/login/forgot" className="text-[white] hover:underline">
                 Mot de passe oublié ?
               </a>
               <button
@@ -138,9 +148,9 @@ export default function LoginPage() {
                 {loginMutation.isPending ? "Connexion..." : "Se connecter"}
               </button>
             </div>
-            <p className="mt-4 text-center text-sm">
+            <p className="mt-4 text-center text-sm text-teal-50 ">
               Vous n'avez pas de compte ?{" "}
-              <a href="/register" className="text-indigo-600 hover:underline">
+              <a href="/register" className="text-[white] hover:underline">
                 Inscrivez-vous
               </a>
             </p>

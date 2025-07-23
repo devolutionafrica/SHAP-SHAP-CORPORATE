@@ -39,8 +39,8 @@ export default function SinistresPage() {
       console.log("Fetched sinistres:", result.data);
       setSinistre(result.data.data as Sinistre[]);
     } catch (error) {
-      console.error("Error fetching sinistres:", error);
-      alert("Erreur lors du chargement des sinistres.");
+      // console.error("Error fetching sinistres:", error);
+      // alert("Erreur lors du chargement des sinistres.");
       setSinistre(null);
     }
   };

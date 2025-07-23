@@ -78,7 +78,7 @@ export default function CotisationPage() {
 
   const [cotisations, setCotisations] = useState<CotisationClientIndiv[]>([]);
   const [summaryCotisations, setSummaryCotisation] = useState<any>(null);
-
+  const [loading, setLoading] = useState(false);
   // Pagination states
   const [page, setPage] = useState(0); // Current page (0-indexed)
   const [rowsPerPage, setRowsPerPage] = useState(10); // Items per page
@@ -102,11 +102,16 @@ export default function CotisationPage() {
 
   const fetchCotisationData = async () => {
     try {
+      setLoading(true);
       const cotisationResponse = await fetchCotisation.refetch();
-      setCotisations(
-        (cotisationResponse.data && cotisationResponse.data.data) || []
-      );
+      if (cotisationResponse.data) {
+        setCotisations(
+          (cotisationResponse.data && cotisationResponse.data.data) || []
+        );
+      }
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Erreur lors de la récupération des cotisations :", error);
       setCotisations([]);
       // Consider a more user-friendly error display, e.g., a toast notification
@@ -218,30 +223,34 @@ export default function CotisationPage() {
   });
 
   const filteredAndSortedCotisations = useMemo(() => {
-    if (!cotisations) return [];
+    try {
+      if (!cotisations) return [];
 
-    let filtered = cotisations;
+      let filtered = cotisations;
 
-    const lowerCaseQuery = searchQuery.toLowerCase();
-    if (lowerCaseQuery) {
-      filtered = filtered.filter((cotisation) =>
-        String(cotisation.NumeroQuittance)
-          .toLowerCase()
-          .includes(lowerCaseQuery)
-      );
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      if (lowerCaseQuery) {
+        filtered = filtered.filter((cotisation) =>
+          String(cotisation.NumeroQuittance)
+            .toLowerCase()
+            .includes(lowerCaseQuery)
+        );
+      }
+
+      if (filterCotisation == "Impayée") {
+        filtered = filtered.filter(
+          (cotisation) => cotisation.EtatQuittance === "Impayée"
+        );
+      }
+
+      return filtered.sort((a, b) => {
+        const dateA = dayjs(a.Echeance);
+        const dateB = dayjs(b.Echeance);
+        return dateB.diff(dateA); // Plus récent en premier
+      });
+    } catch (e) {
+      let filtered = [];
     }
-
-    if (filterCotisation == "Impayée") {
-      filtered = filtered.filter(
-        (cotisation) => cotisation.EtatQuittance === "Impayée"
-      );
-    }
-
-    return filtered.sort((a, b) => {
-      const dateA = dayjs(a.Echeance);
-      const dateB = dayjs(b.Echeance);
-      return dateB.diff(dateA); // Plus récent en premier
-    });
   }, [cotisations, searchQuery, filterCotisation]);
 
   const handlePageChange = (event: unknown, newPage: number) => {
@@ -257,17 +266,18 @@ export default function CotisationPage() {
 
   const handleChangeFiltre = (val: string) => {
     setFiltreCotisation(val);
-    setPage(0); // Reset to first page when filter changes
+    setPage(0);
   };
 
   // Calculate items for the current page
   const paginatedCotisations = useMemo(() => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
-    return filteredAndSortedCotisations.slice(startIndex, endIndex);
+    if (filteredAndSortedCotisations != null) {
+      return filteredAndSortedCotisations!.slice(startIndex, endIndex);
+    } else return [];
   }, [page, rowsPerPage, filteredAndSortedCotisations]);
 
-  // Correction de la logique de classe pour le filtre
   const filteredStyle = (val: string) => {
     // Si l'élément actuel (val) est le filtre sélectionné (filterCotisation)
     if (val === filterCotisation) {
@@ -277,7 +287,7 @@ export default function CotisationPage() {
     }
   };
 
-  const filtres = ["Tous", "Impayée"]; // Note: "Impayées" doit correspondre exactement à l'état de la quittance
+  const filtres = ["Tous", "Impayée"];
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -339,7 +349,6 @@ export default function CotisationPage() {
           </Grid>
         </motion.div>
 
-        {/* Introduction Message */}
         <motion.div variants={itemVariants} className="mb-6">
           <Typography variant="body1" className="text-gray-700 leading-relaxed">
             Nous vous remercions de la confiance placée en notre compagnie en
@@ -353,30 +362,28 @@ export default function CotisationPage() {
           </Typography>
         </motion.div>
 
-        {/* Cotisations Table */}
         <motion.div
           className="bg-white rounded-lg shadow-md overflow-hidden mb-6"
           variants={cardVariants}
         >
           <CardContent className="p-0">
             <Typography
-              component="div" // Utiliser div pour un meilleur contrôle du flex
+              component="div"
               variant="h6"
               className="pt-6 pb-2 text-gray-800 font-semibold "
             >
               <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
                 {" "}
-                {/* Flexbox pour alignement */}
                 <div className="text-center sm:text-left">
                   Situation du {startDate.format("DD/MM/YYYY")} au{" "}
                   {endDate.format("DD/MM/YYYY")}
                 </div>
-                <div className="bg-[#223268] rounded-[36px] flex flex-row items-center border border-black p-1">
+                <div className="bg-[#223268] rounded-[36px] flex flex-row items-center border border-black p-1 ">
                   {" "}
                   {filtres.map((item: string, index: number) => (
                     <div
                       key={index}
-                      className={`p-2 px-4 text-[11px] rounded-[30px] cursor-pointer ${filteredStyle(
+                      className={`p-2 px-4 text-[11px] rounded-[30px] cursor-pointer transition-colors duration-300 ${filteredStyle(
                         item
                       )} `}
                       onClick={() => handleChangeFiltre(item)}
@@ -411,103 +418,111 @@ export default function CotisationPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {fetchCotisation.isLoading ? (
-                    <div className="flex justify-center items-center py-8 mx-auto !w-full">
-                      <AnimatedImageLoader
-                        alt="Loader"
-                        src="/nsiavie.png"
-                        label="Chargement des cotisations"
-                      />
-                      {/* <p>Chargement des cotisations</p> */}
-                    </div>
-                  ) : paginatedCotisations.length > 0 ? (
-                    paginatedCotisations.map((cotisation) => (
-                      <motion.tr
-                        key={cotisation.NumeroQuittance}
-                        initial="hidden"
-                        animate="visible"
-                        variants={itemVariants}
-                        className="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200"
-                      >
-                        <TableCell className="text-center text-sm px-4 py-3">
-                          {cotisation.NumeroQuittance}
-                        </TableCell>
-                        <TableCell className="text-center text-sm px-4 py-3">
-                          {cotisation.Echeance &&
-                            dayjs(cotisation.Echeance).format("DD/MM/YYYY")}
-                        </TableCell>
-                        <TableCell className="text-center text-sm px-4 py-3">
-                          {cotisation.DebutPeriode &&
-                            dayjs(cotisation.DebutPeriode).format("DD/MM/YYYY")}
-                        </TableCell>
-                        <TableCell className="text-center text-sm px-4 py-3">
-                          {cotisation.FinPeriode &&
-                            dayjs(cotisation.FinPeriode).format("DD/MM/YYYY")}
-                        </TableCell>
-                        <TableCell className="text-center text-sm px-4 py-3 font-medium">
-                          {formatNumberToFCFA(cotisation.PrimePeriodique)}
-                        </TableCell>
-                        <TableCell className="text-center text-sm px-4 py-3 font-medium">
-                          {formatNumberToFCFA(cotisation.MontantEncaisse)}
-                        </TableCell>
-                        <TableCell className="text-center px-2 py-3">
-                          <span
-                            className={`px-3 py-1 rounded-full text-[11px] ${
-                              cotisation.EtatQuittance === "Soldée"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                          >
-                            {cotisation.EtatQuittance}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-center text-sm px-4 py-3">
-                          {cotisation.EtatQuittance === "Impayée" ||
-                            (true && (
+                  {loading == false &&
+                  paginatedCotisations != null &&
+                  paginatedCotisations.length > 0
+                    ? paginatedCotisations.map((cotisation) => (
+                        <motion.tr
+                          key={cotisation.NumeroQuittance}
+                          initial="hidden"
+                          animate="visible"
+                          variants={itemVariants}
+                          className="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          {/* <div key={cotisation.NumeroQuittance}> */}
+                          <TableCell className="text-center text-sm px-4 py-3">
+                            {cotisation.NumeroQuittance}
+                          </TableCell>
+                          <TableCell className="text-center text-sm px-4 py-3">
+                            {cotisation.Echeance &&
+                              dayjs(cotisation.Echeance).format("DD/MM/YYYY")}
+                          </TableCell>
+                          <TableCell className="text-center text-sm px-4 py-3">
+                            {cotisation.DebutPeriode &&
+                              dayjs(cotisation.DebutPeriode).format(
+                                "DD/MM/YYYY"
+                              )}
+                          </TableCell>
+                          <TableCell className="text-center text-sm px-4 py-3">
+                            {cotisation.FinPeriode &&
+                              dayjs(cotisation.FinPeriode).format("DD/MM/YYYY")}
+                          </TableCell>
+                          <TableCell className="text-center text-sm px-4 py-3 font-medium">
+                            {formatNumberToFCFA(cotisation.PrimePeriodique)}
+                          </TableCell>
+                          <TableCell className="text-center text-sm px-4 py-3 font-medium">
+                            {formatNumberToFCFA(cotisation.MontantEncaisse)}
+                          </TableCell>
+                          <TableCell className="text-center px-2 py-3">
+                            <span
+                              className={`px-3 py-1 rounded-full text-[11px] ${
+                                cotisation.EtatQuittance === "Soldée"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {cotisation.EtatQuittance}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-center text-sm px-4 py-3">
+                            {cotisation.EtatQuittance == "Impayée" && (
                               <div>
                                 <ReglementPrimeModal data={cotisation} />
                               </div>
-                            ))}
-                        </TableCell>
-                      </motion.tr>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={8}
-                        className="text-center py-4 text-gray-500"
-                      >
-                        <FileText
-                          className="inline-block mr-2 text-gray-400"
-                          size={20}
-                        />
-                        Aucune cotisation trouvée pour cette période ou ce
-                        numéro de quittance.
-                      </TableCell>
-                    </TableRow>
-                  )}
+                            )}
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    : loading == false && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={8}
+                            className="text-center py-4 text-gray-500"
+                          >
+                            <FileText
+                              className="inline-block mr-2 text-gray-400"
+                              size={20}
+                            />
+                            Aucune cotisation trouvée pour cette période ou ce
+                            numéro de quittance.
+                          </TableCell>
+                        </TableRow>
+                      )}
                 </TableBody>
               </Table>
+
+              {loading && (
+                // <TableRow>
+                <div className="flex justify-center items-center py-8 mx-auto !w-full bg-[#d1cccc70]">
+                  <AnimatedImageLoader
+                    alt="Loader"
+                    src="/nsiavie.png"
+                    label="Chargement des cotisations"
+                  />
+                </div>
+              )}
             </TableContainer>
 
             {/* Pagination controls */}
-            {filteredAndSortedCotisations.length > 0 && (
-              <TablePagination
-                component="div"
-                count={filteredAndSortedCotisations.length}
-                page={page}
-                onPageChange={handlePageChange}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleRowsPerPageChange}
-                rowsPerPageOptions={[5, 10, 25, 50]}
-                labelRowsPerPage="Lignes par page :"
-                labelDisplayedRows={({ from, to, count }) =>
-                  `${from}-${to} sur ${count !== -1 ? count : `plus de ${to}`}`
-                }
-                className="mt-4" // Tailwind margin top
-              />
-            )}
-
+            {filteredAndSortedCotisations != null &&
+              filteredAndSortedCotisations.length > 0 && (
+                <TablePagination
+                  component="div"
+                  count={filteredAndSortedCotisations.length}
+                  page={page}
+                  onPageChange={handlePageChange}
+                  rowsPerPage={rowsPerPage}
+                  onRowsPerPageChange={handleRowsPerPageChange}
+                  rowsPerPageOptions={[5, 10, 25, 50]}
+                  labelRowsPerPage="Lignes par page :"
+                  labelDisplayedRows={({ from, to, count }) =>
+                    `${from}-${to} sur ${
+                      count !== -1 ? count : `plus de ${to}`
+                    }`
+                  }
+                  className="mt-4" // Tailwind margin top
+                />
+              )}
             {/* Action Buttons */}
             <Box className="flex justify-end gap-4 p-6 pt-4">
               {getTypeUser() === 1 && (
@@ -558,7 +573,7 @@ export default function CotisationPage() {
                 value: summaryCotisations?.EncoursAvanceImpayes || 0,
               },
             ].map((item, index) => (
-              <Grid>
+              <Grid key={index}>
                 {" "}
                 {/* Ajouté Grid item pour la responsivité */}
                 <motion.div variants={itemVariants}>

@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { poolPromise, sql } from "@/app/api/lib/db";
 import { verifyAuthToken } from "@/app/api/lib/auth";
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   const authResult = verifyAuthToken(request);
   if (authResult instanceof NextResponse) return authResult;
 
   // Récupération des paramètres de requête
-  const numeroPolice = request.nextUrl.searchParams.get("numeroPolice");
-
+  const param = await context.params;
+  const numeroPolice = param.id;
   if (!numeroPolice) {
     return NextResponse.json(
       { error: "Paramètres manquants" },

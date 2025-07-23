@@ -29,18 +29,13 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const count = useUserStore((state) => state.countSessionExpire);
-    if (
-      error.response?.status == 401 ||
-      (error.response?.status == 403 && !error.config._retry == false)
-    ) {
+    if (error.response?.status == 401 || error.response?.status == 403) {
       localStorage.removeItem("token");
       console.log(
         "Token supprimé du localStorage car l'utilisateur n'est pas autorisé ou la session a expiré."
       );
 
-      if (count == 0) {
-        triggerSessionExpiredModal();
-      }
+      triggerSessionExpiredModal();
 
       return Promise.reject(error);
     }

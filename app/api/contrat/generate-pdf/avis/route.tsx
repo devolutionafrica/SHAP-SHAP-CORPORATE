@@ -95,7 +95,7 @@ export function generateReportHtmlContent(reportData: any, date: string) {
   `;
 }
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const police = await req.nextUrl.searchParams.get("police");
   const date = await req.nextUrl.searchParams.get("ANNEE");
 
@@ -166,9 +166,9 @@ export async function POST(req: NextRequest) {
   try {
     browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-
+    console.log("GENERATION PDF 1");
     const htmlContent = generateReportHtmlContent(reportData, date);
-
+    console.log("GENERATION PDF 2");
     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
 
     const pdfBuffer = await page.pdf({
@@ -181,11 +181,12 @@ export async function POST(req: NextRequest) {
         left: "15mm",
       },
     });
-
+    console.log("ENVOIE DE LA REPONSE SS");
+    // return NextResponse.json({ message: "donnée envoyé" }, { status: 400 });
     return new NextResponse(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": 'attachment; filename="rapport_situation.pdf"',
+        // "Content-Disposition": 'attachment; filename="rapport_situations.pdf"',
       },
     });
   } catch (error: any) {

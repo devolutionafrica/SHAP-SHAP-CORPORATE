@@ -18,7 +18,6 @@ export async function PATCH(re: NextRequest) {
 
     const body = await re.json();
     const {
-      login,
       dateNaissance,
       lieuNaissance,
       adressePostale,
@@ -29,10 +28,11 @@ export async function PATCH(re: NextRequest) {
       situationMatrimoniale,
       email,
       photoUtilisateur,
+      lieuHabitation
     } = body;
 
     console.log("Mise à jour des infos utilisateur (body reçu) :", body);
-
+    const login = re.nextUrl.searchParams.get("login");
     if (!login) {
       return NextResponse.json({ error: "Login requis" }, { status: 400 });
     }
@@ -65,15 +65,15 @@ export async function PATCH(re: NextRequest) {
             ADRESSE_POSTALE = ISNULL(@AdressePostale, ADRESSE_POSTALE),
             TELEPHONE = ISNULL(@Telephone, TELEPHONE),
             PROFESSION = ISNULL(@Profession, PROFESSION),
-            CIVILITE = ISNULL(@Civilite, CIVILITE),
+            LIEU_HABITATION=ISNULL(@Lieu_habitation,LIEU_HABITATION),
             NATIONALITE = ISNULL(@Nationalite, NATIONALITE),
             SITUATION_MATRIMONIALE = ISNULL(@SituationMatrimoniale, SITUATION_MATRIMONIALE)
         WHERE IDE_CLIENT_UNIQUE = @IdClientUnique;
 
         UPDATE UTILISATEUR
         SET 
-            EMAIL = ISNULL(@Email, EMAIL),
-            PHOTO_UTILISATEUR = ISNULL(@PhotoUtilisateur, PHOTO_UTILISATEUR)
+            EMAIL = ISNULL(@Email, EMAIL)
+            
         WHERE LOGIN = @Login;`;
 
     // --- Ajout et ajustement des inputs pour la deuxième requête ---
@@ -91,7 +91,7 @@ export async function PATCH(re: NextRequest) {
     request2.input("AdressePostale", sql.NVarChar, adressePostale || null);
     request2.input("Telephone", sql.NVarChar, telephone || null);
     request2.input("Profession", sql.NVarChar, profession || null);
-    request2.input("Civilite", sql.NVarChar, civilite || null);
+    request2.input("Lieu_habitation",sql.NVarChar,lieuHabitation)
     request2.input("Nationalite", sql.NVarChar, nationalite || null);
     request2.input(
       "SituationMatrimoniale",
@@ -104,7 +104,7 @@ export async function PATCH(re: NextRequest) {
 
     // Gérer photoUtilisateur:
     // Si PHOTO_UTILISATEUR dans la DB est NVarChar (pour URL/chemin/base64 string):
-    request2.input("PhotoUtilisateur", sql.NVarChar, photoUtilisateur || null);
+    // request2.input("PhotoUtilisateur", sql.NVarChar, photoUtilisateur || null);
     // Si PHOTO_UTILISATEUR dans la DB est VarBinary(MAX) (pour données binaires de l'image):
     // request2.input("PhotoUtilisateur", sql.VarBinary(sql.MAX), photoUtilisateur ? Buffer.from(photoUtilisateur, "base64") : null);
 

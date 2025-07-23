@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAuthToken } from "../../lib/auth";
-import { poolPromise } from "../../lib/db";
+import { verifyAuthToken } from "@/app/api/lib/auth";
+import { poolPromise } from "@/lib/db";
 
 export async function GET({ request }: { request: NextRequest }) {
   //   const header = request.headers;
@@ -16,8 +16,8 @@ export async function GET({ request }: { request: NextRequest }) {
   const result = await pool
     .request()
     .query(
-      " SELECT Identifiant, Libelle, Id FROM [Extranet];[DemandePrestationTypes]"
+      " SELECT Identifiant, Libelle, Id FROM [Extranet].[DemandePrestationTypes]"
     );
 
-  return
+  return;
 }
